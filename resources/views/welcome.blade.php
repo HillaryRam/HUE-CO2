@@ -273,5 +273,24 @@
         @if (Route::has('login'))
             <div class="h-14.5 hidden lg:block"></div>
         @endif
+
+        <script>
+            setTimeout(() => {
+                console.log('Iniciando Echo...');
+                if (window.Echo) {
+                    window.Echo.connector.pusher.connection.bind('connected', () => {
+                        console.log('Echo conectado a Reverb!');
+                    });
+
+                    window.Echo.channel('test-channel')
+                        .listen('.TestEvent', (e) => {
+                            console.log('Evento recibido:', e);
+                            alert('Reverb dice: ' + e.message);
+                        });
+                } else {
+                    console.error('window.Echo no está definido');
+                }
+            }, 500);
+        </script>
     </body>
 </html>
