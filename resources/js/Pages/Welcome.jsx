@@ -25,7 +25,7 @@ export default function Welcome({ auth }) {
                         ) : (
                             <>
                                 <Link
-                                    href="/login"
+                                    href="/dashboard"
                                     className="bg-green-500 hover:bg-green-600 text-white font-semibold px-8 py-3 rounded-lg transition"
                                 >
                                     Iniciar sesión
