@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Juego extends Model
+{
+    protected $primaryKey = 'juego_id';
+
+    protected $fillable = ['modo', 'temperatura', 'anillo_id', 'estado'];
+
+    public function anillo()
+    {
+        return $this->belongsTo(Anillo::class, 'anillo_id');
+    }
+
+    public function jugadores()
+    {
+        return $this->belongsToMany(Jugador::class, 'juego_jugador', 'juego_id', 'jugador_id')
+                    ->withPivot('rol_id', 'eco_fichas', 'puntuacion')
+                    ->withTimestamps();
+    }
+
+    public function turnos()
+    {
+        return $this->hasMany(Turno::class, 'juego_id');
+    }
+}
