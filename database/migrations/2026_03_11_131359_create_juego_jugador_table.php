@@ -12,13 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('juego_jugador', function (Blueprint $table) {
-            $table->id('juego_jugador_id');                   // Clave primaria
-            $table->foreignId('juego_id')->constrained('juegos')->onDelete('cascade'); // FK a juegos
-            $table->foreignId('jugador_id')->constrained('jugadores')->onDelete('cascade'); // FK a jugadores
-            $table->foreignId('rol_id')->constrained('roles')->onDelete('cascade'); // FK a roles
-            $table->integer('eco_fichas')->default(0);       // Eco tokens del jugador
-            $table->integer('puntuacion')->default(0);       // Puntuación del jugador
-            $table->timestamps();                            // created_at y updated_at
+            $table->id();
+            $table->foreignId('juego_id')->constrained('juegos')->cascadeOnDelete();
+            $table->foreignId('jugador_id')->constrained('jugadores')->cascadeOnDelete();
+            $table->timestamps();
         });
     }
 

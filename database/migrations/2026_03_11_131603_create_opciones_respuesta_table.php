@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('opciones_respuesta', function (Blueprint $table) {
-            $table->id('opcion_id');                             // Clave primaria
-            $table->foreignId('pregunta_id')->constrained('preguntas')->onDelete('cascade'); // FK a preguntas
-            $table->text('texto_opcion');                        // Texto de la opción
-            $table->boolean('es_correcta')->default(false);      // Indica si la opción es correcta
-            $table->timestamps();                                // created_at y updated_at
+            $table->id();
+            $table->foreignId('pregunta_id')->constrained('preguntas')->cascadeOnDelete();
+            $table->string('texto');
+            $table->boolean('correcta')->default(false);
+            $table->timestamps();
         });
     }
 

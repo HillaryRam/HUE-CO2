@@ -12,13 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('turnos', function (Blueprint $table) {
-            $table->id('turno_id');                             // Clave primaria
-            $table->foreignId('juego_id')->constrained('juegos')->onDelete('cascade');       // FK a juegos
-            $table->foreignId('jugador_id')->constrained('jugadores')->onDelete('cascade');  // FK a jugadores
-            $table->foreignId('carta_id')->constrained('cartas')->onDelete('cascade');       // FK a cartas
-            $table->string('resultado', 255)->nullable();        // Resultado del turno
-            $table->integer('cambio_temp')->nullable();         // Cambio de temperatura
-            $table->timestamps();                               // created_at y updated_at
+            $table->id();
+            $table->foreignId('carta_id')->constrained('cartas')->cascadeOnDelete();
+            $table->foreignId('jugador_id')->constrained('jugadores')->cascadeOnDelete();
+            $table->integer('orden')->nullable();
+            $table->timestamps();
         });
     }
 

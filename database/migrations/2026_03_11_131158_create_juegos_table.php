@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('juegos', function (Blueprint $table) {
-            $table->id('juego_id');             // Clave primaria
+            $table->id(); // ⚠️ Esto crea 'id' como PRIMARY KEY
             $table->string('modo', 50)->nullable();  // Modo del juego
             $table->integer('temperatura')->nullable(); // Valor temporal o clima del juego
             $table->foreignId('anillo_id')->nullable()->constrained('anillos')->onDelete('set null'); // FK a anillos

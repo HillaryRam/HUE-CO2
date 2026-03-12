@@ -6,22 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('anillos', function (Blueprint $table) {
-            $table->id('anillo_id');          // Clave primaria
-            $table->string('nombre', 50);     // Nombre del anillo
-            $table->integer('orden')->nullable(); // Orden de aparición o prioridad
-            $table->timestamps();             // created_at y updated_at
+            $table->id();  // Esto crea 'id' como PRIMARY KEY
+            $table->string('nombre');
+            $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('anillos');
