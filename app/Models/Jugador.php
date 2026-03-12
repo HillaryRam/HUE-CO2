@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Sanctum\HasApiTokens;
 
 class Jugador extends Model
 {
+    use HasApiTokens;
+
     protected $primaryKey = 'jugador_id';
 
     protected $fillable = ['usuario', 'email', 'contrasena'];
