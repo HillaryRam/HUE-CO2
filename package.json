@@ -6,7 +6,8 @@
         "build": "vite build",
         "dev": "vite",
         "reverb": "docker exec hueco2-laravel.test-1 php artisan reverb:start",
-        "start": "concurrently \"wsl docker compose up\" \"npm run dev\" \"sleep 15 && npm run reverb\""
+        "start": "concurrently \"wsl docker compose up\" \"npm run dev\"",
+        "build:docker": "docker exec hueco2-laravel.test-1 bash -c \"npm run build\""
     },
     "devDependencies": {
         "@inertiajs/react": "^2.3.17",
