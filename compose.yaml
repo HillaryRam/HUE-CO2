@@ -1,3 +1,5 @@
+name: hueco2
+
 services:
     laravel.test:
         build:
