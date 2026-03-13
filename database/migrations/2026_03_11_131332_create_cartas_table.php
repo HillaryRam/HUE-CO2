@@ -4,13 +4,15 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('cartas', function (Blueprint $table) {
-            $table->id();           // ⚠️ clave primaria 'id'
-            $table->string('nombre');
+            $table->id();
+            $table->foreignId('anillo_id')->constrained('anillos');
+            $table->string('tipo'); // 'pregunta' o 'evento'
+            $table->text('texto');
+            $table->integer('tiempo')->nullable();
             $table->timestamps();
         });
     }
