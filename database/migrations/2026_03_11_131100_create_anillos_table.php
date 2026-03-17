@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('anillos', function (Blueprint $table) {
-            $table->id();  // Esto crea 'id' como PRIMARY KEY
+            $table->id('anillo_id');  // Esto crea 'id' como PRIMARY KEY
             $table->string('nombre');
             $table->integer('orden');
             $table->timestamps();

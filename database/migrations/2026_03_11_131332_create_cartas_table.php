@@ -8,8 +8,8 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('cartas', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('anillo_id')->constrained('anillos');
+            $table->id('carta_id');
+            $table->foreignId('anillo_id')->constrained('anillos', 'anillo_id');
             $table->string('tipo'); // 'pregunta' o 'evento'
             $table->text('texto');
             $table->integer('tiempo')->nullable();

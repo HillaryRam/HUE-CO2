@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('juegos', function (Blueprint $table) {
-            $table->id(); // ⚠️ Esto crea 'id' como PRIMARY KEY
+            $table->id('juego_id'); // ⚠️ Esto crea 'id' como PRIMARY KEY
             $table->string('modo', 50)->nullable();  // Modo del juego
             $table->integer('temperatura')->nullable(); // Valor temporal o clima del juego
-            $table->foreignId('anillo_id')->nullable()->constrained('anillos')->onDelete('set null'); // FK a anillos
+            $table->foreignId('anillo_id')->nullable()->constrained('anillos', 'anillo_id')->onDelete('set null'); // FK a anillos
             $table->string('estado', 50)->nullable();  // Estado del juego (activo, terminado...)
             $table->timestamps();                // created_at y updated_at
         });

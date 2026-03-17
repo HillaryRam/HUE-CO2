@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class OpcionRespuesta extends Model
 {
+    protected $table = 'opciones_respuesta';
     protected $primaryKey = 'opcion_id';
 
-    protected $fillable = ['pregunta_id', 'texto_opcion', 'es_correcta'];
+    protected $fillable = ['pregunta_id', 'texto', 'correcta'];
 
-    protected $casts = ['es_correcta' => 'boolean'];
+    protected $casts = ['correcta' => 'boolean'];
 
     public function pregunta()
     {

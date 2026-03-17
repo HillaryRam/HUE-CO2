@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('turnos', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('carta_id')->constrained('cartas')->cascadeOnDelete();
-            $table->foreignId('jugador_id')->constrained('jugadores')->cascadeOnDelete();
+            $table->id('turno_id');
+            $table->foreignId('juego_id')->constrained('juegos', 'juego_id')->cascadeOnDelete();
+            $table->foreignId('carta_id')->constrained('cartas', 'carta_id')->cascadeOnDelete();
+            $table->foreignId('jugador_id')->constrained('jugadores', 'jugador_id')->cascadeOnDelete();
             $table->integer('orden')->nullable();
             $table->timestamps();
         });

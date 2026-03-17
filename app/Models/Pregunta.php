@@ -22,6 +22,6 @@ class Pregunta extends Model
 
     public function opcionCorrecta()
     {
-        return $this->hasOne(OpcionRespuesta::class, 'pregunta_id')->where('es_correcta', true);
+        return $this->hasOne(OpcionRespuesta::class, 'pregunta_id')->where('correcta', true);
     }
 }

@@ -9,8 +9,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('jugadores', function (Blueprint $table) {
-            $table->id();           // ⚠️ clave primaria 'id'
-            $table->string('nombre');
+            $table->id('jugador_id');
+            $table->string('usuario', 50);
+            $table->string('email')->unique();
+            $table->string('contrasena');
             $table->timestamps();
         });
     }

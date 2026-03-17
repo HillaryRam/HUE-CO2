@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Evento extends Model
 {
+    protected $primaryKey = 'evento_id';
+
     protected $fillable = ['carta_id', 'efecto'];
 
     public function carta()

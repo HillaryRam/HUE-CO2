@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('eventos', function (Blueprint $table) {
-            $table->id('id');                                 // Clave primaria
-            $table->foreignId('carta_id')->constrained('cartas')->onDelete('cascade'); // FK a cartas
+            $table->id('evento_id');                                 // Clave primaria
+            $table->foreignId('carta_id')->constrained('cartas', 'carta_id')->onDelete('cascade'); // FK a cartas
             $table->text('efecto');                           // Descripción del efecto del evento
             $table->timestamps();                             // created_at y updated_at
         });
