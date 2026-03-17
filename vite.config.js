@@ -14,7 +14,15 @@ export default defineConfig({
     ],
 
     server: {
-        host: 'localhost',
+        host: '0.0.0.0', // Abre la puerta del contenedor hacia Windows
         port: 5173,
+        strictPort: true,
+        cors: true, // Permite que Ngrok tome los archivos de diseño
+        hmr: {
+            host: 'localhost', // Mantiene la recarga automática en el navegador
+        },
+        watch: {
+            usePolling: true, // Súper necesario en Docker para detectar cuando guardas un archivo
+        }
     },
 });
