@@ -47,16 +47,16 @@ class CartaController extends Controller
     {
         $request->validate([
             'anillo_id' => 'required|exists:anillos,anillo_id',
-            'tipo'      => 'required|string|max:50',
-            'texto'     => 'nullable|string',
-            'tiempo'    => 'nullable|integer',
+            'tipo' => 'required|string|max:50',
+            'texto' => 'nullable|string',
+            'tiempo' => 'nullable|integer',
         ]);
 
         $carta = Carta::create($request->only(['anillo_id', 'tipo', 'texto', 'tiempo']));
 
         return response()->json([
             'message' => 'Carta creada',
-            'carta'   => $carta,
+            'carta' => $carta,
         ], 201);
     }
 
@@ -68,7 +68,7 @@ class CartaController extends Controller
 
         return response()->json([
             'message' => 'Carta actualizada',
-            'carta'   => $carta,
+            'carta' => $carta,
         ]);
     }
 

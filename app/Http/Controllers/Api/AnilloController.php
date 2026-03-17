@@ -18,7 +18,7 @@ class AnilloController extends Controller
     // GET /api/anillos/{id}
     public function show($id)
     {
-        $anillo = Anillo::with(['cartas.preguntas.opciones', 'cartas.eventos'])->findOrFail($id);
+        $anillo = Anillo::with(['cartas.preguntas.opciones'])->findOrFail($id);
         return response()->json($anillo);
     }
 
@@ -27,14 +27,14 @@ class AnilloController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:50',
-            'orden'  => 'nullable|integer',
+            'orden' => 'nullable|integer',
         ]);
 
         $anillo = Anillo::create($request->only(['nombre', 'orden']));
 
         return response()->json([
             'message' => 'Anillo creado',
-            'anillo'  => $anillo,
+            'anillo' => $anillo,
         ], 201);
     }
 
@@ -46,7 +46,7 @@ class AnilloController extends Controller
 
         return response()->json([
             'message' => 'Anillo actualizado',
-            'anillo'  => $anillo,
+            'anillo' => $anillo,
         ]);
     }
 

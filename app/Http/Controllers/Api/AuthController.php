@@ -13,14 +13,14 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'usuario'    => 'required|string|max:50',
-            'email'      => 'required|email|unique:jugadores,email',
+            'usuario' => 'required|string|max:50',
+            'email' => 'required|email|unique:jugadores,email',
             'contrasena' => 'required|string|min:6',
         ]);
 
         $jugador = Jugador::create([
-            'usuario'    => $request->usuario,
-            'email'      => $request->email,
+            'usuario' => $request->usuario,
+            'email' => $request->email,
             'contrasena' => Hash::make($request->contrasena),
         ]);
 
@@ -29,7 +29,7 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Jugador registrado correctamente',
             'jugador' => $jugador,
-            'token'   => $token,
+            'token' => $token,
         ], 201);
     }
 
@@ -37,7 +37,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email'      => 'required|email',
+            'email' => 'required|email',
             'contrasena' => 'required|string',
         ]);
 
@@ -52,7 +52,7 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Login correcto',
             'jugador' => $jugador,
-            'token'   => $token,
+            'token' => $token,
         ]);
     }
 

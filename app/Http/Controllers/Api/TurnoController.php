@@ -25,16 +25,16 @@ class TurnoController extends Controller
     {
         $request->validate([
             'jugador_id' => 'required|exists:jugadores,jugador_id',
-            'carta_id'   => 'required|exists:cartas,carta_id',
-            'resultado'  => 'nullable|string',
-            'cambio_temp'=> 'nullable|integer',
+            'carta_id' => 'required|exists:cartas,carta_id',
+            'resultado' => 'nullable|string',
+            'cambio_temp' => 'nullable|numeric',
         ]);
 
         $turno = Turno::create([
-            'juego_id'    => $juego_id,
-            'jugador_id'  => $request->jugador_id,
-            'carta_id'    => $request->carta_id,
-            'resultado'   => $request->resultado,
+            'juego_id' => $juego_id,
+            'jugador_id' => $request->jugador_id,
+            'carta_id' => $request->carta_id,
+            'resultado' => $request->resultado,
             'cambio_temp' => $request->cambio_temp ?? 0,
         ]);
 
@@ -46,7 +46,7 @@ class TurnoController extends Controller
 
         return response()->json([
             'message' => 'Turno registrado',
-            'turno'   => $turno->load(['jugador', 'carta']),
+            'turno' => $turno->load(['jugador', 'carta']),
         ], 201);
     }
 
