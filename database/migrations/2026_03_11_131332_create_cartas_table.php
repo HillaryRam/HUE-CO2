@@ -13,6 +13,7 @@ return new class extends Migration {
             $table->string('tipo'); // 'pregunta' o 'evento'
             $table->text('texto');
             $table->integer('tiempo')->nullable();
+            $table->decimal('cambio_temp', 3, 1)->nullable(); // solo para eventos
             $table->timestamps();
         });
     }

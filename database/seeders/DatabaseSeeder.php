@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             AnillosSeeder::class,
             RolesSeeder::class,
             CartasSeeder::class,
+            PreguntasTestSeeder::class,
         ]);
     }
 }
