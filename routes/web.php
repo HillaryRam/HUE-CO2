@@ -26,8 +26,14 @@ Route::get('/dashboard', function () {
     ]);
 })->name('dashboard');
 
+// Ruta del juego local
+Route::get('/juego-local', function () {
+    return Inertia::render('LocalGame');
+})->name('juego.local');
+
 // Ruta de prueba Reverb (temporal)
 Route::get('/fire-event', function () {
     App\Events\TestEvent::dispatch('Hello World from Reverb!');
     return 'Event fired!';
 });
+
