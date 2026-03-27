@@ -1,66 +1,70 @@
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 
-export default function Dashboard({ auth }) {
+export default function Dashboard() {
     const [roomCode, setRoomCode] = useState('');
 
     const createRoom = () => {
-        // Aquí harías una petición a tu backend para crear una sala
-        // y luego redirigir al juego como "host"
         router.post('/rooms/create');
     };
 
     const joinRoom = (e) => {
         e.preventDefault();
-        // Redirigir al juego como "player" con el código de la sala
         router.post('/rooms/join', { code: roomCode });
     };
 
     return (
-        <div className="min-h-screen bg-stone-900 text-white flex flex-col items-center justify-center p-4">
+        <AuthenticatedLayout
+            header={
+                <h2 className="text-xl font-semibold leading-tight text-gray-800">
+                    Portal de Juego
+                </h2>
+            }
+        >
             <Head title="Dashboard - Elige un modo" />
 
-            <h1 className="text-3xl font-bold mb-8">Bienvenido, {auth.user.name}</h1>
-
-            <div className="flex flex-col md:flex-row gap-8 w-full max-w-2xl">
-                {/* Crear Sala */}
-                <div className="flex-1 bg-stone-800 p-8 rounded-2xl border border-stone-700 flex flex-col items-center">
-                    <h2 className="text-xl font-bold mb-4">Crear Partida</h2>
-                    <p className="text-stone-400 text-center mb-6 text-sm">
-                        Crea una sala nueva. Tú serás el anfitrión y verás el tablero principal.
-                    </p>
-                    <button
-                        onClick={createRoom}
-                        className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 rounded-xl font-bold transition-colors"
-                    >
-                        Crear Sala
-                    </button>
-                </div>
-
-                {/* Unirse a Sala */}
-                <div className="flex-1 bg-stone-800 p-8 rounded-2xl border border-stone-700 flex flex-col items-center">
-                    <h2 className="text-xl font-bold mb-4">Unirse a Partida</h2>
-                    <p className="text-stone-400 text-center mb-6 text-sm">
-                        Únete a una sala existente usando el código del anfitrión.
-                    </p>
-                    <form onSubmit={joinRoom} className="w-full flex flex-col gap-3">
-                        <input
-                            type="text"
-                            placeholder="Código de la sala"
-                            value={roomCode}
-                            onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-                            className="w-full px-4 py-3 bg-stone-900 border border-stone-600 rounded-xl text-center font-mono text-xl uppercase"
-                            required
-                        />
+            <div className="py-12 flex flex-col items-center">
+                <div className="flex flex-col md:flex-row gap-8 w-full max-w-4xl px-4">
+                    {/* Crear Sala */}
+                    <div className="flex-1 bg-white p-8 rounded-3xl border-4 border-stone-200 flex flex-col items-center shadow-lg">
+                        <h2 className="text-2xl font-black mb-4 text-stone-900">Crear Partida</h2>
+                        <p className="text-stone-500 text-center mb-6 text-sm font-medium">
+                            Crea una sala nueva. Tú serás el anfitrión y verás el tablero principal.
+                        </p>
                         <button
-                            type="submit"
-                            className="w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-xl font-bold transition-colors"
+                            onClick={createRoom}
+                            className="w-full py-4 bg-[#16a34a] hover:bg-[#15803d] text-white rounded-2xl font-black text-lg shadow-[0_4px_0_0_#166534] active:shadow-none active:translate-y-1 transition-all"
                         >
-                            Unirse
+                            Crear Sala
                         </button>
-                    </form>
+                    </div>
+
+                    {/* Unirse a Sala */}
+                    <div className="flex-1 bg-white p-8 rounded-3xl border-4 border-stone-200 flex flex-col items-center shadow-lg">
+                        <h2 className="text-2xl font-black mb-4 text-stone-900">Unirse a Partida</h2>
+                        <p className="text-stone-500 text-center mb-6 text-sm font-medium">
+                            Únete a una sala existente usando el código del anfitrión.
+                        </p>
+                        <form onSubmit={joinRoom} className="w-full flex flex-col gap-3">
+                            <input
+                                type="text"
+                                placeholder="CÓDIGO"
+                                value={roomCode}
+                                onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
+                                className="w-full px-4 py-4 bg-stone-100 border-4 border-stone-200 rounded-2xl text-center font-black text-2xl uppercase focus:border-[#87AF4C] focus:outline-none transition-colors"
+                                required
+                            />
+                            <button
+                                type="submit"
+                                className="w-full py-4 bg-[#1c1917] hover:bg-stone-800 text-white rounded-2xl font-black text-lg shadow-[0_4px_0_0_#000] active:shadow-none active:translate-y-1 transition-all"
+                            >
+                                Unirse
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
+        </AuthenticatedLayout>
     );
 }

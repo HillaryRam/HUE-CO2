@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -9,24 +10,24 @@ Route::get('/', function () {
     ]);
 });
 
-// Redirección temporal para evitar el 404 si el navegador tiene la versión vieja en caché
-Route::get('/login', function () {
-    return redirect('/dashboard');
+// Ruta pública para los invitados (Portal de entrada al juego)
+Route::get('/jugar', function () {
+    return Inertia::render('GuestPortal');
+})->name('guest.portal');
+
+// Dashboard (Ahora protegido por Auth de Breeze)
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+// Perfil de usuario (Estándar de Breeze)
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Dashboard temporalmente público para desarrollo
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard', [
-        'auth' => [
-            'user' => auth()->user() ?? [
-                'name' => 'Invitado',
-                'email' => 'invitado@example.com'
-            ]
-        ],
-    ]);
-})->name('dashboard');
-
-// Ruta del juego local
+// Ruta del juego local (Mantiene su funcionamiento)
 Route::get('/juego-local', function () {
     return Inertia::render('LocalGame');
 })->name('juego.local');
@@ -37,3 +38,4 @@ Route::get('/fire-event', function () {
     return 'Event fired!';
 });
 
+require __DIR__.'/auth.php';
