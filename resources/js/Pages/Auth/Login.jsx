@@ -1,10 +1,6 @@
-import Checkbox from '@/Components/Checkbox';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
+import React from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { Mail, Lock, ChevronLeft, Globe } from 'lucide-react';
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -15,86 +11,96 @@ export default function Login({ status, canResetPassword }) {
 
     const submit = (e) => {
         e.preventDefault();
-
         post(route('login'), {
             onFinish: () => reset('password'),
         });
     };
 
     return (
-        <GuestLayout>
-            <Head title="Log in" />
+        <div className="min-h-screen bg-[#fafaf9] font-sans text-[#44403c] flex flex-col items-center justify-center p-4 md:p-6 relative overflow-hidden">
+            <Head title="Iniciar Sesión | HUE-CO2" />
 
-            {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    {status}
+            {/* Fondo Orgánico */}
+            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#dcfce7] rounded-full blur-[120px] opacity-40 -z-10" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#fef3c7] rounded-full blur-[120px] opacity-40 -z-10" />
+            <div className="absolute inset-0 opacity-5 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/handmade-paper.png')]" />
+
+            {/* Logo Mini */}
+            <div className="absolute top-6 left-6 flex items-center gap-2 opacity-50">
+                <div className="w-12 h-12 flex items-center justify-center mx-auto mb-4">
+                    <img src="/images/DPEC_logo.png" alt="Logo" className="w-full h-full object-contain" />
                 </div>
-            )}
+                <span className="font-black mb-5">HUE-CO2</span>
+            </div>
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
+            <div className="w-full max-w-md bg-white border-4 border-[#e7e5e4] p-8 md:p-10 rounded-[3rem] shadow-2xl animate-in slide-in-from-right-8 duration-300">
+                <Link href="/" className="mb-6 text-[#a8a29e] hover:text-[#1c1917] flex items-center gap-1 font-bold text-sm inline-flex">
+                    <ChevronLeft className="w-4 h-4" /> Volver
+                </Link>
 
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
+                {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
 
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
+                {/* Selector de Pestañas */}
+                <div className="flex bg-[#f5f5f4] p-1.5 rounded-2xl mb-8 border-2 border-[#e7e5e4]">
+                    <div className="flex-1 py-3 rounded-xl font-black text-sm transition-all bg-white shadow-sm text-[#1c1917] text-center">
+                        Entrar
+                    </div>
+                    <Link href={route('register')} className="flex-1 py-3 rounded-xl font-black text-sm transition-all text-[#a8a29e] hover:text-[#57534e] text-center">
+                        Registrarse
+                    </Link>
                 </div>
 
-                <div className="mt-4 block">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) =>
-                                setData('remember', e.target.checked)
-                            }
-                        />
-                        <span className="ms-2 text-sm text-gray-600">
-                            Remember me
-                        </span>
-                    </label>
-                </div>
+                <form onSubmit={submit} className="space-y-5">
+                    <div>
+                        <label className="block text-[10px] font-black uppercase text-[#a8a29e] tracking-widest mb-2 ml-4">Correo Electrónico</label>
+                        <div className="relative">
+                            <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-[#a8a29e] w-5 h-5" />
+                            <input
+                                type="email"
+                                value={data.email}
+                                onChange={(e) => setData('email', e.target.value)}
+                                placeholder="tucorreo@ejemplo.com"
+                                className={`w-full bg-[#f5f5f4] border-4 ${errors.email ? 'border-red-500' : 'border-[#e7e5e4]'} rounded-2xl py-4 pl-14 pr-6 text-sm font-bold focus:outline-none focus:border-[#87AF4C] transition-colors`}
+                                required
+                                autoFocus
+                            />
+                        </div>
+                        {errors.email && <p className="text-red-500 text-xs font-bold mt-2 ml-4">{errors.email}</p>}
+                    </div>
 
-                <div className="mt-4 flex items-center justify-end">
+                    <div>
+                        <label className="block text-[10px] font-black uppercase text-[#a8a29e] tracking-widest mb-2 ml-4">Contraseña</label>
+                        <div className="relative">
+                            <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-[#a8a29e] w-5 h-5" />
+                            <input
+                                type="password"
+                                value={data.password}
+                                onChange={(e) => setData('password', e.target.value)}
+                                placeholder="••••••••"
+                                className={`w-full bg-[#f5f5f4] border-4 ${errors.password ? 'border-red-500' : 'border-[#e7e5e4]'} rounded-2xl py-4 pl-14 pr-6 text-sm font-bold focus:outline-none focus:border-[#87AF4C] transition-colors`}
+                                required
+                            />
+                        </div>
+                        {errors.password && <p className="text-red-500 text-xs font-bold mt-2 ml-4">{errors.password}</p>}
+                    </div>
+
                     {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        >
-                            Forgot your password?
-                        </Link>
+                        <div className="text-right">
+                            <Link href={route('password.request')} className="text-xs font-bold text-[#87AF4C] hover:underline">
+                                ¿Olvidaste tu contraseña?
+                            </Link>
+                        </div>
                     )}
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
-                </div>
-            </form>
-        </GuestLayout>
+                    <button
+                        type="submit"
+                        disabled={processing}
+                        className="w-full bg-[#1c1917] text-white py-5 rounded-2xl font-black text-lg shadow-lg hover:bg-[#292524] transition-all mt-4 disabled:opacity-50"
+                    >
+                        Iniciar Sesión
+                    </button>
+                </form>
+            </div>
+        </div>
     );
 }
