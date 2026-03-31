@@ -13,6 +13,13 @@ export default defineConfig({
         react(),
         tailwindcss(),
     ],
+    server: {
+        hmr: {
+            host: 'wispiest-chance-labouredly.ngrok-free.dev',
+            protocol: 'wss', // Importante para que no bloquee el websocket
+        },
+        host: '0.0.0.0',
+    },
     resolve: {
         alias: {
             '@': path.resolve(__dirname, 'resources/js'),

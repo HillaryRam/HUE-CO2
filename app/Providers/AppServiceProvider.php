@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,8 +19,11 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    public function boot()
     {
-        Vite::prefetch(concurrency: 3);
+        // Esto obliga a que todos los assets (CSS/JS) usen HTTPS
+        if (env('APP_ENV') !== 'local' || str_contains(request()->header('host'), 'ngrok')) {
+            URL::forceScheme('https');
+        }
     }
 }
