@@ -12,14 +12,20 @@ export default function AuthenticatedLayout({ header, children }) {
         useState(false);
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="border-b border-gray-100 bg-white">
+        <div className="min-h-screen bg-[#fafaf9] font-sans text-[#44403c] relative overflow-hidden">
+            {/* Fondo Orgánico */}
+            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#dcfce7] rounded-full blur-[120px] opacity-20 -z-10" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#fef3c7] rounded-full blur-[120px] opacity-20 -z-10" />
+            <div className="absolute inset-0 opacity-5 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/handmade-paper.png')] -z-10" />
+
+            <nav className="border-b-4 border-[#e7e5e4] bg-white/80 backdrop-blur-md sticky top-0 z-50">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-16 justify-between">
+                    <div className="flex h-20 justify-between">
                         <div className="flex">
                             <div className="flex shrink-0 items-center">
-                                <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                                <Link href="/" className="flex items-center gap-3">
+                                    <ApplicationLogo className="block h-12 w-auto object-contain" />
+                                    <span className="font-black text-2xl tracking-tighter text-[#1c1917] hidden sm:block">HUE-CO2</span>
                                 </Link>
                             </div>
 
@@ -27,8 +33,16 @@ export default function AuthenticatedLayout({ header, children }) {
                                 <NavLink
                                     href={route('dashboard')}
                                     active={route().current('dashboard')}
+                                    className="font-black text-lg"
                                 >
                                     Dashboard
+                                </NavLink>
+                                <NavLink
+                                    href={route('profile.edit')}
+                                    active={route().current('profile.edit')}
+                                    className="font-black text-lg"
+                                >
+                                    Mi Perfil
                                 </NavLink>
                             </div>
                         </div>
@@ -40,12 +54,12 @@ export default function AuthenticatedLayout({ header, children }) {
                                         <span className="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
+                                                className="inline-flex items-center rounded-2xl border-4 border-[#e7e5e4] bg-white px-5 py-2.5 text-sm font-black text-[#1c1917] transition duration-150 ease-in-out hover:border-[#87AF4C] focus:outline-none shadow-sm"
                                             >
                                                 {user.name}
 
                                                 <svg
-                                                    className="-me-0.5 ms-2 h-4 w-4"
+                                                    className="-me-0.5 ms-2 h-4 w-4 opacity-50"
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     viewBox="0 0 20 20"
                                                     fill="currentColor"
@@ -62,16 +76,12 @@ export default function AuthenticatedLayout({ header, children }) {
 
                                     <Dropdown.Content>
                                         <Dropdown.Link
-                                            href={route('profile.edit')}
-                                        >
-                                            Profile
-                                        </Dropdown.Link>
-                                        <Dropdown.Link
                                             href={route('logout')}
                                             method="post"
                                             as="button"
+                                            className="font-bold text-red-600"
                                         >
-                                            Log Out
+                                            Cerrar Sesión
                                         </Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
@@ -85,7 +95,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                         (previousState) => !previousState,
                                     )
                                 }
-                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
+                                className="inline-flex items-center justify-center rounded-xl p-2 text-[#a8a29e] transition duration-150 ease-in-out hover:bg-stone-100 hover:text-[#1c1917] focus:outline-none"
                             >
                                 <svg
                                     className="h-6 w-6"
@@ -101,7 +111,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                         }
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
-                                        strokeWidth="2"
+                                        strokeWidth="3"
                                         d="M4 6h16M4 12h16M4 18h16"
                                     />
                                     <path
@@ -112,7 +122,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                         }
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
-                                        strokeWidth="2"
+                                        strokeWidth="3"
                                         d="M6 18L18 6M6 6l12 12"
                                     />
                                 </svg>
@@ -124,38 +134,48 @@ export default function AuthenticatedLayout({ header, children }) {
                 <div
                     className={
                         (showingNavigationDropdown ? 'block' : 'hidden') +
-                        ' sm:hidden'
+                        ' sm:hidden border-t-4 border-[#e7e5e4] bg-white'
                     }
                 >
                     <div className="space-y-1 pb-3 pt-2">
                         <ResponsiveNavLink
                             href={route('dashboard')}
                             active={route().current('dashboard')}
+                            className="font-black"
                         >
                             Dashboard
                         </ResponsiveNavLink>
+
+                        <ResponsiveNavLink
+                            href={route('profile.edit')}
+                            active={route().current('profile.edit')}
+                            className="font-black"
+                        >
+                            Mi Perfil
+                        </ResponsiveNavLink>
                     </div>
 
-                    <div className="border-t border-gray-200 pb-1 pt-4">
+                    <div className="border-t-4 border-[#e7e5e4] pb-1 pt-4">
                         <div className="px-4">
-                            <div className="text-base font-medium text-gray-800">
+                            <div className="text-base font-black text-[#1c1917]">
                                 {user.name}
                             </div>
-                            <div className="text-sm font-medium text-gray-500">
+                            <div className="text-sm font-bold text-[#a8a29e]">
                                 {user.email}
                             </div>
                         </div>
 
                         <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}>
-                                Profile
+                            <ResponsiveNavLink href={route('profile.edit')} className="font-bold">
+                                Mi Perfil
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"
                                 href={route('logout')}
                                 as="button"
+                                className="font-bold text-red-600"
                             >
-                                Log Out
+                                Cerrar Sesión
                             </ResponsiveNavLink>
                         </div>
                     </div>
@@ -163,14 +183,16 @@ export default function AuthenticatedLayout({ header, children }) {
             </nav>
 
             {header && (
-                <header className="bg-white shadow">
-                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                        {header}
+                <header className="py-8">
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <div className="text-4xl font-black tracking-tighter text-[#1c1917]">
+                            {header}
+                        </div>
                     </div>
                 </header>
             )}
 
-            <main>{children}</main>
+            <main className="relative z-10">{children}</main>
         </div>
     );
 }
