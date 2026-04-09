@@ -37,7 +37,7 @@ export default function Welcome({ auth }) {
                         // Si el usuario ya está logueado, se ve un botón directo al Dashboard
                         <Link
                             href={route('dashboard')}
-                            className="w-full bg-[#16a34a] text-white p-5 rounded-2xl shadow-lg hover:bg-[#15803d] transition-all font-black text-lg flex items-center justify-center gap-3"
+                            className="w-full bg-[#87AF4C] text-white p-5 rounded-2xl shadow-lg hover:bg-[#15803d] transition-all font-black text-lg flex items-center justify-center gap-3"
                         >
                             Ir al Portal de Juego
                         </Link>
@@ -65,7 +65,7 @@ export default function Welcome({ auth }) {
 
                             <button
                                 onClick={handleGuest}
-                                className="w-full bg-[#1c1917] text-white p-5 rounded-2xl shadow-lg hover:bg-stone-800 transition-all font-black text-lg flex items-center justify-center gap-3"
+                                className="w-full bg-[#1c1917] text-white p-5 rounded-2xl shadow-lg hover:bg-stone-800 transition-all font-black text-lg flex items-center justify-center gap-3 cursor-pointer"
                             >
                                 <UserCircle className="w-6 h-6 text-[#87AF4C]" /> Modo Invitado
                             </button>

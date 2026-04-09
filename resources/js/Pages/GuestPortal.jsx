@@ -35,8 +35,7 @@ export default function GuestPortal() {
         { id: 'ciudadania', name: 'Ciudadanía', icon: <Users className="w-5 h-5" />, color: 'bg-violet-100 text-violet-700 border-violet-300' },
     ];
 
-    // (Aquí irían los useEffect y las funciones renderSoloLobby, renderSmallLobby, etc. 
-    // que ya teníamos en el PortalScreen. Puedes copiarlas directamente del código anterior).
+    // Renderizado del lobby para 1 jugador (SOLO)
 
     const renderSoloLobby = () => (
         <div className="flex flex-col items-center text-center">
@@ -53,6 +52,21 @@ export default function GuestPortal() {
             >
                 ¡Empezar Partida! <Play className="w-6 h-6 fill-current" />
             </button>
+        </div>
+    );
+
+    // Renderizado del lobby para 2-5 jugadores (SMALL)
+    const renderSmallLobby = () => (
+        <div className="flex flex-col items-center text-center">
+            <h3 className="text-2xl font-black mb-6 text-stone-900">Grupo de 2 a 5 Jugadores</h3>
+            <div className="grid grid-cols-2 gap-4 mb-8 w-full max-w-sm">
+                {[2, 3, 4, 5].map(num => (
+                    <button key={num} onClick={startLocalGame} className="bg-[#fdfcfb] border-4 border-[#e7e5e4] p-6 rounded-3xl font-black text-2xl hover:border-[#fb923c] hover:bg-[#fff7ed] transition-all">
+                        {num} <span className="text-sm block font-bold text-[#a8a29e] uppercase tracking-tighter">Jugadores</span>
+                    </button>
+                ))}
+            </div>
+            <p className="text-[#78716c] text-sm font-medium italic">Los 6 sectores se repartirán automáticamente entre vosotros.</p>
         </div>
     );
 
@@ -115,7 +129,7 @@ export default function GuestPortal() {
                     <p className="text-center text-[#78716c] text-sm font-medium mb-6">Como invitado, el progreso <br /> de esta partida no se guardará.</p>
 
                     <div className="space-y-4 mt-6">
-                        <button onClick={() => handleSelectMode('solo')} className="w-full flex items-center justify-between p-6 bg-[#f0fdf4] border-4 border-[#E3EFD2] hover:border-[#87AF4C] rounded-2xl transition-all group">
+                        <button onClick={() => navigateTo('select_mode')} className="w-full flex items-center justify-between p-6 bg-[#f0fdf4] border-4 border-[#E3EFD2] hover:border-[#87AF4C] rounded-2xl transition-all group">
                             <div className="flex items-center gap-4 text-left">
                                 <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm"><User className="text-[#87AF4C] w-6 h-6" /></div>
                                 <div>
@@ -146,7 +160,45 @@ export default function GuestPortal() {
                         <ChevronLeft className="w-4 h-4" /> Volver
                     </button>
                     <h2 className="text-4xl font-black mb-2 text-center text-[#1c1917]">¿Cuántos vais a jugar?</h2>
-                    {/* Aquí van los botones de 2-5 jugadores, 6 jugadores, etc. */}
+                    <p className="text-center text-[#87AF4C] font-medium mb-10">Los 6 sectores siempre estarán presentes. Elige cómo repartirlos.</p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <button onClick={() => handleSelectMode('solo')} className="bg-white border-4 border-[#e7e5e4] p-6 rounded-[2.5rem] text-left hover:border-[#16a34a] hover:bg-[#f0fdf4] transition-all group shadow-sm hover:shadow-xl">
+                            <div className="w-14 h-14 bg-[#16a34a]/10 text-[#16a34a] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <User className="w-8 h-8" />
+                            </div>
+                            <h3 className="font-black text-2xl mb-2">1 Jugador</h3>
+                            <p className="text-sm font-bold text-[#a8a29e] uppercase tracking-widest mb-3">Modo Solitario</p>
+                            <p className="text-sm text-[#57534e] leading-relaxed">Asumes el control total. Liderarás los 6 sectores simultáneamente.</p>
+                        </button>
+
+                        <button onClick={() => handleSelectMode('small')} className="bg-white border-4 border-[#e7e5e4] p-6 rounded-[2.5rem] text-left hover:border-[#fb923c] hover:bg-[#fff7ed] transition-all group shadow-sm hover:shadow-xl">
+                            <div className="w-14 h-14 bg-[#fb923c]/10 text-[#fb923c] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <Users className="w-8 h-8" />
+                            </div>
+                            <h3 className="font-black text-2xl mb-2">2-5 Jugadores</h3>
+                            <p className="text-sm font-bold text-[#a8a29e] uppercase tracking-widest mb-3">Grupo Íntimo</p>
+                            <p className="text-sm text-[#57534e] leading-relaxed">El sistema reparte los 6 roles equitativamente entre los presentes.</p>
+                        </button>
+
+                        <button onClick={() => handleSelectMode('classic')} className="bg-white border-4 border-[#e7e5e4] p-6 rounded-[2.5rem] text-left hover:border-[#3b82f6] hover:bg-[#eff6ff] transition-all group shadow-sm hover:shadow-xl">
+                            <div className="w-14 h-14 bg-[#3b82f6]/10 text-[#3b82f6] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <Crown className="w-8 h-8" />
+                            </div>
+                            <h3 className="font-black text-2xl mb-2">6 Jugadores</h3>
+                            <p className="text-sm font-bold text-[#a8a29e] uppercase tracking-widest mb-3">Equipo Perfecto</p>
+                            <p className="text-sm text-[#57534e] leading-relaxed">La experiencia original. Cada persona controla un sector específico.</p>
+                        </button>
+
+                        <button onClick={() => handleSelectMode('class')} className="bg-white border-4 border-[#e7e5e4] p-6 rounded-[2.5rem] text-left hover:border-[#d946ef] hover:bg-[#fdf4ff] transition-all group shadow-sm hover:shadow-xl">
+                            <div className="w-14 h-14 bg-[#d946ef]/10 text-[#d946ef] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <Globe className="w-8 h-8" />
+                            </div>
+                            <h3 className="font-black text-2xl mb-2">+7 Jugadores</h3>
+                            <p className="text-sm font-bold text-[#a8a29e] uppercase tracking-widest mb-3">Modo Clase/Taller</p>
+                            <p className="text-sm text-[#57534e] leading-relaxed">Formad 6 grandes equipos. Ideal para proyectar en pizarra digital.</p>
+                        </button>
+                    </div>
                 </motion.div>
             )}
 
@@ -158,10 +210,21 @@ export default function GuestPortal() {
                     </button>
                     <div className="mt-8">
                         {mode === 'solo' && renderSoloLobby()}
+                        {mode === 'small' && renderSmallLobby()}
+                        {(mode === 'classic' || mode === 'class') && (
+                            <div className="text-center p-12">
+                                <div className="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <Clock className="w-8 h-8 text-stone-400 animate-spin" />
+                                </div>
+                                <h3 className="text-xl font-bold mb-2">Modo Multijugador</h3>
+                                <p className="text-stone-500">Este modo requiere conexión a servidor para sincronizar jugadores.</p>
+                            </div>
+                        )}
                     </div>
                 </motion.div>
             )}
 
+            {/*----------------------------------------------------------------------------------------*/}
             {/* VISTA UNIRSE CON PIN */}
             {view === 'join' && (
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md bg-white border-4 border-[#e7e5e4] p-10 rounded-[3rem] shadow-2xl">
