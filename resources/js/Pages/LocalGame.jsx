@@ -1,15 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
 import { Setup } from '../Components/Game/Setup';
 import { GameBoard } from '../Components/Game/GameBoard';
 import { GameOver } from '../Components/Game/GameOver';
 import { TutorialOverlay } from '../Components/Game/TutorialOverlay';
+import { ROLES } from '../data/gameData';
 
 export default function LocalGame() {
     const [gameState, setGameState] = useState('setup'); // setup, playing, ended
     const [players, setPlayers] = useState([]);
     const [isWin, setIsWin] = useState(false);
     const [showTutorial, setShowTutorial] = useState(false);
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode');
+        
+        if (mode === 'solo') {
+            handleStart(ROLES.map(r => r.id));
+        }
+    }, []);
 
     const handleStart = (selectedPlayers) => {
         setPlayers(selectedPlayers);

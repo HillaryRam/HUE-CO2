@@ -22,8 +22,8 @@ export default function GuestPortal() {
     };
 
     // Redirigir al juego local
-    const startLocalGame = () => {
-        router.get('/juego-local');
+    const startLocalGame = (params = {}) => {
+        router.get('/juego-local', params);
     };
 
     const rolesDef = [
@@ -47,7 +47,7 @@ export default function GuestPortal() {
                 <p className="text-[#57534e] mb-6 font-medium text-sm">Controlarás los 6 sectores tú solo. Ideal para jugar en una sola pantalla.</p>
             </div>
             <button
-                onClick={startLocalGame}
+                onClick={() => startLocalGame({ mode: 'solo' })}
                 className="w-full max-w-sm bg-[#1c1917] text-white py-5 rounded-[2rem] font-black text-xl shadow-xl hover:scale-105 transition-transform flex items-center justify-center gap-3"
             >
                 ¡Empezar Partida! <Play className="w-6 h-6 fill-current" />
