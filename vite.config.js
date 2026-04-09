@@ -15,8 +15,11 @@ export default defineConfig({
     ],
     server: {
         hmr: {
-            host: 'wispiest-chance-labouredly.ngrok-free.dev',
+            host: '0.0.0.0',
             protocol: 'wss', // Importante para que no bloquee el websocket
+            hmr: {
+                host: 'localhost',
+            },
         },
         host: '0.0.0.0',
     },
