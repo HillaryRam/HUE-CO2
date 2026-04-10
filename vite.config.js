@@ -14,27 +14,18 @@ export default defineConfig({
         tailwindcss(),
     ],
     server: {
-        hmr: {
-            host: '0.0.0.0',
-            protocol: 'wss', // Importante para que no bloquee el websocket
-            hmr: {
-                host: 'localhost',
-            },
-        },
         host: '0.0.0.0',
+        port: 5174,
+        hmr: {
+            host: 'localhost',
+        },
+        watch: {
+            usePolling: true,
+        },
     },
     resolve: {
         alias: {
             '@': path.resolve(__dirname, 'resources/js'),
-        },
-    },
-    server: {
-        host: '0.0.0.0',
-        watch: {
-            usePolling: true,
-        },
-        hmr: {
-            host: 'localhost',
         },
     },
 });

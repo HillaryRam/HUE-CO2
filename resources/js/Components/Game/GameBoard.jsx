@@ -6,10 +6,17 @@ import {
 } from 'lucide-react';
 import { ROLES } from '../../data/gameData';
 
-export function GameBoard({ players: activePlayers, onEnd, tutorialStep = -1 }) {
+export function GameBoard({ players: activePlayers, onEnd, tutorialStep = -1, gameMode = 'solo', myRole }) {
   const [timeLeft, setTimeLeft] = useState(105); // 1:45
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [chatInput, setChatInput] = useState('');
+  const [messages, setMessages] = useState([
+    { id: 1, user: 'Sistema', text: '¡Bienvenidos al modo multijugador!', type: 'system' },
+    { id: 2, user: 'Textil', text: 'Hola equipo, ¿qué porcentaje ponemos en el agua?', type: 'user' },
+    { id: 3, user: 'Ciencia', text: 'Yo creo que un 70% es ideal para este turno.', type: 'user' }
+  ]);
+  const [votedSectors, setVotedSectors] = useState({});
+  const [intensity, setIntensity] = useState(50);
 
   const [orbitalAngle, setOrbitalAngle] = useState(0);
 
@@ -181,11 +188,11 @@ export function GameBoard({ players: activePlayers, onEnd, tutorialStep = -1 }) 
           </div>
 
           {/* 3. CARTA DE DESAFÍO DERECHA */}
-          <div className="w-[320px] lg:w-[380px] bg-white border-2 border-blue-500 rounded-[2rem] shadow-[0_8px_30px_rgba(0,0,0,0.04)] flex flex-col p-5 lg:p-6 shrink-0 h-full">
+          <div className="w-[320px] lg:w-[380px] bg-white border-2 border-violet-500 rounded-[2rem] shadow-[0_8px_30px_rgba(0,0,0,0.04)] flex flex-col p-6 shrink-0 h-full">
 
             <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2 text-blue-500 font-bold text-xs uppercase tracking-widest">
-                <Droplets size={16} /> Anillo del Agua
+              <div className="flex items-center gap-2 text-violet-500 font-bold text-xs uppercase tracking-widest">
+                <Cpu size={16} /> Anillo Tecnológico
               </div>
               <div className="text-[9px] font-black bg-slate-100 text-slate-500 px-2 py-1 rounded-md uppercase tracking-widest">
                 Turno: 3/15
@@ -196,77 +203,201 @@ export function GameBoard({ players: activePlayers, onEnd, tutorialStep = -1 }) 
               Fuga de Microplásticos
             </h2>
 
-            <p className="text-slate-500 text-sm mb-6 leading-relaxed flex-1">
+            <p className="text-slate-500 text-sm mb-6 leading-relaxed">
               ¿Cuál es la estrategia más efectiva para cerrar el ciclo del agua en la producción textil este turno?
             </p>
 
-            <div className="grid grid-cols-2 gap-3 mt-auto">
-              {options.map(opt => {
-                const isSelected = selectedAnswer === opt.id;
-                return (
-                  <button
-                    key={opt.id}
-                    onClick={() => setSelectedAnswer(opt.id)}
-                    className={`rounded-2xl overflow-hidden flex flex-col h-[100px] lg:h-[110px] transition-all active:scale-95 outline-none
-                    ${isSelected ? 'ring-4 ring-offset-2 ring-blue-500 shadow-md' : 'border border-slate-200 shadow-sm hover:border-blue-300 hover:shadow-md'}`}
-                  >
-                    <div className={`h-[50%] flex items-center justify-center ${opt.color} text-white w-full`}>
-                      {opt.icon}
-                    </div>
-                    <div className="h-[50%] bg-white p-2 flex items-center justify-center">
-                      <span className={`text-[10px] lg:text-[11px] font-bold text-center leading-snug ${isSelected ? 'text-blue-700' : 'text-slate-600'}`}>
-                        {opt.text}
-                      </span>
-                    </div>
-                  </button>
-                )
-              })}
+            <div className="flex-1 flex flex-col justify-between w-full px-2">
+              <div className="flex flex-col items-center">
+                {/* Indicador de Porcentaje */}
+                <div className="relative mb-6 mt-4">
+                  <div className="bg-violet-500 text-white font-black text-4xl px-6 py-2 rounded-2xl shadow-[0_10px_20px_rgba(139,92,246,0.3)] animate-bounce-subtle">
+                    {intensity}%
+                  </div>
+                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-violet-500 rotate-45"></div>
+                </div>
+
+                {/* Slider Personalizado */}
+                <div className="w-full mb-6">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="1"
+                    value={intensity}
+                    onChange={(e) => setIntensity(parseInt(e.target.value))}
+                    className="w-full h-4 bg-slate-100 rounded-full appearance-none cursor-pointer accent-violet-600 transition-all hover:h-5"
+                    style={{
+                      background: `linear-gradient(to right, #8b5cf6 ${intensity}%, #f1f5f9 ${intensity}%)`,
+                    }}
+                  />
+                  <div className="flex justify-between mt-3 px-1">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Mínimo</span>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Máximo</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Botón de Confirmar (Forzando margen desde abajo) */}
+              <div className="pb-6 mt-auto">
+                <button
+                  className="w-full py-4 bg-violet-500 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl hover:bg-violet-600 hover:scale-[1.02] transition-all active:scale-95 flex items-center justify-center gap-3 group"
+                >
+                  Aplicar Estrategia <Zap className="w-4 h-4 text-yellow-400 group-hover:animate-pulse" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="h-[160px] w-full bg-white border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] z-30 shrink-0">
-        <div className="max-w-[1500px] h-full w-full mx-auto flex items-center justify-between px-6 gap-3">
-          {ROLES.map((role) => {
-            const colors = getRoleColors(role.id);
-            const tokens = sectorStates[role.id]?.tokens || 0;
-            const canAfford = tokens >= role.activeCost;
+      <div className="h-[180px] w-full bg-white border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] z-30 shrink-0">
+        <div className="max-w-[1500px] h-full w-full mx-auto flex items-center px-6 gap-6">
 
-            return (
-              <button
-                key={role.id}
-                disabled={!canAfford}
-                className={`flex-1 h-[130px] rounded-2xl border-2 transition-all duration-300 flex flex-col items-start justify-start p-4 relative group
-                  ${canAfford
-                    ? `${colors.bg} ${colors.border} hover:shadow-lg hover:-translate-y-1`
-                    : 'bg-slate-50 border-slate-100 opacity-60 grayscale cursor-not-allowed'}
-                `}
-              >
-                {/* Coste (Centrado óptico mejorado) */}
-                <div className={`absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full text-base font-black shadow-md leading-none
-                  ${canAfford ? `${colors.accent} text-white` : 'bg-slate-300 text-slate-500'}
-                `}>
-                  {role.activeCost}
-                </div>
+          {/* ================= BARRA MODO SOLO ================= */}
+          {gameMode === 'solo' && (
+            <div className="flex w-full items-center justify-between gap-3">
+              {ROLES.map((role) => {
+                const colors = getRoleColors(role.id);
+                const tokens = sectorStates[role.id]?.tokens || 0;
+                const canAfford = tokens >= role.activeCost;
 
-                {/* Icono del Sector (Más grande) */}
-                <div className={`${colors.text} mb-3 group-hover:scale-110 transition-transform`}>
-                  {React.cloneElement(getRoleIcon(role.iconName, role.id), { className: "w-8 h-8 lg:w-9 lg:h-9" })}
-                </div>
+                return (
+                  <button
+                    key={role.id}
+                    disabled={!canAfford}
+                    className={`flex-1 h-[130px] rounded-2xl border-2 transition-all duration-300 flex flex-col items-start justify-start p-4 relative group
+                                      ${canAfford
+                        ? `${colors.bg} ${colors.border} hover:shadow-lg hover:-translate-y-1`
+                        : 'bg-slate-50 border-slate-100 opacity-60 grayscale cursor-not-allowed'}
+                                    `}
+                  >
+                    <div className={`absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full text-base font-black shadow-md leading-none
+                                      ${canAfford ? `${colors.accent} text-white` : 'bg-slate-300 text-slate-500'}
+                                    `}>
+                      {role.activeCost}
+                    </div>
 
-                {/* Contenedor de Textos (Más grandes y justo debajo del icono) */}
-                <div className="text-left mt-auto lg:mt-0">
-                  <div className="text-[9px] lg:text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1">
-                    {role.name}
-                  </div>
-                  <div className={`text-[11px] lg:text-[13px] font-black leading-tight ${colors.text} uppercase`}>
-                    {role.activeDesc.split(':')[0]}
-                  </div>
+                    <div className={`${colors.text} mb-3 group-hover:scale-110 transition-transform`}>
+                      {React.cloneElement(getRoleIcon(role.iconName, role.id), { className: "w-8 h-8 lg:w-9 lg:h-9" })}
+                    </div>
+
+                    <div className="text-left mt-auto lg:mt-0">
+                      <div className="text-[9px] lg:text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1">
+                        {role.name}
+                      </div>
+                      <div className={`text-[11px] lg:text-[13px] font-black leading-tight ${colors.text} uppercase`}>
+                        {role.activeDesc.split(':')[0]}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* ================= BARRA MODO 2-5 JUGADORES (3 BLOQUES) ================= */}
+          {gameMode === 'small' && myRole && (
+            <>
+              {/* BLOQUE IZQUIERDO: INFORMACIÓN DE MI SECTOR */}
+              <div className="w-[300px] h-[150px] shrink-0">
+                {(() => {
+                  const colors = getRoleColors(myRole.id);
+                  const tokens = sectorStates[myRole.id]?.tokens || 0;
+                  const canAfford = tokens >= myRole.activeCost;
+                  return (
+                    <div className={`h-full w-full rounded-2xl border-2 p-5 flex flex-col relative ${colors.bg} ${colors.border}`}>
+                      <div className={`absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full text-lg font-black shadow-md ${colors.accent} text-white`}>
+                        {myRole.activeCost}
+                      </div>
+
+                      <div className={`${colors.text} mb-2`}>
+                        {React.cloneElement(getRoleIcon(myRole.iconName, myRole.id), { className: "w-10 h-10" })}
+                      </div>
+
+                      <div className="text-left mt-auto">
+                        <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">
+                          TU SECTOR: {myRole.name}
+                        </div>
+                        <div className={`text-sm lg:text-base font-black leading-tight ${colors.text} uppercase`}>
+                          {myRole.activeDesc.split(':')[0]}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* BLOQUE CENTRAL: CHAT DEL EQUIPO */}
+              <div className="flex-1 h-[150px] bg-slate-50 rounded-2xl border-2 border-slate-100 flex flex-col p-3 overflow-hidden shadow-inner">
+                <div className="flex-1 overflow-y-auto mb-2 pr-1 space-y-2 scrollbar-hide">
+                  {messages.map((msg, i) => (
+                    <div key={i} className={`text-xs ${msg.type === 'system' ? 'text-slate-400 italic text-center' : 'text-slate-700'}`}>
+                      {msg.type !== 'system' && (
+                        <span className="font-black mr-2" style={{ color: msg.user === 'Textil' ? '#4f46e5' : msg.user === 'Ciencia' ? '#2563eb' : 'inherit' }}>
+                          {msg.user || 'Jugador'}:
+                        </span>
+                      )}
+                      {msg.text}
+                    </div>
+                  ))}
                 </div>
-              </button>
-            );
-          })}
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && setMessages([...messages, { text: chatInput }])}
+                    placeholder="Escribe al equipo..."
+                    className="flex-1 bg-white border-2 border-slate-200 rounded-xl px-4 py-2 text-xs font-bold outline-none focus:border-blue-400 transition-colors"
+                  />
+                  <button
+                    onClick={() => {
+                      if (chatInput.trim()) {
+                        setMessages([...messages, { text: chatInput, type: 'user' }]);
+                        setChatInput('');
+                      }
+                    }}
+                    className="bg-blue-500 text-white p-2.5 rounded-xl hover:bg-blue-600 transition-colors shadow-md active:scale-95"
+                  >
+                    <Send size={16} />
+                  </button>
+                </div>
+              </div>
+
+              {/* BLOQUE DERECHO: ESTADO DE VOTACIONES */}
+              <div className="w-[300px] h-[150px] shrink-0 bg-white rounded-2xl border-2 border-slate-100 p-4 shadow-sm">
+                <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <CheckCircle2 size={12} className="text-emerald-500" /> Estado de Votación
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  {ROLES.map(role => {
+                    const isVoted = votedSectors[role.id];
+                    const colors = getRoleColors(role.id);
+                    return (
+                      <button
+                        key={role.id}
+                        onClick={() => setVotedSectors(prev => ({ ...prev, [role.id]: !prev[role.id] }))}
+                        className={`relative flex items-center justify-center p-2 rounded-xl border-2 transition-all active:scale-90
+                          ${isVoted ? 'bg-emerald-50 border-emerald-200 ring-2 ring-emerald-500/20' : 'bg-slate-50 border-slate-100'}
+                        `}
+                      >
+                        <div className={isVoted ? colors.text : 'text-slate-300'}>
+                          {React.cloneElement(getRoleIcon(role.iconName, role.id), { className: "w-5 h-5 lg:w-6 lg:h-6" })}
+                        </div>
+                        {isVoted && (
+                          <div className="absolute -top-1 -right-1 bg-emerald-500 text-white rounded-full p-0.5 shadow-sm">
+                            <CheckCircle2 size={10} strokeWidth={4} />
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          )}
+
         </div>
       </div>
     </div>

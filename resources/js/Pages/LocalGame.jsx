@@ -12,11 +12,21 @@ export default function LocalGame() {
     const [isWin, setIsWin] = useState(false);
     const [showTutorial, setShowTutorial] = useState(false);
 
+    const [gameMode, setGameMode] = useState('solo');
+    const [myRole, setMyRole] = useState(null);
+
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const mode = urlParams.get('mode');
         
         if (mode === 'solo') {
+            setGameMode('solo');
+            handleStart(ROLES.map(r => r.id));
+        } else if (mode === 'small') {
+            setGameMode('small');
+            // Asignar un rol aleatorio para el bloque izquierdo
+            const randomRole = ROLES[Math.floor(Math.random() * ROLES.length)];
+            setMyRole(randomRole);
             handleStart(ROLES.map(r => r.id));
         }
     }, []);
@@ -46,7 +56,13 @@ export default function LocalGame() {
 
                 {gameState === 'playing' && (
                     <>
-                        <GameBoard players={players} onEnd={handleEnd} tutorialStep={showTutorial ? 0 : -1} />
+                        <GameBoard 
+                            players={players} 
+                            onEnd={handleEnd} 
+                            tutorialStep={showTutorial ? 0 : -1} 
+                            gameMode={gameMode}
+                            myRole={myRole}
+                        />
                         {showTutorial && <TutorialOverlay onComplete={() => setShowTutorial(false)} />}
                     </>
                 )}
