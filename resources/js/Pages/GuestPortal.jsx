@@ -12,8 +12,12 @@ export default function GuestPortal() {
     const [mode, setMode] = useState(null);
     const [pin, setPin] = useState('772 904');
     const [simulatedPlayers, setSimulatedPlayers] = useState([]);
+    const [selectedPlayers, setSelectedPlayers] = useState(null);
 
-    const navigateTo = (newView) => setView(newView);
+    const navigateTo = (newView) => {
+        setView(newView);
+        setSelectedPlayers(null); // Reset selection when moving back or changing views
+    };
 
     const handleSelectMode = (selectedMode) => {
         setMode(selectedMode);
@@ -22,8 +26,8 @@ export default function GuestPortal() {
     };
 
     // Redirigir al juego local
-    const startLocalGame = () => {
-        router.get('/juego-local');
+    const startLocalGame = (params = {}) => {
+        router.get('/juego-local', params);
     };
 
     const rolesDef = [
@@ -47,7 +51,7 @@ export default function GuestPortal() {
                 <p className="text-[#57534e] mb-6 font-medium text-sm">Controlarás los 6 sectores tú solo. Ideal para jugar en una sola pantalla.</p>
             </div>
             <button
-                onClick={startLocalGame}
+                onClick={() => startLocalGame({ mode: 'solo' })}
                 className="w-full max-w-sm bg-[#1c1917] text-white py-5 rounded-[2rem] font-black text-xl shadow-xl hover:scale-105 transition-transform flex items-center justify-center gap-3"
             >
                 ¡Empezar Partida! <Play className="w-6 h-6 fill-current" />
@@ -61,12 +65,30 @@ export default function GuestPortal() {
             <h3 className="text-2xl font-black mb-6 text-stone-900">Grupo de 2 a 5 Jugadores</h3>
             <div className="grid grid-cols-2 gap-4 mb-8 w-full max-w-sm">
                 {[2, 3, 4, 5].map(num => (
-                    <button key={num} onClick={startLocalGame} className="bg-[#fdfcfb] border-4 border-[#e7e5e4] p-6 rounded-3xl font-black text-2xl hover:border-[#fb923c] hover:bg-[#fff7ed] transition-all">
+                    <button
+                        key={num}
+                        onClick={() => setSelectedPlayers(num)}
+                        className={`border-4 p-6 rounded-3xl font-black text-2xl transition-all ${selectedPlayers === num
+                            ? 'border-[#fb923c] bg-[#fff7ed] shadow-inner scale-95'
+                            : 'bg-[#fdfcfb] border-[#e7e5e4] hover:border-[#fb923c] hover:bg-[#fff7ed]'
+                            }`}
+                    >
                         {num} <span className="text-sm block font-bold text-[#a8a29e] uppercase tracking-tighter">Jugadores</span>
                     </button>
                 ))}
             </div>
-            <p className="text-[#78716c] text-sm font-medium italic">Los 6 sectores se repartirán automáticamente entre vosotros.</p>
+            <p className="text-[#78716c] text-sm font-medium italic mb-8">Los 6 sectores se repartirán automáticamente entre vosotros.</p>
+
+            {selectedPlayers && (
+                <motion.button
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    onClick={() => startLocalGame({ players: selectedPlayers, mode: 'small' })}
+                    className="w-full max-w-sm bg-[#fb923c] text-white py-5 rounded-[2rem] font-black text-xl shadow-[0_8px_0_0_#ea580c] hover:shadow-[0_4px_0_0_#ea580c] hover:translate-y-1 active:shadow-none active:translate-y-2 transition-all flex items-center justify-center gap-3"
+                >
+                    ¡Comenzar Partida! <Play className="w-6 h-6 fill-current" />
+                </motion.button>
+            )}
         </div>
     );
 

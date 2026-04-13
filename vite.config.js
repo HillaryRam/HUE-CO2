@@ -14,24 +14,18 @@ export default defineConfig({
         tailwindcss(),
     ],
     server: {
-        hmr: {
-            host: 'wispiest-chance-labouredly.ngrok-free.dev',
-            protocol: 'wss', // Importante para que no bloquee el websocket
-        },
         host: '0.0.0.0',
+        port: 5174,
+        hmr: {
+            host: 'localhost',
+        },
+        watch: {
+            usePolling: true,
+        },
     },
     resolve: {
         alias: {
             '@': path.resolve(__dirname, 'resources/js'),
-        },
-    },
-    server: {
-        host: '0.0.0.0',
-        watch: {
-            usePolling: true,
-        },
-        hmr: {
-            host: 'localhost',
         },
     },
 });
