@@ -38,4 +38,9 @@ Route::get('/fire-event', function () {
     return 'Event fired!';
 });
 
+// Ruta de prueba de resultados (Temporal para visualización)
+Route::get('/test-results', function () {
+    return Inertia::render('TestResults');
+});
+
 require __DIR__.'/auth.php';
