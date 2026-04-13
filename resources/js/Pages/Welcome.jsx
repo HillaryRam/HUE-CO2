@@ -13,28 +13,32 @@ export default function Welcome({ auth }) {
     };
 
     return (
-        <div className="min-h-screen bg-[#fafaf9] font-sans text-[#44403c] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        <div className="min-h-screen bg-[#fafaf9] font-sans text-[#44403c] flex flex-col items-center justify-center p-6 relative overflow-hidden transition-colors duration-500">
             <Head title="HUE-CO2" />
 
-
-            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#dcfce7] rounded-full blur-[120px] opacity-40 -z-10" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#fef3c7] rounded-full blur-[120px] opacity-40 -z-10" />
+            {/* Fondo Orgánico Optimizado (Sin blurs pesados) */}
+            <div className="absolute inset-0 pointer-events-none -z-10 opacity-30" 
+                style={{ 
+                    background: 'radial-gradient(circle at 10% 10%, #dcfce7 0%, transparent 45%), radial-gradient(circle at 90% 90%, #fef3c7 0%, transparent 45%)'
+                }} 
+            />
             <div className="absolute inset-0 opacity-5 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/handmade-paper.png')]" />
 
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.15, ease: "easeOut" }}
+                style={{ willChange: "transform, opacity" }}
                 className="w-full max-w-sm text-center"
             >
                 <div className="w-36 h-36 flex items-center justify-center mx-auto mb-4">
-                    <img src="/images/DPEC_logo.png" alt="Logo" className="w-full h-full object-contain" />
+                    <img src="/images/DPEC_logo.png" alt="Logo" className="w-full h-full object-contain" loading="eager" />
                 </div>
                 <h1 className="text-5xl font-black tracking-tighter text-[#1c1917] mb-1 uppercase">HUE-CO2</h1>
                 <p className="text-[#87AF4C] font-bold uppercase tracking-[0.2em] text-[10px] mb-12">Danza por el cambio</p>
 
                 <div className="space-y-4">
                     {auth?.user ? (
-                        // Si el usuario ya está logueado, se ve un botón directo al Dashboard
                         <Link
                             href={route('dashboard')}
                             className="w-full bg-[#87AF4C] text-white p-5 rounded-2xl shadow-lg hover:bg-[#15803d] transition-all font-black text-lg flex items-center justify-center gap-3"
@@ -42,7 +46,6 @@ export default function Welcome({ auth }) {
                             Ir al Portal de Juego
                         </Link>
                     ) : (
-                        // Si NO está logueado, mostramos Login / Registro / Invitado
                         <>
                             <Link
                                 href={route('login')}
@@ -63,12 +66,12 @@ export default function Welcome({ auth }) {
                                 <div className="relative flex justify-center text-xs uppercase"><span className="bg-[#fafaf9] px-2 text-stone-400 font-bold">o también</span></div>
                             </div>
 
-                            <button
-                                onClick={handleGuest}
+                            <Link
+                                href={route('guest.portal')}
                                 className="w-full bg-[#1c1917] text-white p-5 rounded-2xl shadow-lg hover:bg-stone-800 transition-all font-black text-lg flex items-center justify-center gap-3 cursor-pointer"
                             >
                                 <UserCircle className="w-6 h-6 text-[#87AF4C]" /> Modo Invitado
-                            </button>
+                            </Link>
                         </>
                     )}
                 </div>
