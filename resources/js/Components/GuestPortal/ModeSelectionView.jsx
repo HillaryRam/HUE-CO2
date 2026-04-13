@@ -5,10 +5,10 @@ import { ChevronLeft, User, Users, Crown, Globe } from 'lucide-react';
 export function ModeSelectionView({ onBack, onSelectMode }) {
     return (
         <motion.div 
-            initial={{ opacity: 0, x: 20 }} 
-            animate={{ opacity: 1, x: 0 }} 
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
+            initial={{ opacity: 0, x: 20, y: 10 }} 
+            animate={{ opacity: 1, x: 0, y: 0 }} 
+            exit={{ opacity: 0, x: -20, y: -10 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
             style={{ willChange: "transform, opacity" }}
             className="w-full max-w-4xl"
         >

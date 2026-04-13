@@ -5,10 +5,10 @@ import { ChevronLeft, User, Globe, ArrowRight } from 'lucide-react';
 export function HostAuthView({ onBack, onSelectMode, isGuest = true }) {
     return (
         <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
+            initial={{ opacity: 0, x: 20, y: 10 }}
+            animate={{ opacity: 1, x: 0, y: 0 }}
+            exit={{ opacity: 0, x: -20, y: -10 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
             style={{ willChange: "transform, opacity" }}
             className="w-full max-w-md bg-white border-4 border-[#e7e5e4] p-10 rounded-[3rem] shadow-2xl"
         >
@@ -52,7 +52,7 @@ export function HostAuthView({ onBack, onSelectMode, isGuest = true }) {
                         </div>
                         <div>
                             <div className="font-black text-[#1c1917]">Modo Online</div>
-                            <div className="text-[10px] text-[#a8a29e] font-bold uppercase tracking-widest mt-1">Cada uno en su casa</div>
+                            <div className="text-[10px] text-[#a8a29e] font-bold uppercase tracking-widest mt-1">Varias pantallas</div>
                         </div>
                     </div>
                     <ArrowRight className="w-5 h-5 text-[#a8a29e] opacity-0 group-hover:opacity-100 transition-opacity" />

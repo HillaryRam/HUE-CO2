@@ -44,7 +44,7 @@ export default function Dashboard() {
 
             <div className="py-8 md:py-12 flex flex-col items-center min-h-[60vh] justify-center relative overflow-hidden">
                 
-                <AnimatePresence mode="popLayout">
+                <AnimatePresence mode="wait">
                     {view === 'main' && (
                         <motion.div 
                             key="main"

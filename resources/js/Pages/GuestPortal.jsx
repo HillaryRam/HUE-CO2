@@ -54,7 +54,7 @@ export default function GuestPortal() {
                 </div>
             )}
 
-            <AnimatePresence mode="popLayout">
+            <AnimatePresence mode="wait">
                 {/* VISTA 1: MAIN MENU */}
                 {view === 'main' && (
                     <MainMenuView 

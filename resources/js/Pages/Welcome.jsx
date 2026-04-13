@@ -25,9 +25,9 @@ export default function Welcome({ auth }) {
             <div className="absolute inset-0 opacity-5 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/handmade-paper.png')]" />
 
             <motion.div
-                initial={{ opacity: 0, y: 15 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.15, ease: "easeOut" }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
                 style={{ willChange: "transform, opacity" }}
                 className="w-full max-w-sm text-center"
             >

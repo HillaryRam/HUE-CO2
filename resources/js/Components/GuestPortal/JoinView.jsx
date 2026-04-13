@@ -20,10 +20,10 @@ export function JoinView({ onBack, onConnect }) {
 
     return (
         <motion.div 
-            initial={{ opacity: 0, y: 20 }} 
+            initial={{ opacity: 0, y: 30 }} 
             animate={{ opacity: 1, y: 0 }} 
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
+            exit={{ opacity: 0, y: 30 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
             style={{ willChange: "transform, opacity" }}
             className="w-full max-w-md bg-white border-4 border-[#e7e5e4] p-10 rounded-[3rem] shadow-2xl"
         >
