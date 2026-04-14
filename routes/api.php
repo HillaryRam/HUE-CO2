@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AnilloController;
 use App\Http\Controllers\Api\TurnoController;
 use App\Http\Controllers\Api\CartaController;
 use App\Http\Controllers\Api\JugadorController;
+use App\Http\Controllers\GameController;
 
 // ── Rutas públicas ──────────────────────────────────────────
 Route::post('/register', [AuthController::class, 'register']);
@@ -18,6 +19,11 @@ Route::get('/anillos/{id}',                     [AnilloController::class, 'show'
 Route::get('/anillos/{anillo_id}/carta-aleatoria', [CartaController::class, 'cartaAleatoria']);
 Route::get('/cartas',                           [CartaController::class, 'index']);
 Route::get('/cartas/{id}',                      [CartaController::class, 'show']);
+
+// ── Rutas de Juego en Tiempo Real (públicas, identificadas por roomCode) ──
+Route::post('/game/{roomCode}/vote',     [GameController::class, 'vote']);
+Route::post('/game/{roomCode}/proposal', [GameController::class, 'proposal']);
+Route::post('/game/{roomCode}/advance',  [GameController::class, 'advance']);
 
 // ── Rutas protegidas (requieren token) ──────────────────────
 Route::middleware('auth:sanctum')->group(function () {

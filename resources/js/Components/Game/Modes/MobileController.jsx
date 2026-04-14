@@ -6,6 +6,7 @@ import {
     ChevronRight, Recycle, ShieldCheck, Star, Hexagon, Heart, Moon,
     CheckCircle, Minus, X
 } from 'lucide-react';
+import { useGameChannel } from '../../../hooks/useGameChannel';
 
 // ─── Constantes Estáticas ────────────────────────────────────────────────────
 // Fuente de verdad de roles (espejo del gameData.ts para el mando)
@@ -70,30 +71,58 @@ export default function MobileController({
     currentTurn = '3/15',
     challenge = {},
     gameState = 'challenge', // 'waiting' | 'challenge' | 'voted'
-    onVote,
-    onApply,
+    roomCode = 'TEST-000',   // Código de sala para conectar al canal correcto
     onDonate,
     onChat,
     onActivatePower,
 }) {
+    const [localGameState, setLocalGameState] = useState(gameState);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [sliderValue, setSliderValue] = useState(challenge.sliderDefault ?? 50);
     const [proposalText, setProposalText] = useState('');
+    const [currentChallenge, setCurrentChallenge] = useState(challenge);
+
+    // ── WebSocket: Conectar al canal de la sala ───────────────────────────────
+    const { isConnected, gameState: serverGameState, sendVote, sendProposal } = useGameChannel(
+        roomCode,
+        role?.id,
+        playerName
+    );
+
+    // Cuando el servidor cambia el estado del juego, actualizar nuestra vista
+    React.useEffect(() => {
+        if (!serverGameState) return;
+        setLocalGameState(serverGameState.state);
+        if (serverGameState.challenge && Object.keys(serverGameState.challenge).length > 0) {
+            setCurrentChallenge(serverGameState.challenge);
+            setSelectedAnswer(null);
+            setSliderValue(serverGameState.challenge.sliderDefault ?? 50);
+            setProposalText('');
+        }
+    }, [serverGameState]);
+    // ───────────────────────────────────────────────────────────────
 
     const theme = ROLE_CONFIG[role?.id] ?? ROLE_CONFIG.ciudadania;
     const icon = ROLE_ICONS[role?.id] ?? <Users />;
-    const challengeType = challenge.type ?? 'options';
+    const challengeType = currentChallenge.type ?? 'options';
 
     const formatTime = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
-    const handleVote = (answer) => {
+    const handleVote = async (answer) => {
         setSelectedAnswer(answer);
-        onVote?.(answer);
+        await sendVote(answer, challengeType);
+        setLocalGameState('voted');
+    };
+
+    const handleProposal = async () => {
+        if (!proposalText.trim()) return;
+        await sendProposal(proposalText);
+        setLocalGameState('voted');
     };
 
     // ── Contenido del Área Principal según tipo de reto ──
     const renderChallengeContent = () => {
-        if (gameState === 'voted') {
+        if (localGameState === 'voted') {
             return (
                 <motion.div
                     key="voted"
@@ -115,7 +144,7 @@ export default function MobileController({
             );
         }
 
-        if (gameState === 'waiting') {
+        if (localGameState === 'waiting') {
             return (
                 <motion.div
                     key="waiting"
@@ -142,11 +171,11 @@ export default function MobileController({
                 <div className="flex items-center gap-2 mb-3">
                     <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0" />
                     <span className="text-[9px] font-black uppercase text-rose-500 tracking-widest">
-                        Desafío · Anillo del {challenge.ring ?? 'Agua'}
+                        Desafío · Anillo del {currentChallenge.ring ?? 'Agua'}
                     </span>
                 </div>
                 <h2 className="text-lg font-black mb-1 text-[#1c1917] leading-tight">
-                    {challenge.title ?? 'Reto sin nombre'}
+                    {currentChallenge.title ?? 'Reto sin nombre'}
                 </h2>
 
                 {/* ── Tipo OPCIONES ── */}
@@ -156,7 +185,7 @@ export default function MobileController({
                             Mira la pantalla para debatir la respuesta.
                         </p>
                         <div className="grid grid-cols-2 gap-3">
-                            {challenge.options?.map((opt, i) => {
+                            {currentChallenge.options?.map((opt, i) => {
                                 const style = OPTION_STYLES[i];
                                 const isSelected = selectedAnswer === opt;
                                 return (
@@ -193,7 +222,7 @@ export default function MobileController({
                 {challengeType === 'open' && (
                     <>
                         <p className="text-xs text-[#78716c] font-medium mb-4 leading-relaxed">
-                            {challenge.description ?? 'Redacta tu propuesta para el grupo.'}
+                            {currentChallenge.description ?? 'Redacta tu propuesta para el grupo.'}
                         </p>
                         <textarea
                             className={`w-full h-28 border-2 border-[#e7e5e4] bg-[#f5f5f4] rounded-2xl p-3 text-sm font-medium outline-none resize-none text-[#1c1917] focus:border-slate-400 transition-all`}
@@ -202,7 +231,7 @@ export default function MobileController({
                             onChange={(e) => setProposalText(e.target.value)}
                         />
                         <button
-                            onClick={() => onApply?.(proposalText)}
+                            onClick={handleProposal}
                             className={`mt-3 w-full py-3 rounded-2xl font-black text-white flex items-center justify-center gap-2 active:scale-95 transition-all ${theme.btn}`}
                         >
                             <Send size={16} /> Enviar al Grupo
@@ -214,7 +243,7 @@ export default function MobileController({
                 {challengeType === 'slider' && (
                     <>
                         <p className="text-xs text-[#78716c] font-medium mb-5 leading-relaxed">
-                            {challenge.description ?? 'Ajusta el valor de tu decisión.'}
+                            {currentChallenge.description ?? 'Ajusta el valor de tu decisión.'}
                         </p>
                         <div className="text-center mb-5">
                             <span className={`text-5xl font-black tabular-nums ${theme.text}`}>
@@ -224,19 +253,19 @@ export default function MobileController({
                         </div>
                         <input
                             type="range"
-                            min={challenge.sliderMin ?? 0}
-                            max={challenge.sliderMax ?? 100}
-                            step={challenge.sliderStep ?? 5}
+                            min={currentChallenge.sliderMin ?? 0}
+                            max={currentChallenge.sliderMax ?? 100}
+                            step={currentChallenge.sliderStep ?? 5}
                             value={sliderValue}
                             onChange={(e) => setSliderValue(parseInt(e.target.value))}
                             className="w-full h-3 bg-[#e7e5e4] rounded-full appearance-none cursor-pointer mb-2"
                         />
                         <div className="flex justify-between text-[9px] font-black text-[#a8a29e] uppercase tracking-widest mb-4">
-                            <span>{challenge.sliderMin ?? 0}</span>
-                            <span>{challenge.sliderMax ?? 100}</span>
+                            <span>{currentChallenge.sliderMin ?? 0}</span>
+                            <span>{currentChallenge.sliderMax ?? 100}</span>
                         </div>
                         <button
-                            onClick={() => onApply?.(sliderValue)}
+                            onClick={() => handleVote(sliderValue)}
                             className={`w-full py-3 rounded-2xl font-black text-white flex items-center justify-center gap-2 active:scale-95 transition-all ${theme.btn}`}
                         >
                             <Zap size={16} /> Confirmar Decisión
@@ -251,7 +280,7 @@ export default function MobileController({
                             Evalúa a tus compañeros
                         </p>
                         <div className="bg-[#f5f5f4] border-2 border-dashed border-[#d6d3d1] rounded-2xl p-4 mb-4 text-sm font-bold italic text-[#44403c] leading-relaxed">
-                            "{challenge.proposal ?? 'El sector ha propuesto una medida...'}"
+                            "{currentChallenge.proposal ?? 'El sector ha propuesto una medida...'}"
                         </div>
                         <p className="text-[9px] font-black text-[#a8a29e] uppercase tracking-widest text-center mb-3">
                             Debate con tu equipo. <br />Vota si su propuesta merece ganar los Eco-Tokens.
