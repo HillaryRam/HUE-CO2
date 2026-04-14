@@ -1,5 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+
+/**
+ Esta clase es un proveedor de estado global para el juego.
+ los estados que maneja son:
+ - timeLeft: tiempo restante del juego
+ - intensity: intensidad del juego
+ - sectorStates: estados de los sectores
+ - isPaused: estado de pausa
+  */
 const GameContext = createContext();
 
 export function GameProvider({ children, initialTime = 105, playerStats = {} }) {
