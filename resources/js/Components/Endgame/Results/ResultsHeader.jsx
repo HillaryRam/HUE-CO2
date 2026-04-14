@@ -19,7 +19,7 @@ export default function ResultsHeader({ current }) {
                     repeat: Infinity,
                     ease: "easeInOut"
                 }}
-                className={`w-40 h-40 rounded-full relative flex items-center justify-center mb-5  overflow-hidden bg-white`}
+                className={`w-40 h-40 rounded-full relative flex items-center justify-center mb-5  overflow-hidden bg-transparent`}
             >
                 <img
                     src="/images/earth_icon.png"

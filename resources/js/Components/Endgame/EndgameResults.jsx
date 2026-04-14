@@ -84,10 +84,10 @@ export default function EndgameResults({
 
     return (
         <div className="min-h-screen bg-[#fafaf9] font-sans text-[#44403c] flex flex-col items-center overflow-hidden relative p-4 md:p-8">
-            {/* Fondo Dinámico Optimizado (Radial Gradient) */}
-            <div className={`absolute inset-0 pointer-events-none -z-10 opacity-20 transition-all duration-1000`}
+            {/* Fondo Dinámico Optimizado (Capa de resplandor sobre el bg base) */}
+            <div className="absolute inset-0 pointer-events-none z-0 transition-all duration-1000 opacity-40"
                 style={{
-                    background: `radial-gradient(circle at 50% -20%, ${outcome === 'victory' ? '#6ee7b7' : outcome === 'neutral' ? '#fcd34d' : '#fb7185'} 0%, transparent 70%)`
+                    background: `radial-gradient(circle at 50% 0%, ${outcome === 'victory' ? '#6ee7b7' : outcome === 'neutral' ? '#fcd34d' : '#fb7185'} 0%, transparent 80%)`
                 }}
             />
             <div className="absolute inset-0 opacity-5 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/handmade-paper.png')]" />
@@ -98,7 +98,7 @@ export default function EndgameResults({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="w-full max-w-7xl flex flex-col items-center"
+                    className="w-full max-w-7xl flex flex-col items-center relative z-10"
                 >
                     <ResultsHeader current={current} />
 
