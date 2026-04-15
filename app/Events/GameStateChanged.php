@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Events;
+
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+
+/**
+ * Se dispara desde el host/servidor para notificar a todos los mandos
+ * que el estado del juego ha cambiado (nuevo reto, nueva ronda, fin del juego).
+ * Todos los MobileController y la pantalla grande lo escuchan.
+ */
+class GameStateChanged implements ShouldBroadcast
+{
+    use Dispatchable, InteractsWithSockets, SerializesModels;
+
+    public string $roomCode;
+    public string $state;     // 'challenge' | 'waiting' | 'results' | 'ended'
+    public array  $challenge; // El nuevo objeto de reto (null si es 'waiting')
+    public int    $timeLeft;  // Segundos restantes del turno
+    public int    $turnNumber;
+
+    public function __construct(
+        string $roomCode,
+        string $state,
+        array  $challenge = [],
+        int    $timeLeft  = 90,
+        int    $turnNumber = 1
+    ) {
+        $this->roomCode   = $roomCode;
+        $this->state      = $state;
+        $this->challenge  = $challenge;
+        $this->timeLeft   = $timeLeft;
+        $this->turnNumber = $turnNumber;
+    }
+
+    public function broadcastOn(): array
+    {
+        return [
+            new Channel("game.{$this->roomCode}"),
+        ];
+    }
+
+    public function broadcastAs(): string
+    {
+        return 'game.state.changed';
+    }
+}

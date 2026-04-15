@@ -43,4 +43,8 @@ Route::get('/test-results', function () {
     return Inertia::render('TestResults');
 });
 
+Route::get('/test-boards', function () {
+    return Inertia::render('TestBoards');
+});
+
 require __DIR__.'/auth.php';

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
 import { Setup } from '../Components/Game/Setup';
 import { GameBoard } from '../Components/Game/GameBoard';
-import { GameOver } from '../Components/Game/GameOver';
+import EndgameResults from '../Components/Endgame/EndgameResults';
 import { TutorialOverlay } from '../Components/Game/TutorialOverlay';
 import { ROLES } from '../data/gameData';
 
@@ -68,7 +68,10 @@ export default function LocalGame() {
                 )}
 
                 {gameState === 'ended' && (
-                    <GameOver win={isWin} onRestart={handleRestart} />
+                    <EndgameResults 
+                        outcome={isWin ? 'victory' : 'defeat'} 
+                        onBackToPortal={handleRestart} 
+                    />
                 )}
             </div>
         </>
