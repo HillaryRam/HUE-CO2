@@ -6,7 +6,29 @@ import ChallengeCard from '../UI/ChallengeCard';
 import SectorEcoStats from '../UI/SectorEcoStats';
 import { useGame } from '../Core/GameProvider';
 import { motion } from 'framer-motion';
-import { Send, CheckCircle2 } from 'lucide-react';
+import { Send, CheckCircle2, Users, Cpu, Shirt, FlaskConical, Tractor, Landmark, Hexagon } from 'lucide-react';
+
+const figmaColors = {
+    'ciencia': { bg: 'bg-[#DEB8FF]', shadow: 'shadow-[0px_4px_0px_0px_rgba(150,64,255,1.0)]', textTitle: 'text-purple-600', iconClass: 'text-[#9640FF]' },
+    'primario': { bg: 'bg-[#E2F1C3]', shadow: 'shadow-[0px_4px_0px_0px_rgba(101,132,55,1.0)]', textTitle: 'text-lime-700', iconClass: 'text-[#658437]' },
+    'publico': { bg: 'bg-[#FFC2C2]', shadow: 'shadow-[0px_4px_0px_0px_rgba(208,0,0,1.0)]', textTitle: 'text-red-700', iconClass: 'text-[#D00000]' },
+    'tech': { bg: 'bg-[#D6D5FF]', shadow: 'shadow-[0px_4px_0px_0px_rgba(67,64,255,1.0)]', textTitle: 'text-indigo-600', iconClass: 'text-[#4340FF]' },
+    'textil': { bg: 'bg-[#FFE4C4]', shadow: 'shadow-[0px_4px_0px_0px_rgba(255,163,64,1.0)]', textTitle: 'text-orange-500', iconClass: 'text-[#FFA340]' },
+    'ciudadania': { bg: 'bg-[#FFC9F2]', shadow: 'shadow-[0px_4px_0px_0px_rgba(255,58,219,1.0)]', textTitle: 'text-fuchsia-500', iconClass: 'text-[#FF3ADB]' },
+};
+
+const getRoleIcon = (iconName, id) => {
+    if (id === 'tech') return <Cpu className="w-full h-full" strokeWidth={2.5} />;
+    if (id === 'primario') return <Tractor className="w-full h-full" strokeWidth={2.5} />;
+    if (id === 'publico') return <Landmark className="w-full h-full" strokeWidth={2.5} />;
+
+    switch (iconName) {
+        case 'Shirt': return <Shirt className="w-full h-full" strokeWidth={2.5} />;
+        case 'FlaskConical': return <FlaskConical className="w-full h-full" strokeWidth={2.5} />;
+        case 'Users': return <Users className="w-full h-full" strokeWidth={2.5} />;
+        default: return <Hexagon className="w-full h-full" strokeWidth={2.5} />;
+    }
+};
 
 export default function OnlinePlayerBoard({ sectors, challenge, roomCode, myRole }) {
     const { timeLeft, intensity, setIntensity } = useGame();
@@ -31,7 +53,7 @@ export default function OnlinePlayerBoard({ sectors, challenge, roomCode, myRole
                 
                 {/* Visualización Central */}
                 <div className="flex items-center justify-between gap-8 flex-1 min-h-0">
-                    <GlobalThermometer temperature={0.8} />
+                    <GlobalThermometer temperature={0.0} />
                     
                     <OrbitalBoard sectors={sectors} />
 
@@ -44,13 +66,54 @@ export default function OnlinePlayerBoard({ sectors, challenge, roomCode, myRole
                     />
                 </div>
 
-                {/* EcoStats de Sectores */}
-                <SectorEcoStats sectors={sectors} votedSectors={votedSectors} />
 
-                {/* Footer Interactivo (Chat y Votación) */}
+
+                {/* Footer Interactivo (Habilidad, Chat y Votación) */}
                 <div className="h-[200px] mt-8 flex gap-6 pb-4">
+                    {/* Habilidad Propia (Desbloqueada) */}
+                    {(() => {
+                        const myRoleData = sectors.find(s => s.id === myRole?.id) || sectors[0];
+                        const theme = figmaColors[myRoleData.id] || figmaColors['tech'];
+                        
+                        return (
+                            <motion.button
+                                whileHover={{ y: -5 }}
+                                className={`w-[240px] flex flex-col items-start justify-between p-5 rounded-[2.5rem] transition-all
+                                    ${theme.bg} ${theme.shadow} active:translate-y-1 active:shadow-none
+                                `}
+                            >
+                                <div className="flex justify-between w-full items-center mb-2">
+                                    <div className="w-10 h-10 p-2 bg-white rounded-xl flex justify-center items-center shadow-sm">
+                                        <div className={`w-full h-full ${theme.iconClass}`}>
+                                            {getRoleIcon(myRoleData.iconName, myRoleData.id)}
+                                        </div>
+                                    </div>
+                                    <div className="text-[10px] font-black text-white/60 uppercase tracking-widest bg-black/10 px-3 py-1 rounded-full">
+                                        Tu Habilidad
+                                    </div>
+                                </div>
+
+                                <div className="text-left w-full mt-2">
+                                    <div className={`${theme.textTitle} text-xs font-black uppercase tracking-tight truncate mb-1`}>
+                                        {myRoleData.name}
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                        <div className="h-5 px-3 bg-white/50 rounded-full border border-slate-400/30 inline-flex justify-center items-center w-fit">
+                                            <span className="text-slate-700 text-[8px] font-bold uppercase tracking-wider">
+                                                {myRoleData.specialist}
+                                            </span>
+                                        </div>
+                                        <div className="text-[9px] font-bold text-slate-600 uppercase leading-tight line-clamp-2">
+                                            {myRoleData.activeDesc?.split(':')[0]}
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.button>
+                        );
+                    })()}
+
                     {/* Chat */}
-                    <div className="flex-1 bg-white border-2 border-slate-100 rounded-[2.5rem] flex flex-col p-4 shadow-sm overflow-hidden">
+                    <div className="flex-1 bg-white border-2 border-slate-100 rounded-[2.5rem] flex flex-col p-5 shadow-sm overflow-hidden">
                         <div className="flex-1 overflow-y-auto mb-3 pr-2 space-y-2 scrollbar-hide">
                             {messages.map((msg) => (
                                 <div key={msg.id} className={`text-xs ${msg.type === 'system' ? 'text-slate-400 italic' : 'text-slate-700'}`}>
@@ -65,9 +128,9 @@ export default function OnlinePlayerBoard({ sectors, challenge, roomCode, myRole
                                 value={chatInput}
                                 onChange={(e) => setChatInput(e.target.value)}
                                 placeholder="Habla con tu equipo..."
-                                className="flex-1 bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-3 text-xs font-bold focus:border-blue-400 outline-none transition-all"
+                                className="flex-1 bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-3.5 text-xs font-bold focus:border-blue-400 outline-none transition-all"
                             />
-                            <button className="bg-blue-600 text-white p-3.5 rounded-2xl shadow-lg hover:bg-blue-700 active:scale-95 transition-all">
+                            <button className="bg-blue-600 text-white p-4 rounded-2xl shadow-lg hover:bg-blue-700 active:scale-95 transition-all">
                                 <Send size={18} />
                             </button>
                         </div>

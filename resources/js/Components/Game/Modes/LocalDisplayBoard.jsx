@@ -76,9 +76,7 @@ export default function LocalDisplayBoard({ sectors, challenge, roomCode }) {
             <div className="pt-8 px-8 flex-1 flex flex-col w-full max-w-[1600px] mx-auto min-h-0 relative z-10">
                 <main className="flex-1 flex items-center justify-between gap-8 mb-8">
                     {/* Termómetro */}
-                    <div className="pl-4">
-                        <GlobalThermometer temperature={0.6} />
-                    </div>
+                    <GlobalThermometer temperature={0.0} />
 
                     {/* Planetario Central */}
                     <div className="flex-1 flex justify-center">

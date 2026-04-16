@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { 
     Users, Cpu, Shirt, FlaskConical, Tractor, Scale, Hexagon 
@@ -18,18 +18,7 @@ const getRoleIcon = (iconName, id) => {
 };
 
 export default function OrbitalBoard({ sectors }) {
-    const [orbitalAngle, setOrbitalAngle] = useState(0);
 
-    // Bucle de animación optimizado
-    useEffect(() => {
-        let requestRef;
-        const animate = () => {
-            setOrbitalAngle(prev => (prev + 0.10) % 360);
-            requestRef = requestAnimationFrame(animate);
-        };
-        requestRef = requestAnimationFrame(animate);
-        return () => cancelAnimationFrame(requestRef);
-    }, []);
 
     return (
         <div className="flex-1 relative flex items-center justify-center aspect-square max-w-[350px] lg:max-w-[480px]">
@@ -44,7 +33,7 @@ export default function OrbitalBoard({ sectors }) {
                     <circle cx="250" cy="250" r="115" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="4" />
                     <circle cx="250" cy="250" r="150" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="4" />
                     <circle cx="250" cy="250" r="185" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="4" />
-                    <circle cx="250" cy="250" r="220" fill="none" stroke="#3b82f6" strokeWidth="8" strokeDasharray="10 5" className="animate-[spin_20s_linear_infinite]" />
+                    <circle cx="250" cy="250" r="220" fill="none" stroke="#3b82f6" strokeWidth="8" />
                 </svg>
 
                 {/* Tierra en el Centro con animación de flotación */}
@@ -60,7 +49,7 @@ export default function OrbitalBoard({ sectors }) {
                 {/* NODOS ORBITANDO EL ANILLO AZUL (r=220) */}
                 {sectors.map((p, i) => {
                     const baseAngle = (i * 60 - 30);
-                    const currentAngle = (baseAngle + orbitalAngle) * (Math.PI / 180);
+                    const currentAngle = baseAngle * (Math.PI / 180);
 
                     const radiusPercent = 44; // Corresponde al radio 220 en el SVG de 500
                     const x = 50 + radiusPercent * Math.cos(currentAngle);

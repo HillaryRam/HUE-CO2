@@ -3,8 +3,8 @@ import { motion } from 'framer-motion';
 import { Flame, Snowflake } from 'lucide-react';
 
 export default function GlobalThermometer({ temperature = 0.5 }) {
-    // Normalizamos el valor para el visual (de -0.5 a +1.5 suele ser el rango del juego)
-    const fillPercent = Math.max(0, Math.min(100, (temperature + 0.5) * 50));
+    // Normalizamos el valor para el visual (de -1.0 a +1.0 para que 0 sea el centro)
+    const fillPercent = Math.max(0, Math.min(100, (temperature + 1.0) * 50));
 
     return (
         <motion.div 
@@ -14,7 +14,7 @@ export default function GlobalThermometer({ temperature = 0.5 }) {
         >
             <div className="flex flex-col items-center gap-1 mt-2">
                 <Flame className="text-rose-500 w-8 h-8" strokeWidth={2.5} />
-                <span className="text-[9px] font-black text-rose-500 uppercase tracking-tighter">+1.5°</span>
+                <span className="text-[9px] font-black text-rose-500 uppercase tracking-tighter">+1.0°</span>
             </div>
 
             <div className="w-10 flex-1 bg-slate-50/50 rounded-full my-4 flex flex-col relative border border-slate-100 overflow-hidden shadow-inner">
@@ -23,22 +23,26 @@ export default function GlobalThermometer({ temperature = 0.5 }) {
                     initial={{ height: "50%" }}
                     animate={{ height: `${fillPercent}%` }}
                     transition={{ type: "spring", stiffness: 50, damping: 20 }}
-                    className={`absolute bottom-0 left-0 right-0 ${temperature > 1 ? 'bg-rose-500' : temperature > 0.5 ? 'bg-amber-400' : 'bg-sky-400'} shadow-[0_0_15px_rgba(0,0,0,0.1)]`}
+                    className={`absolute bottom-0 left-0 right-0 ${temperature > 0.7 ? 'bg-rose-500' : temperature > 0.2 ? 'bg-amber-400' : 'bg-sky-400'} shadow-[0_0_15px_rgba(0,0,0,0.1)]`}
                 />
                 
-                {/* Marcas de medición */}
-                <div className="absolute inset-0 flex flex-col justify-evenly py-6 items-center z-10 pointer-events-none opacity-20">
-                    {[...Array(9)].map((_, i) => (
-                        <div key={i} className="w-6 h-[2px] rounded-full bg-slate-900"></div>
+                {/* Marcas de medición (4 abajo, 4 arriba) */}
+                <div className="absolute inset-0 z-10 pointer-events-none opacity-20">
+                    {[10, 20, 30, 40, 60, 70, 80, 90].map((pos) => (
+                        <div 
+                            key={pos} 
+                            className="absolute left-1/2 -translate-x-1/2 w-6 h-[2px] rounded-full bg-slate-900"
+                            style={{ bottom: `${pos}%` }}
+                        />
                     ))}
                 </div>
 
                 {/* Línea de equilibrio (0.0°C) */}
-                <div className="absolute bottom-[25%] left-0 right-0 h-[2px] bg-slate-900/20 z-20 border-t border-dashed border-slate-400" title="Equilibrio" />
+                <div className="absolute bottom-[50%] left-0 right-0 h-[2px] bg-slate-900/20 z-20 border-t border-dashed border-slate-400" title="Equilibrio" />
             </div>
 
             <div className="flex flex-col items-center gap-1 mb-2">
-                <span className="text-[9px] font-black text-sky-500 uppercase tracking-tighter">-0.5°</span>
+                <span className="text-[9px] font-black text-sky-500 uppercase tracking-tighter">-1.0°</span>
                 <Snowflake className="text-sky-500 w-8 h-8" strokeWidth={2.5} />
             </div>
         </motion.div>
