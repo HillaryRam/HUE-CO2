@@ -6,6 +6,7 @@ import ChallengeCard from '../UI/ChallengeCard';
 import SectorMiniCard from '../UI/SectorMiniCard';
 import { useGame } from '../Core/GameProvider';
 import { useGameChannel } from '../../../hooks/useGameChannel';
+import axios from 'axios';
 
 /*
 Tablero de visualización para el Modo Local (Kahoot).
@@ -15,8 +16,8 @@ Se suscribe al canal Reverb para mostrar en tiempo real:
  - La propuesta de texto enviada por un jugador (cambia ChallengeCard a modo validate)
 */
 
-export default function LocalDisplayBoard({ sectors, challenge, roomCode }) {
-    const { timeLeft, intensity } = useGame();
+export default function LocalDisplayBoard({ sectors, challenge, roomCode, turnNumber = 1 }) {
+    const { timeLeft, setTimeLeft, intensity } = useGame();
 
     // ── WebSocket: Escuchar eventos de la sala ──────────────────────────────
     const { votes, proposal, isConnected } = useGameChannel(roomCode, 'host', 'Pantalla');
@@ -35,8 +36,29 @@ export default function LocalDisplayBoard({ sectors, challenge, roomCode }) {
 
     // Sincronizar si el challenge cambia desde el padre (el host avanza de reto)
     useEffect(() => {
-        setActiveChallenge(challenge);
+        if (challenge) {
+            setActiveChallenge(challenge);
+            if (challenge.time) {
+                setTimeLeft(challenge.time);
+            }
+        }
     }, [challenge]);
+
+    // ── Temporizador Automático ──────────────────────────────────────────
+    useEffect(() => {
+        if (timeLeft === 0 && activeChallenge?.type !== 'waiting') {
+            console.log('[HUE-CO2] Tiempo agotado. Avanzando turno...');
+            handleAdvance();
+        }
+    }, [timeLeft]);
+
+    const handleAdvance = async () => {
+        try {
+            await axios.post(`/api/game/${roomCode}/advance`);
+        } catch (error) {
+            console.error('[HUE-CO2] Error al avanzar turno:', error);
+        }
+    };
     // ───────────────────────────────────────────────────────────────────────
 
     // Inyectar datos de jugadores (en producción, vendrán del servidor)

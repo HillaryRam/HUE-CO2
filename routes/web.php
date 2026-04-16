@@ -27,10 +27,18 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Ruta del juego local (Mantiene su funcionamiento)
-Route::get('/juego-local', function () {
-    return Inertia::render('LocalGame');
-})->name('juego.local');
+// Ruta del Tablero Principal (Solo visualización Premium)
+Route::get('/tablero/{roomCode}', function ($roomCode) {
+    return Inertia::render('GameDisplay', [
+        'roomCode' => $roomCode,
+        'initialMode' => request('mode', 'shared')
+    ]);
+})->name('game.board');
+
+// Rutas DE JUEGO con sesión web (para Dashboard con Breeze auth)
+Route::middleware(['auth'])->group(function () {
+    Route::post('/juego/crear', [App\Http\Controllers\Api\JuegoController::class, 'store'])->name('juego.crear');
+});
 
 // Ruta de prueba Reverb (temporal)
 Route::get('/fire-event', function () {

@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Events\GameStateChanged;
 use App\Events\PlayerVoted;
 use App\Events\ProposalSubmitted;
+use App\Models\Juego;
+use App\Models\Turno;
+use App\Services\GameFlowService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -17,6 +20,13 @@ use Illuminate\Http\JsonResponse;
  */
 class GameController extends Controller
 {
+    protected $gameFlow;
+
+    public function __construct(GameFlowService $gameFlow)
+    {
+        $this->gameFlow = $gameFlow;
+    }
+
     /**
      * POST /api/game/{roomCode}/vote
      * Un jugador envía su voto (opciones ABCD, slider o validación).
@@ -29,6 +39,21 @@ class GameController extends Controller
             'answer'      => 'required',
             'type'        => 'required|in:options,slider,validate',
         ]);
+
+        $juego = Juego::where('room_code', $roomCode)->firstOrFail();
+
+        // Guardar el turno/voto en la BD para procesar penalizaciones luego
+        Turno::updateOrCreate(
+            [
+                'juego_id'   => $juego->juego_id,
+                'carta_id'   => $juego->current_carta_id,
+                'jugador_id' => $request->user() ? $request->user()->jugador_id : null,
+                // Nota: sector_id podría mapearse a jugador_id si no hay login
+            ],
+            [
+                'resultado' => is_array($validated['answer']) ? json_encode($validated['answer']) : $validated['answer'],
+            ]
+        );
 
         PlayerVoted::dispatch(
             roomCode:   $roomCode,
@@ -71,21 +96,10 @@ class GameController extends Controller
      */
     public function advance(Request $request, string $roomCode): JsonResponse
     {
-        $validated = $request->validate([
-            'state'      => 'required|in:challenge,waiting,results,ended',
-            'challenge'  => 'nullable|array',
-            'time_left'  => 'nullable|integer|min:0|max:300',
-            'turn_number'=> 'nullable|integer|min:1',
-        ]);
+        $juego = Juego::where('room_code', $roomCode)->firstOrFail();
+        
+        $this->gameFlow->advanceTurn($juego);
 
-        GameStateChanged::dispatch(
-            roomCode:   $roomCode,
-            state:      $validated['state'],
-            challenge:  $validated['challenge'] ?? [],
-            timeLeft:   $validated['time_left'] ?? 90,
-            turnNumber: $validated['turn_number'] ?? 1
-        );
-
-        return response()->json(['status' => 'ok']);
+        return response()->json(['status' => 'ok', 'turn' => $juego->current_turn]);
     }
 }

@@ -1,6 +1,9 @@
 import axios from 'axios';
 window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+// Laravel SPA CSRF: usar cookies en lugar de leer meta tag
+window.axios.defaults.withCredentials = true;
+window.axios.defaults.withXSRFToken = true;
 
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';

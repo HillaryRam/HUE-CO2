@@ -8,11 +8,16 @@ import { HostAuthView } from '../Components/GuestPortal/HostAuthView';
 import { ModeSelectionView } from '../Components/GuestPortal/ModeSelectionView';
 import { LobbyView } from '../Components/GuestPortal/LobbyView';
 import { JoinView } from '../Components/GuestPortal/JoinView';
+import MobileController from '../Components/Game/Modes/MobileController';
+import axios from 'axios';
 
 export default function GuestPortal() {
-    const [view, setView] = useState('main'); // main, join, host_auth, select_mode, lobby
+    const [view, setView] = useState('main'); // main, join, host_auth, select_mode, lobby, playing
     const [mode, setMode] = useState(null);
+    const [roomCode, setRoomCode] = useState(null);
     const [selectedPlayers, setSelectedPlayers] = useState(null);
+    const [myPlayerName, setMyPlayerName] = useState('');
+    const [myRole, setMyRole] = useState(null);
 
     const navigateTo = (newView) => {
         setView(newView);
@@ -28,9 +33,23 @@ export default function GuestPortal() {
         router.get('/juego-local', params);
     };
 
-    const handleConnect = (data) => {
-        console.log('Connect logic here:', data);
-        // router.post('/rooms/join', data);
+    const handleConnect = async (data) => {
+        try {
+            const cleanPin = data.pin.replace(/\s/g, '');
+            const response = await axios.post('/api/juegos/join', {
+                room_code: cleanPin,
+                player_name: data.nickname
+            });
+            
+            setRoomCode(cleanPin);
+            setMyPlayerName(data.nickname);
+            // Por ahora, si se une con éxito, vamos al mando (MobileController)
+            // En un flujo real, aquí elegiría rol si no se le asigna uno
+            setView('playing'); 
+        } catch (error) {
+            console.error('Error al conectar:', error);
+            alert('No se pudo conectar. Revisa el PIN.');
+        }
     };
 
     return (
@@ -101,6 +120,18 @@ export default function GuestPortal() {
                         onBack={() => navigateTo('main')}
                         onConnect={handleConnect}
                     />
+                )}
+
+                {/* VISTA 5: MANDO DE JUEGO (MOBILE) */}
+                {view === 'playing' && (
+                    <div className="fixed inset-0 z-50 bg-white">
+                        <MobileController 
+                            roomCode={roomCode}
+                            playerName={myPlayerName}
+                            role={myRole || { id: 'ciudadania', name: 'Ciudadanía' }}
+                            gameState="waiting"
+                        />
+                    </div>
                 )}
             </AnimatePresence>
         </div>

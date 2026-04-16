@@ -44,7 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/juegos/{id}',         [JuegoController::class, 'show']);
     Route::put('/juegos/{id}',         [JuegoController::class, 'update']);
     Route::delete('/juegos/{id}',      [JuegoController::class, 'destroy']);
-    Route::post('/juegos/{id}/unirse', [JuegoController::class, 'unirse']);
+    Route::post('/juegos/join',        [JuegoController::class, 'unirse']);
 
     // Turnos
     Route::get('/juegos/{juego_id}/turnos',  [TurnoController::class, 'index']);
