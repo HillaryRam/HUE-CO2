@@ -13,6 +13,26 @@ use App\Http\Controllers\GameController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
 
+// Endpoint de prueba de conexión para la App Móvil
+Route::get('/status', function () {
+    try {
+        \Illuminate\Support\Facades\DB::connection()->getPdo();
+        return response()->json([
+            'status' => 'success',
+            'api' => 'HUE-CO2',
+            'database_connected' => true,
+            'timestamp' => now()
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'api' => 'HUE-CO2',
+            'database_connected' => false,
+            'error' => $e->getMessage()
+        ], 500);
+    }
+});
+
 // Anillos y cartas (lectura pública para Unity)
 Route::get('/anillos',                          [AnilloController::class, 'index']);
 Route::get('/anillos/{id}',                     [AnilloController::class, 'show']);
