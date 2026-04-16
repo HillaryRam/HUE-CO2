@@ -8,7 +8,7 @@ class Juego extends Model
 {
     protected $primaryKey = 'juego_id';
 
-    protected $fillable = ['modo', 'temperatura', 'anillo_id', 'estado'];
+    protected $fillable = ['modo', 'temperatura', 'anillo_id', 'estado', 'room_code', 'current_turn', 'current_carta_id', 'last_turn_at'];
 
     public function anillo()
     {

@@ -20,6 +20,7 @@ class GameStateChanged implements ShouldBroadcast
     public string $roomCode;
     public string $state;     // 'challenge' | 'waiting' | 'results' | 'ended'
     public array  $challenge; // El nuevo objeto de reto (null si es 'waiting')
+    public array  $sectors;   // Estado de todos los sectores (tokens, etc.)
     public int    $timeLeft;  // Segundos restantes del turno
     public int    $turnNumber;
 
@@ -27,12 +28,14 @@ class GameStateChanged implements ShouldBroadcast
         string $roomCode,
         string $state,
         array  $challenge = [],
+        array  $sectors = [],
         int    $timeLeft  = 90,
         int    $turnNumber = 1
     ) {
         $this->roomCode   = $roomCode;
         $this->state      = $state;
         $this->challenge  = $challenge;
+        $this->sectors    = $sectors;
         $this->timeLeft   = $timeLeft;
         $this->turnNumber = $turnNumber;
     }

@@ -1,9 +1,11 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { ChevronLeft, User, Play, Clock } from 'lucide-react';
 
-export function LobbyView({ mode, onBack, onStartGame, selectedPlayers, setSelectedPlayers }) {
-    
+export function LobbyView({ mode, onBack, onStartGame, selectedPlayers, setSelectedPlayers, roomCode }) {
+    console.log('[HUE-CO2] LobbyView Render Props:', { mode, roomCode, selectedPlayers });
+
+    const safeRoomCode = String(roomCode || "");
+
     const renderSoloLobby = () => (
         <div className="flex flex-col items-center text-center">
             <div className="bg-[#f0fdf4] border-4 border-[#16a34a] p-8 rounded-[3rem] shadow-xl mb-8 w-full">
@@ -42,27 +44,18 @@ export function LobbyView({ mode, onBack, onStartGame, selectedPlayers, setSelec
             <p className="text-[#78716c] text-sm font-medium italic mb-8">Los 6 sectores se repartirán automáticamente entre vosotros.</p>
 
             {selectedPlayers && (
-                <motion.button
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
+                <button
                     onClick={() => onStartGame({ players: selectedPlayers, mode: 'small' })}
                     className="w-full max-w-sm bg-[#fb923c] text-white py-5 rounded-[2rem] font-black text-xl shadow-[0_8px_0_0_#ea580c] hover:shadow-[0_4px_0_0_#ea580c] hover:translate-y-1 active:shadow-none active:translate-y-2 transition-all flex items-center justify-center gap-3"
                 >
                     ¡Comenzar Partida! <Play className="w-6 h-6 fill-current" />
-                </motion.button>
+                </button>
             )}
         </div>
     );
 
     return (
-        <motion.div 
-            initial={{ opacity: 0, scale: 0.95, y: 10 }} 
-            animate={{ opacity: 1, scale: 1, y: 0 }} 
-            exit={{ opacity: 0, scale: 0.95, y: -10 }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
-            style={{ willChange: "transform, opacity" }}
-            className="w-full max-w-2xl bg-white border-4 border-[#e7e5e4] p-8 md:p-12 rounded-[3.5rem] shadow-2xl relative"
-        >
+        <div className="w-full max-w-2xl bg-white border-4 border-[#e7e5e4] p-8 md:p-12 rounded-[3.5rem] shadow-2xl relative transition-all duration-300">
             <button 
                 onClick={onBack} 
                 className="absolute top-8 left-8 text-[#a8a29e] hover:text-[#1c1917] flex items-center gap-1 font-bold text-sm bg-white p-2 rounded-xl z-10"
@@ -70,6 +63,16 @@ export function LobbyView({ mode, onBack, onStartGame, selectedPlayers, setSelec
                 <ChevronLeft className="w-4 h-4" /> Atrás
             </button>
             <div className="mt-8">
+                {safeRoomCode && (
+                    <div className="mb-8 text-center bg-[#f5f5f4] p-6 rounded-3xl border-2 border-stone-200">
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-stone-400 mb-2">Código de Sala</p>
+                        <div className="text-5xl font-black tracking-[0.2em] text-[#1c1917] flex justify-center gap-2">
+                             {safeRoomCode.split('').map((char, i) => (
+                                 <span key={i} className="bg-white px-2 py-1 rounded-lg shadow-sm border border-stone-100">{char}</span>
+                             ))}
+                        </div>
+                    </div>
+                )}
                 {mode === 'solo' && renderSoloLobby()}
                 {mode === 'small' && renderSmallLobby()}
                 {(mode === 'classic' || mode === 'class') && (
@@ -81,7 +84,12 @@ export function LobbyView({ mode, onBack, onStartGame, selectedPlayers, setSelec
                         <p className="text-stone-500">Este modo requiere conexión a servidor para sincronizar jugadores.</p>
                     </div>
                 )}
+                {!mode && (
+                    <div className="text-center p-8 text-stone-400 italic">
+                        Cargando configuración de sala...
+                    </div>
+                )}
             </div>
-        </motion.div>
+        </div>
     );
 }

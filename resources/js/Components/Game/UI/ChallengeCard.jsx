@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Zap, Star, Hexagon, Heart, Moon, Droplet, Send, CheckCircle2, Minus, X, Shirt } from 'lucide-react';
+import { Zap, Star, Hexagon, Heart, Moon, Droplet, Send, CheckCircle2, Minus, X, Shirt, Clock } from 'lucide-react';
 
 // ─── Constantes Estáticas ────────────────────────────────────────────────────
 // Definidas fuera del componente para que no se recreen en cada render.
@@ -38,6 +38,20 @@ export default function ChallengeCard({
 }) {
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [proposalText, setProposalText] = useState('');
+
+    if (!challenge || Object.keys(challenge).length === 0) {
+        return (
+            <div className="w-[340px] lg:w-[400px] h-[600px] bg-white rounded-[2rem] border-4 border-dashed border-slate-200 flex flex-col items-center justify-center p-8 text-center shrink-0">
+                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6 animate-pulse">
+                    <Clock className="w-10 h-10 text-slate-300" />
+                </div>
+                <h3 className="text-xl font-black text-slate-400 uppercase tracking-widest mb-2">Esperando Reto</h3>
+                <p className="text-slate-400 text-sm font-medium leading-relaxed">
+                    Sincronizando con el servidor...<br/>El primer desafío aparecerá en unos instantes.
+                </p>
+            </div>
+        );
+    }
 
     const c = COLOR_MAP[sectorColor] ?? COLOR_MAP.blue;
     const challengeType = challenge.type ?? 'options'; // options | open | slider | validate

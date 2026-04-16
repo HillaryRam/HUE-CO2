@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Juego;
+use App\Models\Jugador;
 use Illuminate\Http\Request;
 
 class JuegoController extends Controller
@@ -27,12 +28,19 @@ class JuegoController extends Controller
             'modo'        => $request->modo,
             'temperatura' => 0,
             'anillo_id'   => $request->anillo_id,
-            'estado'      => 'activo',
+            'estado'      => 'lobby',
+            'room_code'   => strtoupper(substr(bin2hex(random_bytes(3)), 0, 6)),
         ]);
 
         // Añadir al jugador que crea la partida
         if ($request->user()) {
-            $juego->jugadores()->attach($request->user()->jugador_id, [
+            // Vincular el usuario autenticado (Breeze) con un perfil de Jugador
+            $jugador = Jugador::firstOrCreate(
+                ['email' => $request->user()->email],
+                ['usuario' => $request->user()->name, 'contrasena' => '']
+            );
+
+            $juego->jugadores()->attach($jugador->jugador_id, [
                 'rol_id'      => $request->rol_id ?? null,
                 'eco_fichas'  => 12,
                 'puntuacion'  => 0,
@@ -74,22 +82,33 @@ class JuegoController extends Controller
         return response()->json(['message' => 'Juego eliminado']);
     }
 
-    // POST /api/juegos/{id}/unirse
-    public function unirse(Request $request, $id)
+    // POST /api/juegos/join
+    public function unirse(Request $request)
     {
-        $juego = Juego::findOrFail($id);
+        $request->validate([
+            'room_code' => 'required|string|exists:juegos,room_code',
+            'rol_id'    => 'nullable|string',
+        ]);
 
-        $jugadorId = $request->user()->jugador_id;
+        $juego = Juego::where('room_code', $request->room_code)->firstOrFail();
+        $jugadorId = null;
 
-        if ($juego->jugadores()->where('jugador_id', $jugadorId)->exists()) {
-            return response()->json(['message' => 'Ya estás en esta partida'], 409);
+        // Si es un jugador autenticado o invitado
+        if ($request->user()) {
+            $jugador = Jugador::firstOrCreate(
+                ['email' => $request->user()->email],
+                ['usuario' => $request->user()->name, 'contrasena' => '']
+            );
+            $jugadorId = $jugador->jugador_id;
         }
 
-        $juego->jugadores()->attach($jugadorId, [
-            'rol_id'     => $request->rol_id ?? null,
-            'eco_fichas' => 12,
-            'puntuacion' => 0,
-        ]);
+        if ($jugadorId) {
+            $juego->jugadores()->attach($jugadorId, [
+                'rol_id'     => $request->rol_id,
+                'eco_fichas' => 12,
+                'puntuacion' => 0,
+            ]);
+        }
 
         return response()->json([
             'message' => 'Te has unido a la partida',

@@ -8,9 +8,8 @@ use Laravel\Sanctum\HasApiTokens;
 class Jugador extends Model
 {
     use HasApiTokens;
-
+    protected $table = 'jugadores';
     protected $primaryKey = 'jugador_id';
-
     protected $fillable = ['usuario', 'email', 'contrasena'];
 
     protected $hidden = ['contrasena'];

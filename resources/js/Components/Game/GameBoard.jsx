@@ -1,11 +1,11 @@
-import React from 'react';
 import { ROLES } from '../../data/gameData';
 import { GameProvider } from './Core/GameProvider';
+import { useGameChannel } from '../../hooks/useGameChannel';
+import { useState, useEffect } from 'react';
 
 // Importación de Tableros por Modo
 import LocalDisplayBoard from './Modes/LocalDisplayBoard';
 import OnlinePlayerBoard from './Modes/OnlinePlayerBoard';
-import SoloManagerBoard from './Modes/SoloManagerBoard';
 
 export function GameBoard({ 
     players: activePlayers, 
@@ -13,8 +13,30 @@ export function GameBoard({
     tutorialStep = -1, 
     gameMode = 'solo', 
     myRole,
-    roomCode = "772 904"
+    roomCode
 }) {
+    const [sectorsState, setSectorsState] = useState([]);
+    const [currentChallenge, setCurrentChallenge] = useState({});
+    const [turnNumber, setTurnNumber] = useState(tutorialStep > 0 ? 0 : 1);
+
+    // ── WebSocket: Escuchar el estado global del juego ────────────────────────
+    const { gameState: serverGameState, votes } = useGameChannel(roomCode, 'host', 'Host');
+
+    useEffect(() => {
+        if (serverGameState) {
+            if (serverGameState.state === 'challenge') {
+                setCurrentChallenge(serverGameState.challenge);
+                setTurnNumber(serverGameState.turnNumber);
+                if (serverGameState.sectors) {
+                    setSectorsState(serverGameState.sectors);
+                }
+            } else if (serverGameState.state === 'ended') {
+                onEnd(false);
+            }
+        }
+    }, [serverGameState]);
+    // ─────────────────────────────────────────────────────────────────────────
+
     // Preparación de datos de sectores con estilos consistentes
     const getRoleColors = (id) => {
         const colors = {
@@ -28,39 +50,30 @@ export function GameBoard({
         return colors[id] || colors.ciencia;
     };
 
-    const sectors = ROLES.map(role => ({
-        ...role,
-        ...getRoleColors(role.id),
-        // En un juego real esto vendría del servidor
-        tokens: Math.floor(Math.random() * 5) 
-    }));
-
-    const challenge = {
-        type: 'options',
-        title: "Fuga de Microplásticos",
-        description: "¿Cuál es la estrategia más efectiva para cerrar el ciclo del agua en la producción textil este turno?",
-        sectorName: "Sector Textil",
-        turn: "3/15",
-        options: [
-            "Instalar filtros de microplásticos en lavanderías.",
-            "Sustituir el 60% de fibras por lino y cáñamo.",
-            "Crear un clúster de reciclaje textil local.",
-            "Usar pasaportes digitales para rastrear la prenda."
-        ]
-    };
+    const sectors = ROLES.map(role => {
+        const serverData = sectorsState.find(s => s.id === role.id);
+        return {
+            ...role,
+            ...getRoleColors(role.id),
+            tokens: serverData ? serverData.tokens : 12,
+            playerName: serverData ? serverData.playerName : 'Esperando...',
+            hasVoted: !!votes[role.id]
+        };
+    });
 
     // Renderizado condicional según el modo de juego
     const renderBoard = () => {
         switch (gameMode) {
-            case 'shared': // Modo Kahoot (Solo visualización)
-                return <LocalDisplayBoard sectors={sectors} challenge={challenge} roomCode={roomCode} />;
+            case 'shared':
+            case 'solo':
+            case 'small':
+                return <LocalDisplayBoard sectors={sectors} challenge={currentChallenge} roomCode={roomCode} turnNumber={turnNumber} />;
             
-            case 'multiplayer': // Modo Online (Interactivo + Chat)
-                return <OnlinePlayerBoard sectors={sectors} challenge={challenge} roomCode={roomCode} myRole={myRole} />;
+            case 'multiplayer':
+                return <OnlinePlayerBoard sectors={sectors} challenge={currentChallenge} roomCode={roomCode} myRole={myRole} />;
             
-            case 'solo': // Modo un jugador (Control total)
             default:
-                return <SoloManagerBoard sectors={sectors} challenge={challenge} roomCode={roomCode} />;
+                return <LocalDisplayBoard sectors={sectors} challenge={currentChallenge} roomCode={roomCode} turnNumber={turnNumber} />;
         }
     };
 

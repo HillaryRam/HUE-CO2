@@ -9,12 +9,14 @@ import MatchHistory from '@/Components/Dashboard/MatchHistory';
 import { HostAuthView } from '../Components/GuestPortal/HostAuthView';
 import { ModeSelectionView } from '../Components/GuestPortal/ModeSelectionView';
 import { LobbyView } from '../Components/GuestPortal/LobbyView';
+import axios from 'axios';
 
 export default function Dashboard() {
     const [view, setView] = useState('main'); // main, host_auth, select_mode, lobby
     const [mode, setMode] = useState(null);
     const [selectedPlayers, setSelectedPlayers] = useState(null);
     const [roomCode, setRoomCode] = useState('');
+    const [isCreating, setIsCreating] = useState(false);
 
     const navigateTo = (newView) => {
         setView(newView);
@@ -24,13 +26,36 @@ export default function Dashboard() {
         }
     };
 
-    const handleSelectMode = (selectedMode) => {
-        setMode(selectedMode);
-        setView('lobby');
+    const handleSelectMode = async (selectedMode) => {
+        try {
+            setIsCreating(true);
+            setMode(selectedMode);
+
+            const response = await axios.post('/juego/crear', {
+                modo: selectedMode,
+                anillo_id: 1
+            });
+
+            if (response.data?.juego?.room_code) {
+                setRoomCode(response.data.juego.room_code);
+                setView('lobby');
+            } else {
+                throw new Error('No se recibió el código de sala');
+            }
+        } catch (error) {
+            console.error('Error al crear sala:', error);
+            const msg = error.response?.data?.message || error.response?.data?.error || error.message;
+            alert('Error al crear la sala: ' + msg);
+        } finally {
+            setIsCreating(false);
+        }
     };
 
     const startLocalGame = (params = {}) => {
-        router.get('/juego-local', params);
+        // Redirigir a la nueva pantalla del tablero premium
+        router.get(`/tablero/${roomCode}`, { 
+            mode: params.mode || mode 
+        });
     };
 
     const joinRoom = (e) => {
@@ -120,6 +145,7 @@ export default function Dashboard() {
                             key="select"
                             onBack={() => navigateTo('host_auth')}
                             onSelectMode={handleSelectMode}
+                            isLoading={isCreating}
                         />
                     )}
 
@@ -127,6 +153,7 @@ export default function Dashboard() {
                         <LobbyView 
                             key="lobby"
                             mode={mode}
+                            roomCode={roomCode}
                             selectedPlayers={selectedPlayers}
                             setSelectedPlayers={setSelectedPlayers}
                             onBack={() => navigateTo('select_mode')}
