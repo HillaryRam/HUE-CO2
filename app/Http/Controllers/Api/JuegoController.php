@@ -7,8 +7,11 @@ use App\Models\Juego;
 use App\Models\Participante;
 use Illuminate\Http\Request;
 
+use App\Events\PlayerJoined;
+
 class JuegoController extends Controller
 {
+    // ... index, store, show, update, destroy ...
     // GET /api/juegos
     public function index()
     {
@@ -84,13 +87,24 @@ class JuegoController extends Controller
     // POST /api/juegos/join
     public function unirse(Request $request)
     {
+        // Normalizar el código de sala (quitar espacios y poner en mayúsculas)
+        if ($request->has('room_code')) {
+            $request->merge([
+                'room_code' => strtoupper(str_replace(' ', '', $request->room_code))
+            ]);
+        }
+
         $request->validate([
             'room_code' => 'required|string|exists:juegos,room_code',
             'rol_id'    => 'nullable|integer|exists:roles,rol_id',
-            'usuario'   => 'required_unless:auth,true|string|max:50', // Nombre para invitados
+            'usuario'   => 'required_unless:auth,true|string|max:50',
         ]);
 
-        $juego = Juego::where('room_code', $request->room_code)->firstOrFail();
+        $juego = Juego::where('room_code', $request->room_code)->first();
+        
+        if (!$juego) {
+            return response()->json(['error' => 'La sala no existe o el PIN es incorrecto'], 404);
+        }
 
         // Crear el participante
         $participanteData = [
@@ -102,6 +116,10 @@ class JuegoController extends Controller
             $participanteData['usuario'] = $request->user()->username ?? $request->user()->name;
         }
 
+        if (empty($participanteData['usuario'])) {
+            return response()->json(['error' => 'Debes proporcionar un nombre de usuario'], 422);
+        }
+
         $participante = Participante::create($participanteData);
 
         $juego->participantes()->attach($participante->participante_id, [
@@ -109,6 +127,9 @@ class JuegoController extends Controller
             'eco_fichas' => 12,
             'puntuacion' => 0,
         ]);
+
+        // Disparar evento para tiempo real
+        PlayerJoined::dispatch($juego->room_code, $participante->usuario, $participante->participante_id);
 
         return response()->json([
             'message' => 'Te has unido a la partida',

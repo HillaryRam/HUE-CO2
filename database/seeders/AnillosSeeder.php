@@ -11,9 +11,9 @@ class AnillosSeeder extends Seeder
     {
         DB::table('anillos')->insert([
             ['nombre' => 'Agua', 'orden' => 1],
-            ['nombre' => 'Plástico', 'orden' => 2],
-            ['nombre' => 'Datos', 'orden' => 3],
-            ['nombre' => 'Energía', 'orden' => 4],
+            ['nombre' => 'Energía', 'orden' => 2],
+            ['nombre' => 'Plástico', 'orden' => 3],
+            ['nombre' => 'Pantallas', 'orden' => 4],
             ['nombre' => 'Ropa', 'orden' => 5],
         ]);
     }

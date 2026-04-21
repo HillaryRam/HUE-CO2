@@ -5,7 +5,9 @@ namespace App\Services;
 use App\Models\Juego;
 use App\Models\Carta;
 use App\Models\Turno;
+use App\Models\Participante;
 use App\Events\GameStateChanged;
+use App\Events\TurnResultBroadcast;
 use Illuminate\Support\Facades\DB;
 
 class GameFlowService
@@ -17,9 +19,11 @@ class GameFlowService
     public function advanceTurn(Juego $juego)
     {
         return DB::transaction(function () use ($juego) {
+            $turnResults = [];
+
             // 1. Procesar resultados del turno anterior (si existía una carta)
             if ($juego->current_carta_id) {
-                $this->processTurnResults($juego);
+                $turnResults = $this->processTurnResults($juego);
             }
 
             // 2. Incrementar turno
@@ -39,17 +43,22 @@ class GameFlowService
             $juego->save();
 
             // 4. Obtener estado de los sectores para el tablero
-            $sectorsData = $juego->jugadores->map(function ($j) {
+            $sectorsData = $juego->participantes->map(function ($p) {
                 return [
-                    'id' => $j->pivot->rol_id,
-                    'playerName' => $j->nombre,
-                    'tokens' => $j->pivot->eco_fichas,
+                    'id' => $p->pivot->rol_id,
+                    'playerName' => $p->usuario,
+                    'tokens' => $p->pivot->eco_fichas,
                 ];
             })->toArray();
 
             // 5. Disparar evento para que todos los dispositivos se actualicen
             $challengeData = $this->formatChallenge($nuevaCarta, $juego);
             
+            // Notificar a los móviles sobre sus resultados individuales del turno que acaba de terminar
+            if (!empty($turnResults)) {
+                TurnResultBroadcast::dispatch($juego->room_code, $turnResults);
+            }
+
             GameStateChanged::dispatch(
                 $juego->room_code,
                 $juego->estado === 'ended' ? 'ended' : 'challenge',
@@ -65,52 +74,70 @@ class GameFlowService
 
     /**
      * Procesa los votos del turno actual y aplica penalizaciones.
+     * Retorna un array con el feedback para cada participante.
      */
     protected function processTurnResults(Juego $juego)
     {
         $carta = Carta::with('preguntas.opciones')->find($juego->current_carta_id);
-        if (!$carta) return;
+        if (!$carta) return [];
 
-        // Obtener jugadores de la partida (asegurar que estén cargados con datos de la tabla pivote)
-        $jugadores = $juego->jugadores()->get();
+        $jugadores = $juego->participantes()->get();
+        $feedbackMap = [];
 
         foreach ($jugadores as $jugador) {
-            $propia_pregunta = $carta->preguntas->first(); // Simplificación: una pregunta por carta
+            $propia_pregunta = $carta->preguntas->first();
             
-            // Buscar si el jugador votó en este turno (esto requiere una tabla de votos o buscar en Turnos)
-            // Por ahora, asumimos que si no hay un registro en la tabla 'turnos' para este juego/jugador/carta, no votó.
             $voto = Turno::where([
                 'juego_id' => $juego->juego_id,
-                'jugador_id' => $jugador->jugador_id,
+                'participante_id' => $jugador->participante_id,
                 'carta_id' => $juego->current_carta_id
             ])->first();
 
+            $tokensGanados = 0;
             $penalizacion = 0;
+            $mensaje = "";
+            $esCorrecto = false;
 
             if (!$voto) {
-                // PENALIZACIÓN POR NO VOTAR (A TIEMPO)
-                $penalizacion = 2; // Ejemplo: quitar 2 tokens
+                $penalizacion = 2; 
+                $mensaje = "¡Te quedaste sin tiempo! -2 EcoFichas";
             } else {
-                // Si es tipo 'test/options', verificar si es correcta
-                if ($carta->tipo === 'test' && $propia_pregunta) {
+                if ($carta->tipo === 'pregunta' && $propia_pregunta) {
                     $opcionCorrecta = $propia_pregunta->opciones->where('correcta', true)->first();
-                    if ($opcionCorrecta && $voto->resultado != $opcionCorrecta->texto) {
-                        $penalizacion = 1; // Ejemplo: quitar 1 token por error
+                    
+                    // Lógica según tipo de pregunta (simplificada para ABC)
+                    if ($opcionCorrecta && $voto->resultado == $opcionCorrecta->texto) {
+                        $tokensGanados = $carta->puntos > 0 ? $carta->puntos : 2;
+                        $mensaje = "¡Excelente! Respuesta correcta. +" . $tokensGanados . " EcoFichas";
+                        $esCorrecto = true;
+                    } else {
+                        $penalizacion = $carta->penalizacion > 0 ? $carta->penalizacion : 1;
+                        $mensaje = "¡Ups! No es correcto. -" . $penalizacion . " EcoFichas";
                     }
+                } else {
+                    // Es un evento
+                    $mensaje = "Evento procesado. " . $carta->texto;
+                    $esCorrecto = true;
                 }
             }
 
-            if ($penalizacion > 0) {
-                $juego->jugadores()->updateExistingPivot($jugador->jugador_id, [
-                    'eco_fichas' => max(0, $jugador->pivot->eco_fichas - $penalizacion)
+            if ($penalizacion > 0 || $tokensGanados > 0) {
+                $nuevasFichas = max(0, $jugador->pivot->eco_fichas - $penalizacion + $tokensGanados);
+                $juego->participantes()->updateExistingPivot($jugador->participante_id, [
+                    'eco_fichas' => $nuevasFichas
                 ]);
             }
+
+            $feedbackMap[$jugador->participante_id] = [
+                'success' => $esCorrecto,
+                'message' => $mensaje,
+                'tokens'  => $tokensGanados - $penalizacion,
+            ];
         }
+
+        return $feedbackMap;
     }
 
-    /**
-     * Selecciona una carta aleatoria que no se haya usado todavía en este juego.
-     */
     protected function pickRandomCard($anilloId)
     {
         return Carta::where('anillo_id', $anilloId)
@@ -118,9 +145,6 @@ class GameFlowService
             ->first();
     }
 
-    /**
-     * Formatea la carta para el frontend.
-     */
     protected function formatChallenge(?Carta $carta, Juego $juego)
     {
         if (!$carta) return [];
@@ -129,12 +153,14 @@ class GameFlowService
 
         return [
             'id' => $carta->carta_id,
-            'type' => $carta->tipo === 'test' ? 'options' : 'open',
+            'type' => $pregunta ? $pregunta->tipo_pregunta : 'options',
             'title' => $pregunta ? $pregunta->texto : $carta->texto,
             'description' => $carta->texto,
             'ring' => $juego->anillo ? $juego->anillo->nombre : 'General',
             'options' => $pregunta ? $pregunta->opciones->pluck('texto')->toArray() : [],
-            'time' => $carta->tiempo ?? ($carta->tipo === 'test' ? 20 : 30),
+            'time' => $carta->tiempo ?? 20,
+            'puntos' => $carta->puntos,
+            'penalizacion' => $carta->penalizacion,
         ];
     }
 }

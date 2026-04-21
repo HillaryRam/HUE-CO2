@@ -11,10 +11,10 @@ import { JoinView } from '../Components/GuestPortal/JoinView';
 import MobileController from '../Components/Game/Modes/MobileController';
 import axios from 'axios';
 
-export default function GuestPortal() {
-    const [view, setView] = useState('main'); // main, join, host_auth, select_mode, lobby, playing
+export default function GuestPortal({ pin = null }) {
+    const [view, setView] = useState(pin ? 'join' : 'main');
     const [mode, setMode] = useState(null);
-    const [roomCode, setRoomCode] = useState(null);
+    const [roomCode, setRoomCode] = useState(pin ? pin.toString() : null);
     const [selectedPlayers, setSelectedPlayers] = useState(null);
     const [myPlayerName, setMyPlayerName] = useState('');
     const [myRole, setMyRole] = useState(null);
@@ -38,7 +38,7 @@ export default function GuestPortal() {
             const cleanPin = data.pin.replace(/\s/g, '');
             const response = await axios.post('/api/juegos/join', {
                 room_code: cleanPin,
-                player_name: data.nickname
+                usuario: data.nickname
             });
             
             setRoomCode(cleanPin);
@@ -48,7 +48,8 @@ export default function GuestPortal() {
             setView('playing'); 
         } catch (error) {
             console.error('Error al conectar:', error);
-            alert('No se pudo conectar. Revisa el PIN.');
+            const errorMsg = error.response?.data?.error || error.response?.data?.message || 'No se pudo conectar. Revisa el PIN.';
+            alert(errorMsg);
         }
     };
 
@@ -119,6 +120,7 @@ export default function GuestPortal() {
                         key="join"
                         onBack={() => navigateTo('main')}
                         onConnect={handleConnect}
+                        initialPin={roomCode}
                     />
                 )}
 
