@@ -60,7 +60,8 @@ export default function Dashboard() {
 
     const joinRoom = (e) => {
         e.preventDefault();
-        router.post('/rooms/join', { code: roomCode });
+        // Redirigir al portal de juego con el código de sala como parámetro
+        router.get(`/jugar`, { pin: roomCode });
     };
 
     return (

@@ -44,6 +44,7 @@ Route::get('/cartas/{id}',                      [CartaController::class, 'show']
 Route::post('/game/{roomCode}/vote',     [GameController::class, 'vote']);
 Route::post('/game/{roomCode}/proposal', [GameController::class, 'proposal']);
 Route::post('/game/{roomCode}/advance',  [GameController::class, 'advance']);
+Route::post('/juegos/join',              [JuegoController::class, 'unirse'])->middleware('throttle:10,1');
 
 // ── Rutas protegidas (requieren token) ──────────────────────
 Route::middleware('auth:sanctum')->group(function () {
@@ -64,7 +65,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/juegos/{id}',         [JuegoController::class, 'show']);
     Route::put('/juegos/{id}',         [JuegoController::class, 'update']);
     Route::delete('/juegos/{id}',      [JuegoController::class, 'destroy']);
-    Route::post('/juegos/join',        [JuegoController::class, 'unirse']);
 
     // Turnos
     Route::get('/juegos/{juego_id}/turnos',  [TurnoController::class, 'index']);

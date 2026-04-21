@@ -62,7 +62,11 @@ class GameController extends Controller
             type:       $validated['type']
         );
 
-        return response()->json(['status' => 'ok']);
+        return response()->json([
+            'status'   => 'ok',
+            'message'  => '¡Voto registrado! Esperando al Host...',
+            'feedback' => 'Tu elección ha sido enviada con éxito. ¡Suerte!'
+        ]);
     }
 
     /**

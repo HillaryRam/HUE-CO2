@@ -12,7 +12,9 @@ Route::get('/', function () {
 
 // Ruta pública para los invitados (Portal de entrada al juego)
 Route::get('/jugar', function () {
-    return Inertia::render('GuestPortal');
+    return Inertia::render('GuestPortal', [
+        'pin' => request('pin')
+    ]);
 })->name('guest.portal');
 
 // Dashboard (Ahora protegido por Auth de Breeze)

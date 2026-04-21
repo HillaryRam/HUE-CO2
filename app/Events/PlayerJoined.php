@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Events;
+
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+
+class PlayerJoined implements ShouldBroadcastNow
+{
+    use Dispatchable, InteractsWithSockets, SerializesModels;
+
+    public $roomCode;
+    public $playerName;
+    public $participanteId;
+
+    /**
+     * Create a new event instance.
+     */
+    public function __construct(string $roomCode, string $playerName, int $participanteId)
+    {
+        $this->roomCode = $roomCode;
+        $this->playerName = $playerName;
+        $this->participanteId = $participanteId;
+    }
+
+    /**
+     * Get the channels the event should broadcast on.
+     *
+     * @return array<int, \Illuminate\Broadcasting\Channel>
+     */
+    public function broadcastOn(): array
+    {
+        return [
+            new Channel('game.' . $this->roomCode),
+        ];
+    }
+
+    public function broadcastAs(): string
+    {
+        return 'player.joined';
+    }
+}

@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft } from 'lucide-react';
 
-export function JoinView({ onBack, onConnect }) {
-    const [pin, setPin] = useState('');
+export function JoinView({ onBack, onConnect, initialPin = '' }) {
+    const formatPin = (val) => {
+        if (!val) return ''; // Si no hay valor, devolver cadena vacía
+        const clean = val.toString().replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 6);
+        return clean.length <= 3 ? clean : `${clean.slice(0, 3)} ${clean.slice(3)}`;
+    };
+
+    const [pin, setPin] = useState(formatPin(initialPin));
     const [nickname, setNickname] = useState('');
 
     const handlePinChange = (e) => {
-        // Formatear PIN: 000 000
-        const val = e.target.value.replace(/\D/g, '').slice(0, 6);
-        if (val.length <= 3) {
-            setPin(val);
-        } else {
-            setPin(`${val.slice(0, 3)} ${val.slice(3)}`);
-        }
+        setPin(formatPin(e.target.value));
     };
 
     const isReady = pin.replace(/\s/g, '').length === 6 && nickname.trim().length > 0;
