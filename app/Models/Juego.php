@@ -15,9 +15,9 @@ class Juego extends Model
         return $this->belongsTo(Anillo::class, 'anillo_id');
     }
 
-    public function jugadores()
+    public function participantes()
     {
-        return $this->belongsToMany(Jugador::class, 'juego_jugador', 'juego_id', 'jugador_id')
+        return $this->belongsToMany(Participante::class, 'juego_participante', 'juego_id', 'participante_id')
                     ->withPivot('rol_id', 'eco_fichas', 'puntuacion')
                     ->withTimestamps();
     }

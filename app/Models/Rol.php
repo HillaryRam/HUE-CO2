@@ -10,9 +10,9 @@ class Rol extends Model
 
     protected $fillable = ['nombre', 'habilidades'];
 
-    public function jugadores()
+    public function participantes()
     {
-        return $this->belongsToMany(Jugador::class, 'juego_jugador', 'rol_id', 'jugador_id')
+        return $this->belongsToMany(Participante::class, 'juego_participante', 'rol_id', 'participante_id')
                     ->withPivot('eco_fichas', 'puntuacion')
                     ->withTimestamps();
     }

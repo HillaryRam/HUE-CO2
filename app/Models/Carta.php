@@ -4,7 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 class Carta extends Model
 {
     protected $primaryKey = 'carta_id';
-    protected $fillable = ['anillo_id', 'tipo', 'texto', 'tiempo', 'cambio_temp'];
+    protected $fillable = ['anillo_id', 'tipo', 'texto', 'tiempo', 'cambio_temp', 'puntos', 'penalizacion'];
 
     public function anillo()
     {

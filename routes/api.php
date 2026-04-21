@@ -6,12 +6,12 @@ use App\Http\Controllers\Api\JuegoController;
 use App\Http\Controllers\Api\AnilloController;
 use App\Http\Controllers\Api\TurnoController;
 use App\Http\Controllers\Api\CartaController;
-use App\Http\Controllers\Api\JugadorController;
+use App\Http\Controllers\Api\ParticipanteController;
 use App\Http\Controllers\GameController;
 
 // ── Rutas públicas ──────────────────────────────────────────
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login',    [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1');
+Route::post('/login',    [AuthController::class, 'login'])->middleware('throttle:5,1');
 
 // Endpoint de prueba de conexión para la App Móvil
 Route::get('/status', function () {
@@ -52,11 +52,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me',      [AuthController::class, 'me']);
 
-    // Jugadores
-    Route::get('/jugadores',       [JugadorController::class, 'index']);
-    Route::get('/jugadores/{id}',  [JugadorController::class, 'show']);
-    Route::put('/jugadores/{id}',  [JugadorController::class, 'update']);
-    Route::delete('/jugadores/{id}', [JugadorController::class, 'destroy']);
+    // Participantes
+    Route::get('/participantes',       [ParticipanteController::class, 'index']);
+    Route::get('/participantes/{id}',  [ParticipanteController::class, 'show']);
+    Route::put('/participantes/{id}',  [ParticipanteController::class, 'update']);
+    Route::delete('/participantes/{id}', [ParticipanteController::class, 'destroy']);
 
     // Juegos
     Route::get('/juegos',              [JuegoController::class, 'index']);
@@ -71,11 +71,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/juegos/{juego_id}/turnos', [TurnoController::class, 'store']);
     Route::get('/turnos/{id}',               [TurnoController::class, 'show']);
 
-    // Admin - Anillos y Cartas (escritura protegida)
-    Route::post('/anillos',         [AnilloController::class, 'store']);
-    Route::put('/anillos/{id}',     [AnilloController::class, 'update']);
-    Route::delete('/anillos/{id}',  [AnilloController::class, 'destroy']);
-    Route::post('/cartas',          [CartaController::class, 'store']);
-    Route::put('/cartas/{id}',      [CartaController::class, 'update']);
-    Route::delete('/cartas/{id}',   [CartaController::class, 'destroy']);
+    // Admin - Anillos y Cartas (solo para usuarios con rol 'admin')
+    Route::middleware('role:admin')->group(function () {
+        Route::post('/anillos',          [AnilloController::class, 'store']);
+        Route::put('/anillos/{id}',      [AnilloController::class, 'update']);
+        Route::delete('/anillos/{id}',   [AnilloController::class, 'destroy']);
+        Route::post('/cartas',           [CartaController::class, 'store']);
+        Route::put('/cartas/{id}',       [CartaController::class, 'update']);
+        Route::delete('/cartas/{id}',    [CartaController::class, 'destroy']);
+    });
 });
