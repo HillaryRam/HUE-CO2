@@ -45,10 +45,9 @@ class GameController extends Controller
         // Guardar el turno/voto en la BD para procesar penalizaciones luego
         Turno::updateOrCreate(
             [
-                'juego_id'   => $juego->juego_id,
-                'carta_id'   => $juego->current_carta_id,
-                'jugador_id' => $request->user() ? $request->user()->jugador_id : null,
-                // Nota: sector_id podría mapearse a jugador_id si no hay login
+                'juego_id'        => $juego->juego_id,
+                'carta_id'        => $juego->current_carta_id,
+                'participante_id' => $request->participante_id, // Usar participante_id enviado desde la App
             ],
             [
                 'resultado' => is_array($validated['answer']) ? json_encode($validated['answer']) : $validated['answer'],

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Jugador;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -13,22 +13,23 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'usuario' => 'required|string|max:50',
-            'email' => 'required|email|unique:jugadores,email',
+            'usuario' => 'required|string|max:50|unique:users,username',
+            'email' => 'required|email|unique:users,email',
             'contrasena' => 'required|string|min:6',
         ]);
 
-        $jugador = Jugador::create([
-            'usuario' => $request->usuario,
+        $user = User::create([
+            'name' => $request->usuario, // Usamos usuario como nombre por defecto
+            'username' => $request->usuario,
             'email' => $request->email,
-            'contrasena' => Hash::make($request->contrasena),
+            'password' => Hash::make($request->contrasena),
         ]);
 
-        $token = $jugador->createToken('api-token')->plainTextToken;
+        $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
-            'message' => 'Jugador registrado correctamente',
-            'jugador' => $jugador,
+            'message' => 'Usuario registrado correctamente',
+            'user' => $user,
             'token' => $token,
         ], 201);
     }
@@ -41,17 +42,17 @@ class AuthController extends Controller
             'contrasena' => 'required|string',
         ]);
 
-        $jugador = Jugador::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();
 
-        if (!$jugador || !Hash::check($request->contrasena, $jugador->contrasena)) {
+        if (!$user || !Hash::check($request->contrasena, $user->password)) {
             return response()->json(['message' => 'Credenciales incorrectas'], 401);
         }
 
-        $token = $jugador->createToken('api-token')->plainTextToken;
+        $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
             'message' => 'Login correcto',
-            'jugador' => $jugador,
+            'user' => $user,
             'token' => $token,
         ]);
     }

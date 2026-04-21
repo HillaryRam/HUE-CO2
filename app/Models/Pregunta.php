@@ -8,7 +8,7 @@ class Pregunta extends Model
 {
     protected $primaryKey = 'pregunta_id';
 
-    protected $fillable = ['carta_id', 'texto'];
+    protected $fillable = ['carta_id', 'texto', 'tipo_pregunta', 'rango_min', 'rango_max'];
 
     public function carta()
     {

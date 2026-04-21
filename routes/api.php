@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\JuegoController;
 use App\Http\Controllers\Api\AnilloController;
 use App\Http\Controllers\Api\TurnoController;
 use App\Http\Controllers\Api\CartaController;
-use App\Http\Controllers\Api\JugadorController;
+use App\Http\Controllers\Api\ParticipanteController;
 use App\Http\Controllers\GameController;
 
 // ── Rutas públicas ──────────────────────────────────────────
@@ -52,11 +52,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me',      [AuthController::class, 'me']);
 
-    // Jugadores
-    Route::get('/jugadores',       [JugadorController::class, 'index']);
-    Route::get('/jugadores/{id}',  [JugadorController::class, 'show']);
-    Route::put('/jugadores/{id}',  [JugadorController::class, 'update']);
-    Route::delete('/jugadores/{id}', [JugadorController::class, 'destroy']);
+    // Participantes
+    Route::get('/participantes',       [ParticipanteController::class, 'index']);
+    Route::get('/participantes/{id}',  [ParticipanteController::class, 'show']);
+    Route::put('/participantes/{id}',  [ParticipanteController::class, 'update']);
+    Route::delete('/participantes/{id}', [ParticipanteController::class, 'destroy']);
 
     // Juegos
     Route::get('/juegos',              [JuegoController::class, 'index']);

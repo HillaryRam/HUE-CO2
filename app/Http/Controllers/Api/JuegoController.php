@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Juego;
-use App\Models\Jugador;
+use App\Models\Participante;
 use Illuminate\Http\Request;
 
 class JuegoController extends Controller
@@ -12,7 +12,7 @@ class JuegoController extends Controller
     // GET /api/juegos
     public function index()
     {
-        $juegos = Juego::with(['anillo', 'jugadores'])->get();
+        $juegos = Juego::with(['anillo', 'participantes'])->get();
         return response()->json($juegos);
     }
 
@@ -32,15 +32,14 @@ class JuegoController extends Controller
             'room_code'   => strtoupper(substr(bin2hex(random_bytes(3)), 0, 6)),
         ]);
 
-        // Añadir al jugador que crea la partida
+        // Añadir al participante que crea la partida (Host)
         if ($request->user()) {
-            // Vincular el usuario autenticado (Breeze) con un perfil de Jugador
-            $jugador = Jugador::firstOrCreate(
-                ['email' => $request->user()->email],
-                ['usuario' => $request->user()->name, 'contrasena' => '']
-            );
+            $participante = Participante::create([
+                'user_id' => $request->user()->id,
+                'usuario' => $request->user()->username ?? $request->user()->name,
+            ]);
 
-            $juego->jugadores()->attach($jugador->jugador_id, [
+            $juego->participantes()->attach($participante->participante_id, [
                 'rol_id'      => $request->rol_id ?? null,
                 'eco_fichas'  => 12,
                 'puntuacion'  => 0,
@@ -49,14 +48,14 @@ class JuegoController extends Controller
 
         return response()->json([
             'message' => 'Juego creado correctamente',
-            'juego'   => $juego->load(['anillo', 'jugadores']),
+            'juego'   => $juego->load(['anillo', 'participantes']),
         ], 201);
     }
 
     // GET /api/juegos/{id}
     public function show($id)
     {
-        $juego = Juego::with(['anillo', 'jugadores.juegos', 'turnos.carta'])->findOrFail($id);
+        $juego = Juego::with(['anillo', 'participantes', 'turnos.carta'])->findOrFail($id);
         return response()->json($juego);
     }
 
@@ -69,7 +68,7 @@ class JuegoController extends Controller
 
         return response()->json([
             'message' => 'Juego actualizado',
-            'juego'   => $juego->load(['anillo', 'jugadores']),
+            'juego'   => $juego->load(['anillo', 'participantes']),
         ]);
     }
 
@@ -87,32 +86,34 @@ class JuegoController extends Controller
     {
         $request->validate([
             'room_code' => 'required|string|exists:juegos,room_code',
-            'rol_id'    => 'nullable|string',
+            'rol_id'    => 'nullable|integer|exists:roles,rol_id',
+            'usuario'   => 'required_unless:auth,true|string|max:50', // Nombre para invitados
         ]);
 
         $juego = Juego::where('room_code', $request->room_code)->firstOrFail();
-        $jugadorId = null;
 
-        // Si es un jugador autenticado o invitado
+        // Crear el participante
+        $participanteData = [
+            'usuario' => $request->usuario,
+        ];
+
         if ($request->user()) {
-            $jugador = Jugador::firstOrCreate(
-                ['email' => $request->user()->email],
-                ['usuario' => $request->user()->name, 'contrasena' => '']
-            );
-            $jugadorId = $jugador->jugador_id;
+            $participanteData['user_id'] = $request->user()->id;
+            $participanteData['usuario'] = $request->user()->username ?? $request->user()->name;
         }
 
-        if ($jugadorId) {
-            $juego->jugadores()->attach($jugadorId, [
-                'rol_id'     => $request->rol_id,
-                'eco_fichas' => 12,
-                'puntuacion' => 0,
-            ]);
-        }
+        $participante = Participante::create($participanteData);
+
+        $juego->participantes()->attach($participante->participante_id, [
+            'rol_id'     => $request->rol_id,
+            'eco_fichas' => 12,
+            'puntuacion' => 0,
+        ]);
 
         return response()->json([
             'message' => 'Te has unido a la partida',
-            'juego'   => $juego->load('jugadores'),
+            'participante' => $participante,
+            'juego'   => $juego->load('participantes'),
         ]);
     }
 }

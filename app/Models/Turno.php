@@ -8,16 +8,16 @@ class Turno extends Model
 {
     protected $primaryKey = 'turno_id';
 
-    protected $fillable = ['juego_id', 'jugador_id', 'carta_id', 'resultado', 'cambio_temp'];
+    protected $fillable = ['juego_id', 'participante_id', 'carta_id', 'resultado', 'cambio_temp'];
 
     public function juego()
     {
         return $this->belongsTo(Juego::class, 'juego_id');
     }
 
-    public function jugador()
+    public function participante()
     {
-        return $this->belongsTo(Jugador::class, 'jugador_id');
+        return $this->belongsTo(Participante::class, 'participante_id');
     }
 
     public function carta()
