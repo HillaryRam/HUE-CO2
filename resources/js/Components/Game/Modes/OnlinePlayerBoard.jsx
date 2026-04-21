@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import GameHeader from '../UI/GameHeader';
 import OrbitalBoard from '../UI/OrbitalBoard';
 import GlobalThermometer from '../UI/GlobalThermometer';
 import ChallengeCard from '../UI/ChallengeCard';
 import SectorEcoStats from '../UI/SectorEcoStats';
 import { useGame } from '../Core/GameProvider';
 import { motion } from 'framer-motion';
-import { Send, CheckCircle2, Users, Cpu, Shirt, FlaskConical, Tractor, Landmark, Hexagon } from 'lucide-react';
+import { Send, CheckCircle2, Users, Cpu, Shirt, FlaskConical, Tractor, Landmark, Hexagon, Clock, LogOut } from 'lucide-react';
 
 const figmaColors = {
     'ciencia': { bg: 'bg-[#DEB8FF]', shadow: 'shadow-[0px_4px_0px_0px_rgba(150,64,255,1.0)]', textTitle: 'text-purple-600', iconClass: 'text-[#9640FF]' },
@@ -43,13 +42,48 @@ export default function OnlinePlayerBoard({ sectors, challenge, roomCode, myRole
             <div className="absolute inset-0 pointer-events-none opacity-30"
                 style={{ background: 'radial-gradient(circle at 50% 0%, #dcfce7 0%, transparent 60%)' }} />
 
-            <GameHeader 
-                roomCode={roomCode} 
-                timeLeft={timeLeft} 
-                onExit={() => alert('Salir')} 
-            />
+            {/* Cabecera integrada - Alineada con el diseño Premium */}
+            <div className="pt-8 px-8 w-full max-w-[1750px] mx-auto z-50">
+                <div className="flex items-end justify-between mb-12">
+                    {/* Columna 1: Sala Online (Encima del Termómetro) */}
+                    <div className="flex-none">
+                        <div className="bg-white/90 backdrop-blur-md px-6 py-3 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 flex items-center gap-3">
+                            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]"></div>
+                            <span className="text-[11px] font-black text-slate-400 tracking-[0.3em] uppercase">
+                                SALA: <span className="text-slate-900 ml-1">{roomCode || "ONLINE"}</span>
+                            </span>
+                        </div>
+                    </div>
 
-            <div className="flex-1 flex flex-col max-w-7xl mx-auto w-full min-h-0 relative z-10">
+                    {/* Columna 2: Espacio Central (Encima del Planeta) */}
+                    <div className="flex-1 flex justify-center">
+                        {/* Espacio reservado para mantener simetría con el OrbitalBoard */}
+                    </div>
+
+                    {/* Columna 3: Tiempo y Controles (Encima de la carta de reto) */}
+                    <div className="flex-none pr-4">
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-4 bg-white/90 backdrop-blur-md px-6 py-2.5 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50">
+                                <Clock className="w-6 h-6 text-slate-300" strokeWidth={2.5} />
+                                <div className="flex flex-col -gap-1">
+                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Tiempo</span>
+                                    <span className={`font-black text-3xl tabular-nums tracking-tighter leading-none ${timeLeft < 30 ? 'text-rose-500 animate-pulse' : 'text-slate-800'}`}>
+                                        {Math.floor(timeLeft / 60)}:{timeLeft % 60 < 10 ? '0' : ''}{timeLeft % 60}
+                                    </span>
+                                </div>
+                            </div>
+                            <button 
+                                onClick={() => alert('Salir')}
+                                className="bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all group shrink-0"
+                            >
+                                <LogOut className="w-6 h-6 transition-transform group-hover:scale-110" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex-1 flex flex-col w-full max-w-[1750px] mx-auto min-h-0 relative z-10">
                 
                 {/* Visualización Central */}
                 <div className="flex items-center justify-between gap-8 flex-1 min-h-0">

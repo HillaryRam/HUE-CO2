@@ -34,14 +34,15 @@ export default function ChallengeCard({
     setIntensity, 
     onApply, 
     readOnly = false,
-    sectorColor = 'blue' 
+    sectorColor = 'blue',
+    isCompact = false
 }) {
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [proposalText, setProposalText] = useState('');
 
     if (!challenge || Object.keys(challenge).length === 0) {
         return (
-            <div className="w-[340px] lg:w-[400px] h-[600px] bg-white rounded-[2rem] border-4 border-dashed border-slate-200 flex flex-col items-center justify-center p-8 text-center shrink-0">
+            <div className={`${isCompact ? 'w-[300px] h-[520px]' : 'w-[340px] lg:w-[400px] h-[600px]'} bg-white rounded-[2rem] border-4 border-dashed border-slate-200 flex flex-col items-center justify-center p-8 text-center shrink-0`}>
                 <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6 animate-pulse">
                     <Clock className="w-10 h-10 text-slate-300" />
                 </div>
@@ -58,7 +59,7 @@ export default function ChallengeCard({
 
     const renderOptionsGrid = () => (
         <div className="flex flex-col h-full mt-auto pb-2">
-            <div className="grid grid-cols-2 gap-x-3 gap-y-4 w-full flex-grow">
+            <div className={`grid grid-cols-2 ${isCompact ? 'gap-x-2 gap-y-2' : 'gap-x-3 gap-y-4'} w-full flex-grow`}>
                 {challenge.options?.map((opt, idx) => {
                     const style = OPTION_STYLES[idx];
                     const isSelected = selectedAnswer === opt;
@@ -70,7 +71,7 @@ export default function ChallengeCard({
                         >
                             <div className={`absolute inset-0 top-1.5 rounded-xl ${style.dark} ${isSelected ? 'ring-4 ring-indigo-200' : ''}`} />
                             <div className={`relative flex flex-col h-[calc(100%-6px)] z-10 w-full drop-shadow-sm ${isSelected ? '-translate-y-1' : ''} transition-all`}>
-                                <div className={`h-[45px] w-full ${style.light} rounded-t-xl border-b border-[0.83px] ${style.borderDark} flex items-center justify-center`}>
+                                <div className={`${isCompact ? 'h-[35px]' : 'h-[45px]'} w-full ${style.light} rounded-t-xl border-b border-[0.83px] ${style.borderDark} flex items-center justify-center`}>
                                     <div className="w-8 h-8 bg-white/30 rounded-full flex items-center justify-center flex-shrink-0 shadow-inner">
                                         {style.icon}
                                     </div>
@@ -216,7 +217,7 @@ export default function ChallengeCard({
         <motion.div 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="w-[340px] lg:w-[400px] h-[600px] relative shrink-0"
+            className={`${isCompact ? 'w-[300px] h-[520px]' : 'w-[340px] lg:w-[400px] h-[600px]'} relative shrink-0`}
         >
             {/* Sombra 3D */}
             <div className={`absolute inset-0 top-[10px] ${c.base} rounded-[2rem]`} />
@@ -227,7 +228,7 @@ export default function ChallengeCard({
 
                 <div className="relative z-10 flex flex-col h-full">
                     {/* Header */}
-                    <div className="flex items-center justify-between mb-5">
+                    <div className={`flex items-center justify-between ${isCompact ? 'mb-3' : 'mb-5'}`}>
                         <div className={`flex items-center gap-2 ${c.text} font-bold text-sm uppercase tracking-wider`}>
                             <Droplet size={20} strokeWidth={2.5} /> {challenge.sectorName ?? 'Reto del Sector'}
                         </div>
@@ -239,8 +240,8 @@ export default function ChallengeCard({
                     </div>
 
                     {/* Título y Descripción */}
-                    <div className={`flex flex-col gap-2 ${challengeType === 'slider' ? 'mb-8' : 'mb-4'}`}>
-                        <h2 className="text-slate-900 text-[22px] font-black tracking-tight leading-none">
+                    <div className={`flex flex-col gap-2 ${challengeType === 'slider' ? (isCompact ? 'mb-4' : 'mb-8') : (isCompact ? 'mb-2' : 'mb-4')}`}>
+                        <h2 className={`${isCompact ? 'text-[18px]' : 'text-[22px]'} text-slate-900 font-black tracking-tight leading-none`}>
                             {challenge.title ?? 'Título del Desafío'}
                         </h2>
                         <p className={`text-slate-500 font-medium leading-relaxed ${challengeType === 'validate' || challengeType === 'options' ? 'text-[12px]' : 'text-sm'}`}>

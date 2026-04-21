@@ -35,6 +35,14 @@ Route::get('/tablero/{roomCode}', function ($roomCode) {
     ]);
 })->name('game.board');
 
+// Ruta para juego local desde el Guest Portal (Sin Auth)
+Route::get('/juego-local', function () {
+    return Inertia::render('GameDisplay', [
+        'roomCode' => 'LOCAL_' . strtoupper(substr(uniqid(), -4)),
+        'initialMode' => request('mode', 'solo')
+    ]);
+})->name('game.local');
+
 // Rutas DE JUEGO con sesión web (para Dashboard con Breeze auth)
 Route::middleware(['auth'])->group(function () {
     Route::post('/juego/crear', [App\Http\Controllers\Api\JuegoController::class, 'store'])->name('juego.crear');
