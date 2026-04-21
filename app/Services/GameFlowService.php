@@ -44,8 +44,10 @@ class GameFlowService
 
             // 4. Obtener estado de los sectores para el tablero
             $sectorsData = $juego->participantes->map(function ($p) {
+                // Obtener el slug del rol
+                $rol = DB::table('roles')->where('rol_id', $p->pivot->rol_id)->first();
                 return [
-                    'id' => $p->pivot->rol_id,
+                    'id' => $rol ? $rol->slug : 'ciudadania',
                     'playerName' => $p->usuario,
                     'tokens' => $p->pivot->eco_fichas,
                 ];

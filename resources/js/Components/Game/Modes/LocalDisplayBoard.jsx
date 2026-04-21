@@ -61,11 +61,9 @@ export default function LocalDisplayBoard({ sectors, challenge, roomCode, turnNu
     };
     // ───────────────────────────────────────────────────────────────────────
 
-    // Inyectar datos de jugadores (en producción, vendrán del servidor)
-    const mockNames = ['Carlos', 'Jhon', 'Emiliana', 'Daniel', 'Elena', 'Sara'];
-    const displaySectors = sectors.map((s, i) => ({
+    // Usar los datos reales de los sectores (que incluyen playerName desde GameBoard)
+    const displaySectors = sectors.map((s) => ({
         ...s,
-        playerName: mockNames[i],
         // Marcar si ya votaron — compara con los votos recibidos por Reverb
         hasVoted: !!votes[s.id],
     }));

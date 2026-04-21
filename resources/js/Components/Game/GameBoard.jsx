@@ -39,35 +39,25 @@ export function GameBoard({
     }, [serverGameState]);
     // ─────────────────────────────────────────────────────────────────────────
 
-    // ── Carga aleatoria de preguntas desde la BD ─────────────────────────────
-    const fetchRandomChallenge = useCallback(async () => {
+    // ── Carga de retos desde el servidor (avanzar turno) ─────────────────────
+    const nextChallenge = useCallback(async () => {
         setIsLoadingChallenge(true);
         try {
-            const response = await axios.get('/api/preguntas/random');
-            const challenge = response.data;
-            // Añadir el turno actual
-            challenge.turn = `${turnNumber}/15`;
-            setCurrentChallenge(challenge);
+            await axios.post(`/api/game/${roomCode}/advance`);
+            // No seteamos nada aquí, esperamos el evento GameStateChanged vía WebSocket
         } catch (error) {
-            console.error('[HUE-CO2] Error al cargar pregunta:', error);
-            // Fallback: dejar el challenge vacío para que ChallengeCard muestre "Esperando Reto"
+            console.error('[HUE-CO2] Error al avanzar turno:', error);
         } finally {
             setIsLoadingChallenge(false);
         }
-    }, [turnNumber]);
+    }, [roomCode]);
 
-    // Cargar una pregunta al montar si no hay challenge activo
+    // Al montar, si no hay reto, pedimos al servidor que inicie el primero
     useEffect(() => {
-        if (!currentChallenge || Object.keys(currentChallenge).length === 0) {
-            fetchRandomChallenge();
+        if (roomCode && (!currentChallenge || Object.keys(currentChallenge).length === 0)) {
+            nextChallenge();
         }
-    }, []);
-
-    // Función para cargar la siguiente pregunta (avanzar turno)
-    const nextChallenge = useCallback(() => {
-        setTurnNumber(prev => prev + 1);
-        fetchRandomChallenge();
-    }, [fetchRandomChallenge]);
+    }, [roomCode]);
     // ─────────────────────────────────────────────────────────────────────────
 
     // Preparación de datos de sectores con estilos consistentes
