@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AnilloController;
 use App\Http\Controllers\Api\TurnoController;
 use App\Http\Controllers\Api\CartaController;
 use App\Http\Controllers\Api\ParticipanteController;
+use App\Http\Controllers\Api\PreguntaController;
 use App\Http\Controllers\GameController;
 
 // ── Rutas públicas ──────────────────────────────────────────
@@ -39,6 +40,9 @@ Route::get('/anillos/{id}',                     [AnilloController::class, 'show'
 Route::get('/anillos/{anillo_id}/carta-aleatoria', [CartaController::class, 'cartaAleatoria']);
 Route::get('/cartas',                           [CartaController::class, 'index']);
 Route::get('/cartas/{id}',                      [CartaController::class, 'show']);
+
+// Preguntas aleatorias (público para el frontend del juego)
+Route::get('/preguntas/random',                 [PreguntaController::class, 'random']);
 
 // ── Rutas de Juego en Tiempo Real (públicas, identificadas por roomCode) ──
 Route::post('/game/{roomCode}/vote',     [GameController::class, 'vote']);

@@ -4,28 +4,10 @@ import { GameBoard } from '../Components/Game/GameBoard';
 import MobileController from '../Components/Game/Modes/MobileController';
 import { ROLES } from '../data/gameData';
 
-// Datos de ejemplo para probar el mando mobile
-const SAMPLE_CHALLENGE_OPTIONS = {
-    type: 'options',
-    title: 'Sequía en la Cuenca Sur',
-    description: 'El suministro hídrico está al 20%. ¿Qué medida implementáis primero?',
-    ring: 'Agua',
-    turn: '3/15',
-    options: ['Racionamiento urbano', 'Parada textil de emergencia', 'Inyección de agua desalada', 'Uso de aguas residuales tratadas'],
-};
-
-const SAMPLE_CHALLENGE_VALIDATE = {
-    type: 'validate',
-    title: 'Auditoría de Residuos',
-    ring: 'Plástico',
-    turn: '3/15',
-    proposal: '"Prohibir totalmente la venta de ropa con más de 20% de poliéster en 6 meses."',
-};
-
 export default function TestBoards() {
     const [mode, setMode] = useState('shared');
     const [mobileState, setMobileState] = useState('challenge');
-    const [mobileChallenge, setMobileChallenge] = useState(SAMPLE_CHALLENGE_OPTIONS);
+    const [mobileChallenge, setMobileChallenge] = useState(null);
 
     const modes = [
         { key: 'shared',     label: 'Shared (Kahoot)' },
@@ -62,8 +44,7 @@ export default function TestBoards() {
                 <div className="pt-20 flex flex-col items-center gap-4 pb-10">
                     {/* Mini-panel de control para el test del mando */}
                     <div className="flex gap-2 bg-white border border-slate-200 rounded-2xl p-2 shadow-sm text-xs font-bold">
-                        <button onClick={() => setMobileState('challenge')}   className={`px-3 py-1.5 rounded-xl transition-all ${mobileState === 'challenge' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:bg-slate-100'}`}>Pregunta (options)</button>
-                        <button onClick={() => { setMobileChallenge(SAMPLE_CHALLENGE_VALIDATE); setMobileState('challenge'); }} className={`px-3 py-1.5 rounded-xl transition-all text-slate-500 hover:bg-slate-100`}>Validar</button>
+                        <button onClick={() => setMobileState('challenge')}   className={`px-3 py-1.5 rounded-xl transition-all ${mobileState === 'challenge' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:bg-slate-100'}`}>Reto Activo</button>
                         <button onClick={() => setMobileState('voted')}       className={`px-3 py-1.5 rounded-xl transition-all ${mobileState === 'voted' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:bg-slate-100'}`}>Voto Hecho</button>
                         <button onClick={() => setMobileState('waiting')}     className={`px-3 py-1.5 rounded-xl transition-all ${mobileState === 'waiting' ? 'bg-slate-900 text-white' : 'text-slate-500 hover:bg-slate-100'}`}>Esperando</button>
                     </div>
@@ -76,7 +57,7 @@ export default function TestBoards() {
                         timeLeft={84}
                         globalTemp="+0.4°C"
                         currentTurn="3/15"
-                        challenge={mobileChallenge}
+                        challenge={mobileChallenge || { title: 'Cargando...', description: 'Espera un momento', type: 'waiting' }}
                         gameState={mobileState}
                         onVote={(ans) => console.log('Voto:', ans)}
                         onApply={(val) => console.log('Aplicar:', val)}

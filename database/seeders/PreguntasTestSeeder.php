@@ -9,15 +9,21 @@ class PreguntasTestSeeder extends Seeder
 {
     public function run(): void
     {
-        // ─────────────────────────────────────────────
-        // PREGUNTAS Y OPCIONES (solo cartas tipo pregunta)
-        // Las IDs dependen del orden de inserción arriba
-        // ─────────────────────────────────────────────
-        $preguntas = [
+        // Limpiar tablas para evitar errores de duplicidad
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('opciones_respuesta')->truncate();
+        DB::table('preguntas')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-            // ── AGUA ─────────────────────────────────
-            1 => [ // Porcentaje agua dulce
+        // ─────────────────────────────────────────────
+        // DEFINICIÓN DE PREGUNTAS POR SECTOR Y TIPO
+        // ─────────────────────────────────────────────
+        
+        $data = [
+            // --- AGUA (IDs: 1, 2, 3, 4, 5, 6) ---
+            1 => [
                 'texto' => '¿Qué porcentaje aproximado del agua del planeta es agua dulce disponible para consumo humano?',
+                'tipo_pregunta' => 'options',
                 'opciones' => [
                     ['texto' => '50%', 'correcta' => false],
                     ['texto' => '25%', 'correcta' => false],
@@ -25,167 +31,125 @@ class PreguntasTestSeeder extends Seeder
                     ['texto' => '1%', 'correcta' => true],
                 ],
             ],
-            2 => [ // Riego por goteo
+            2 => [
+                'texto' => '¿Qué porcentaje de reducción en el consumo de agua debería exigirse a la industria agrícola?',
+                'tipo_pregunta' => 'slider',
+                'rango_min' => 0,
+                'rango_max' => 100,
+            ],
+            3 => [
+                'texto' => 'Propón una medida concreta que pueda aplicar tu ciudad para reducir el desperdicio de agua potable.',
+                'tipo_pregunta' => 'free',
+            ],
+            4 => [
                 'texto' => '¿Cuál de las siguientes prácticas ayuda más a reducir el consumo de agua en la agricultura?',
+                'tipo_pregunta' => 'options',
                 'opciones' => [
                     ['texto' => 'Regar en horas de más calor', 'correcta' => false],
                     ['texto' => 'Usar riego por goteo', 'correcta' => true],
-                    ['texto' => 'Plantar especies que consumen mucha agua', 'correcta' => false],
-                    ['texto' => 'Limpiar los campos con manguera', 'correcta' => false],
+                    ['texto' => 'Plantar especies sedientas', 'correcta' => false],
+                    ['texto' => 'Limpiar con manguera', 'correcta' => false],
                 ],
             ],
-            3 => [ // Agricultura y agua
-                'texto' => '¿Cuál de estas actividades genera mayor consumo de agua a nivel global?',
-                'opciones' => [
-                    ['texto' => 'Transporte público', 'correcta' => false],
-                    ['texto' => 'Producción de alimentos y agricultura', 'correcta' => true],
-                    ['texto' => 'Energía solar', 'correcta' => false],
-                    ['texto' => 'Reciclaje de papel', 'correcta' => false],
-                ],
+            5 => [
+                'texto' => '¿Qué nivel de ahorro de agua por hogar consideras justo incentivar con rebajas fiscales?',
+                'tipo_pregunta' => 'slider',
+                'rango_min' => 0,
+                'rango_max' => 100,
             ],
-            4 => [ // Biodiversidad y agua
-                'texto' => '¿Qué efecto puede tener la contaminación del agua sobre la biodiversidad?',
-                'opciones' => [
-                    ['texto' => 'Incrementa el número de especies', 'correcta' => false],
-                    ['texto' => 'Reduce la disponibilidad de nutrientes', 'correcta' => false],
-                    ['texto' => 'Provoca la muerte de especies y pérdida de hábitats', 'correcta' => true],
-                    ['texto' => 'Mejora la calidad del agua', 'correcta' => false],
-                ],
-            ],
-            5 => [ // Aguas grises
-                'texto' => '¿Qué medida puede aplicar una ciudad para gestionar mejor el consumo de agua?',
-                'opciones' => [
-                    ['texto' => 'Implementar sistemas de reciclaje de aguas grises', 'correcta' => true],
-                    ['texto' => 'Aumentar el uso de agua potable en parques', 'correcta' => false],
-                    ['texto' => 'Construir piscinas públicas más grandes', 'correcta' => false],
-                    ['texto' => 'Abastecer toda el agua mediante transporte de camiones', 'correcta' => false],
-                ],
-            ],
-            6 => [ // Cambio climático y agua
-                'texto' => '¿Cómo puede el cambio climático afectar el acceso al agua potable?',
-                'opciones' => [
-                    ['texto' => 'Aumentando la disponibilidad de agua en todas las regiones', 'correcta' => false],
-                    ['texto' => 'Provocando sequías y escasez en algunas zonas', 'correcta' => true],
-                    ['texto' => 'Eliminando los problemas de contaminación', 'correcta' => false],
-                    ['texto' => 'Garantizando agua dulce ilimitada', 'correcta' => false],
-                ],
+            6 => [
+                'texto' => '¿Cómo concienciarías a los vecinos para que no malgasten agua en verano?',
+                'tipo_pregunta' => 'free',
             ],
 
-            // ── PLÁSTICO ──────────────────────────────
-            11 => [ // PET reciclable
-                'texto' => '¿Cuál de los siguientes plásticos es más fácil de reciclar en la mayoría de los sistemas de reciclaje urbanos?',
+            // --- PLÁSTICO (IDs: 11, 12, 13, 14, 15, 16) ---
+            11 => [
+                'texto' => '¿Cuál de los siguientes plásticos es más fácil de reciclar habitualmente?',
+                'tipo_pregunta' => 'options',
                 'opciones' => [
-                    ['texto' => 'Polietileno de baja densidad (LDPE)', 'correcta' => false],
-                    ['texto' => 'Poliestireno expandido (EPS)', 'correcta' => false],
+                    ['texto' => 'LDPE', 'correcta' => false],
+                    ['texto' => 'EPS', 'correcta' => false],
                     ['texto' => 'PVC', 'correcta' => false],
-                    ['texto' => 'Polietileno tereftalato (PET)', 'correcta' => true],
+                    ['texto' => 'PET', 'correcta' => true],
                 ],
             ],
-            12 => [ // Botella PET degradación
-                'texto' => '¿Cuál de los siguientes productos de plástico tarda más en degradarse en el medio ambiente?',
-                'opciones' => [
-                    ['texto' => 'Bolsa de plástico biodegradable', 'correcta' => false],
-                    ['texto' => 'Botella de PET', 'correcta' => true],
-                    ['texto' => 'Bolsa de papel', 'correcta' => false],
-                    ['texto' => 'Envase de cartón', 'correcta' => false],
-                ],
+            12 => [
+                'texto' => '¿Qué porcentaje de los envases de plástico debería ser reciclado obligatoriamente por ley?',
+                'tipo_pregunta' => 'slider',
+                'rango_min' => 0,
+                'rango_max' => 100,
             ],
-            13 => [ // Economía circular
+            13 => [
+                'texto' => 'Diseña una campaña rápida para reducir el uso de plástico en tu oficina o centro.',
+                'tipo_pregunta' => 'free',
+            ],
+            14 => [
                 'texto' => '¿Cuál de las siguientes acciones refleja mejor el concepto de economía circular?',
+                'tipo_pregunta' => 'options',
                 'opciones' => [
-                    ['texto' => 'Comprar productos de usar y tirar y desecharlos rápidamente', 'correcta' => false],
-                    ['texto' => 'Reutilizar, reciclar y reducir el consumo de recursos', 'correcta' => true],
-                    ['texto' => 'Aumentar la producción sin considerar residuos', 'correcta' => false],
-                    ['texto' => 'Depender únicamente de la energía fósil', 'correcta' => false],
+                    ['texto' => 'Comprar y tirar', 'correcta' => false],
+                    ['texto' => 'Reutilizar y reciclar', 'correcta' => true],
+                    ['texto' => 'Producir más rápido', 'correcta' => false],
+                    ['texto' => 'Usar energía fósil', 'correcta' => false],
                 ],
             ],
-            14 => [ // Microplásticos oceanos
-                'texto' => '¿Cuál es la consecuencia más grave de los microplásticos en los océanos?',
-                'opciones' => [
-                    ['texto' => 'Generan energía limpia', 'correcta' => false],
-                    ['texto' => 'Contaminan la cadena alimentaria', 'correcta' => true],
-                    ['texto' => 'Mejoran la biodiversidad', 'correcta' => false],
-                    ['texto' => 'Absorben el CO₂ de la atmósfera', 'correcta' => false],
-                ],
+            15 => [
+                'texto' => '¿Qué impuesto (en céntimos) pondrías a cada bolsa de plástico no biodegradable?',
+                'tipo_pregunta' => 'slider',
+                'rango_min' => 0,
+                'rango_max' => 50,
             ],
-            15 => [ // Vidrio reutilizable
-                'texto' => '¿Qué alternativa sostenible al plástico es más efectiva para reducir residuos?',
-                'opciones' => [
-                    ['texto' => 'Usar botellas de vidrio reutilizables', 'correcta' => true],
-                    ['texto' => 'Usar bolsas plásticas de colores', 'correcta' => false],
-                    ['texto' => 'Comprar productos en envases individuales', 'correcta' => false],
-                    ['texto' => 'Usar solo plástico reciclado', 'correcta' => false],
-                ],
-            ],
-            16 => [ // Separar residuos
-                'texto' => '¿Qué acción ayuda más a reducir la contaminación por plásticos en casa?',
-                'opciones' => [
-                    ['texto' => 'Tirar todo el plástico al contenedor de orgánicos', 'correcta' => false],
-                    ['texto' => 'Separar residuos y reciclar correctamente', 'correcta' => true],
-                    ['texto' => 'Comprar solo productos importados', 'correcta' => false],
-                    ['texto' => 'Usar bolsas nuevas cada vez', 'correcta' => false],
-                ],
+            16 => [
+                'texto' => '¿Qué alternativa al plástico propondrías para los envases de comida a domicilio?',
+                'tipo_pregunta' => 'free',
             ],
 
-            // ── DATOS / PANTALLAS ─────────────────────
-            21 => [ // Centros de datos
+            // --- DATOS (IDs: 21, 22, 23, 24, 25, 26) ---
+            21 => [
                 'texto' => '¿Por qué los centros de datos consumen tanta energía?',
+                'tipo_pregunta' => 'options',
                 'opciones' => [
-                    ['texto' => 'Porque funcionan solo unas horas al día', 'correcta' => false],
-                    ['texto' => 'Por la refrigeración y mantenimiento de servidores', 'correcta' => true],
-                    ['texto' => 'Porque usan energía solar únicamente', 'correcta' => false],
-                    ['texto' => 'Porque no almacenan información', 'correcta' => false],
+                    ['texto' => 'Están lejos', 'correcta' => false],
+                    ['texto' => 'Refrigeración y servidores', 'correcta' => true],
+                    ['texto' => 'Solo usan solar', 'correcta' => false],
+                    ['texto' => 'No guardan nada', 'correcta' => false],
                 ],
             ],
-            22 => [ // Huella digital
-                'texto' => '¿Cuál de estas acciones ayuda a reducir la huella digital de los usuarios?',
+            22 => [
+                'texto' => '¿Qué porcentaje de energía renovable deberían usar los gigantes tecnológicos por contrato?',
+                'tipo_pregunta' => 'slider',
+                'rango_min' => 0,
+                'rango_max' => 100,
+            ],
+            23 => [
+                'texto' => 'Propón una estrategia para que una empresa tech reduzca su huella de carbono digital.',
+                'tipo_pregunta' => 'free',
+            ],
+            24 => [
+                'texto' => '¿Cuál de estas acciones ayuda a reducir la huella digital personal?',
+                'tipo_pregunta' => 'options',
                 'opciones' => [
-                    ['texto' => 'Mantener el correo lleno de correos antiguos', 'correcta' => false],
-                    ['texto' => 'Borrar archivos y correos innecesarios', 'correcta' => true],
-                    ['texto' => 'Descargar archivos de gran tamaño sin usar', 'correcta' => false],
-                    ['texto' => 'Dejar todos los dispositivos encendidos constantemente', 'correcta' => false],
+                    ['texto' => 'No borrar correos', 'correcta' => false],
+                    ['texto' => 'Borrar archivos innecesarios', 'correcta' => true],
+                    ['texto' => 'Descargar todo', 'correcta' => false],
+                    ['texto' => 'Siempre encendido', 'correcta' => false],
                 ],
             ],
-            23 => [ // Basura electrónica
-                'texto' => '¿Qué problema ambiental genera principalmente la electrónica de consumo?',
-                'opciones' => [
-                    ['texto' => 'Destrucción de bosques', 'correcta' => false],
-                    ['texto' => 'Basura electrónica y metales tóxicos', 'correcta' => true],
-                    ['texto' => 'Emisión de oxígeno', 'correcta' => false],
-                    ['texto' => 'Disminución de energía solar', 'correcta' => false],
-                ],
+            25 => [
+                'texto' => '¿Cuántos años de vida útil mínima debería garantizarse para un smartphone por ley?',
+                'tipo_pregunta' => 'slider',
+                'rango_min' => 1,
+                'rango_max' => 10,
             ],
-            24 => [ // Responsabilidad tech
-                'texto' => '¿Qué responsabilidad tienen las empresas tecnológicas respecto al ciclo de vida de los dispositivos?',
-                'opciones' => [
-                    ['texto' => 'Solo venderlos y olvidarse', 'correcta' => false],
-                    ['texto' => 'Garantizar reparación, reciclaje y fin de vida sostenible', 'correcta' => true],
-                    ['texto' => 'Fabricarlos siempre más baratos', 'correcta' => false],
-                    ['texto' => 'Cambiarlos cada año por modelos nuevos', 'correcta' => false],
-                ],
-            ],
-            25 => [ // Streaming y almacenamiento
-                'texto' => '¿Cuál de las siguientes prácticas reduce la contaminación digital indirecta?',
-                'opciones' => [
-                    ['texto' => 'Apagar las notificaciones', 'correcta' => false],
-                    ['texto' => 'Usar menos streaming y optimizar almacenamiento', 'correcta' => true],
-                    ['texto' => 'Comprar más dispositivos', 'correcta' => false],
-                    ['texto' => 'Mantener todos los archivos en la nube sin control', 'correcta' => false],
-                ],
-            ],
-            26 => [ // Reparar dispositivos
-                'texto' => '¿Qué estrategia puede usar un usuario para prolongar la vida útil de sus dispositivos electrónicos?',
-                'opciones' => [
-                    ['texto' => 'Actualizarlos solo cuando fallen', 'correcta' => false],
-                    ['texto' => 'Repararlos y reutilizarlos', 'correcta' => true],
-                    ['texto' => 'Comprar siempre el modelo más reciente', 'correcta' => false],
-                    ['texto' => 'Evitar cargarlos completamente', 'correcta' => false],
-                ],
+            26 => [
+                'texto' => '¿Cómo fomentarías el "derecho a reparar" frente a la obsolescencia programada?',
+                'tipo_pregunta' => 'free',
             ],
 
-            // ── ENERGÍA ───────────────────────────────
-            31 => [ // Solar fotovoltaica
-                'texto' => '¿Cuál de estas fuentes de energía produce menos emisiones de CO₂ en su ciclo de vida?',
+            // --- ENERGÍA (IDs: 31, 32, 33, 34, 35, 36, 37) ---
+            31 => [
+                'texto' => '¿Cuál de estas fuentes produce menos emisiones de CO₂ en su ciclo de vida?',
+                'tipo_pregunta' => 'options',
                 'opciones' => [
                     ['texto' => 'Carbón', 'correcta' => false],
                     ['texto' => 'Gas natural', 'correcta' => false],
@@ -193,130 +157,112 @@ class PreguntasTestSeeder extends Seeder
                     ['texto' => 'Petróleo', 'correcta' => false],
                 ],
             ],
-            32 => [ // Apagar electrónicos
-                'texto' => '¿Qué medida ayuda más a reducir el consumo energético en los hogares?',
-                'opciones' => [
-                    ['texto' => 'Dejar las luces encendidas todo el día', 'correcta' => false],
-                    ['texto' => 'Apagar equipos electrónicos cuando no se usan', 'correcta' => true],
-                    ['texto' => 'Usar bombillas incandescentes', 'correcta' => false],
-                    ['texto' => 'Mantener el aire acondicionado encendido todo el tiempo', 'correcta' => false],
-                ],
+            32 => [
+                'texto' => '¿Qué porcentaje de la red eléctrica nacional debería ser renovable para el 2030?',
+                'tipo_pregunta' => 'slider',
+                'rango_min' => 0,
+                'rango_max' => 100,
             ],
-            33 => [ // Renovables vs fósiles
-                'texto' => '¿Cuál es la principal ventaja de las energías renovables frente a los combustibles fósiles?',
-                'opciones' => [
-                    ['texto' => 'Son más caras', 'correcta' => false],
-                    ['texto' => 'Generan menos emisiones contaminantes', 'correcta' => true],
-                    ['texto' => 'Son más contaminantes', 'correcta' => false],
-                    ['texto' => 'Producen electricidad solo por la noche', 'correcta' => false],
-                ],
+            33 => [
+                'texto' => 'Describe un plan de acción para que tu comunidad reduzca el consumo eléctrico un 20%.',
+                'tipo_pregunta' => 'free',
             ],
-            34 => [ // Transporte mayor consumo
-                'texto' => '¿Qué sector consume más energía a nivel global?',
+            34 => [
+                'texto' => '¿Qué sector consume más energía a nivel global hoy?',
+                'tipo_pregunta' => 'options',
                 'opciones' => [
-                    ['texto' => 'Transporte y movilidad', 'correcta' => true],
+                    ['texto' => 'Transporte', 'correcta' => true],
                     ['texto' => 'Educación', 'correcta' => false],
                     ['texto' => 'Agricultura urbana', 'correcta' => false],
-                    ['texto' => 'Reciclaje de plásticos', 'correcta' => false],
+                    ['texto' => 'Reciclaje', 'correcta' => false],
                 ],
             ],
-            35 => [ // Empresas tech eficiencia
-                'texto' => '¿Qué acción puede tomar una empresa tecnológica para reducir su huella energética?',
-                'opciones' => [
-                    ['texto' => 'Mantener siempre encendidos los servidores', 'correcta' => false],
-                    ['texto' => 'Optimizar la eficiencia de sus centros de datos', 'correcta' => true],
-                    ['texto' => 'Comprar servidores más grandes sin control', 'correcta' => false],
-                    ['texto' => 'Aumentar el consumo eléctrico para mayor velocidad', 'correcta' => false],
-                ],
+            35 => [
+                'texto' => '¿Qué temperatura mínima (en grados) pondrías para el aire acondicionado en edificios públicos?',
+                'tipo_pregunta' => 'slider',
+                'rango_min' => 18,
+                'rango_max' => 30,
             ],
-            36 => [ // Transporte público y bici
-                'texto' => '¿Qué hábito cotidiano ayuda a disminuir el consumo de energía?',
-                'opciones' => [
-                    ['texto' => 'Dejar cargadores conectados sin usar', 'correcta' => false],
-                    ['texto' => 'Usar transporte público o bicicleta', 'correcta' => true],
-                    ['texto' => 'Usar siempre ascensores aunque sean pocos pisos', 'correcta' => false],
-                    ['texto' => 'Mantener electrodomésticos encendidos todo el tiempo', 'correcta' => false],
-                ],
+            36 => [
+                'texto' => '¿Qué opinas del transporte compartido frente al vehículo privado?',
+                'tipo_pregunta' => 'free',
             ],
-            37 => [ // BlaBlacar / transporte compartido
-                'texto' => '¿Qué ventaja ambiental tienen los servicios de transporte compartido como BlaBlaCar frente al vehículo privado?',
+            37 => [
+                'texto' => '¿Qué hábito ayuda a disminuir más el consumo de energía en casa?',
+                'tipo_pregunta' => 'options',
                 'opciones' => [
-                    ['texto' => 'Reducen el número de vehículos en circulación y las emisiones de CO₂', 'correcta' => true],
-                    ['texto' => 'Consumen más combustible por persona', 'correcta' => false],
-                    ['texto' => 'No tienen ningún impacto ambiental', 'correcta' => false],
-                    ['texto' => 'Solo benefician a las empresas de transporte', 'correcta' => false],
+                    ['texto' => 'Dejar cargadores puestos', 'correcta' => false],
+                    ['texto' => 'Usar bici o transporte público', 'correcta' => true],
+                    ['texto' => 'Siempre el ascensor', 'correcta' => false],
+                    ['texto' => 'Nada, da igual', 'correcta' => false],
                 ],
             ],
 
-            // ── ROPA ──────────────────────────────────
-            41 => [ // Fast fashion contaminante
+            // --- ROPA (IDs: 42, 43, 44, 45, 46, 47) ---
+            42 => [
                 'texto' => '¿Por qué la industria de la moda rápida ("fast fashion") es tan contaminante?',
+                'tipo_pregunta' => 'options',
                 'opciones' => [
-                    ['texto' => 'Porque produce poca ropa', 'correcta' => false],
-                    ['texto' => 'Porque genera grandes cantidades de residuos y consumo de recursos', 'correcta' => true],
-                    ['texto' => 'Porque usa solo materiales reciclados', 'correcta' => false],
-                    ['texto' => 'Porque vende ropa duradera', 'correcta' => false],
+                    ['texto' => 'Produce poco', 'correcta' => false],
+                    ['texto' => 'Residuos y consumo masivo', 'correcta' => true],
+                    ['texto' => 'Todo es reciclado', 'correcta' => false],
+                    ['texto' => 'Ropa duradera', 'correcta' => false],
                 ],
             ],
-            42 => [ // Reutilizar ropa
-                'texto' => '¿Qué práctica de los consumidores puede reducir el impacto ambiental de la ropa?',
+            43 => [
+                'texto' => '¿Qué porcentaje de impuesto aplicarías a las marcas que no usen materiales reciclados?',
+                'tipo_pregunta' => 'slider',
+                'rango_min' => 0,
+                'rango_max' => 50,
+            ],
+            44 => [
+                'texto' => 'Propón una alternativa sostenible al modelo actual de comprar ropa barata cada mes.',
+                'tipo_pregunta' => 'free',
+            ],
+            45 => [
+                'texto' => '¿Qué práctica reduce más el impacto ambiental de tu armario?',
+                'tipo_pregunta' => 'options',
                 'opciones' => [
-                    ['texto' => 'Comprar solo ropa barata y nueva', 'correcta' => false],
-                    ['texto' => 'Reutilizar, intercambiar o donar prendas', 'correcta' => true],
-                    ['texto' => 'Usar prendas solo una vez', 'correcta' => false],
-                    ['texto' => 'Evitar el reciclaje textil', 'correcta' => false],
+                    ['texto' => 'Comprar barato siempre', 'correcta' => false],
+                    ['texto' => 'Donar, reparar o intercambiar', 'correcta' => true],
+                    ['texto' => 'Usarlo solo una vez', 'correcta' => false],
+                    ['texto' => 'No reciclar nunca', 'correcta' => false],
                 ],
             ],
-            43 => [ // Agua textil
-                'texto' => '¿Cuál es la consecuencia principal del uso intensivo de agua en la industria textil?',
-                'opciones' => [
-                    ['texto' => 'Mejora la biodiversidad', 'correcta' => false],
-                    ['texto' => 'Escasez de agua y contaminación', 'correcta' => true],
-                    ['texto' => 'Producción de energía limpia', 'correcta' => false],
-                    ['texto' => 'Reducción de microplásticos', 'correcta' => false],
-                ],
+            46 => [
+                'texto' => '¿Cuántas prendas de ropa nuevas consideras aceptable comprar al año para ser sostenible?',
+                'tipo_pregunta' => 'slider',
+                'rango_min' => 0,
+                'rango_max' => 24,
             ],
-            44 => [ // Materiales sostenibles
-                'texto' => '¿Qué alternativa puede usar la industria para producir ropa más sostenible?',
-                'opciones' => [
-                    ['texto' => 'Materiales biodegradables o reciclados', 'correcta' => true],
-                    ['texto' => 'Mayor cantidad de químicos para teñir telas', 'correcta' => false],
-                    ['texto' => 'Fabricación rápida sin control', 'correcta' => false],
-                    ['texto' => 'Usar siempre algodón importado sin certificación', 'correcta' => false],
-                ],
-            ],
-            45 => [ // Moda circular
-                'texto' => '¿Qué es la "moda circular"?',
-                'opciones' => [
-                    ['texto' => 'Comprar y tirar prendas cada semana', 'correcta' => false],
-                    ['texto' => 'Reutilizar, reparar y reciclar ropa para minimizar residuos', 'correcta' => true],
-                    ['texto' => 'Usar ropa de colores circulares', 'correcta' => false],
-                    ['texto' => 'Fabricar solo ropa nueva de alta calidad', 'correcta' => false],
-                ],
-            ],
-            46 => [ // Larga duración
-                'texto' => '¿Qué acción del consumidor ayuda más a reducir la huella ambiental de la ropa?',
-                'opciones' => [
-                    ['texto' => 'Comprar siempre ropa nueva', 'correcta' => false],
-                    ['texto' => 'Elegir prendas de larga duración y materiales sostenibles', 'correcta' => true],
-                    ['texto' => 'Evitar lavar la ropa', 'correcta' => false],
-                    ['texto' => 'Comprar ropa barata sin importar la procedencia', 'correcta' => false],
-                ],
+            47 => [
+                'texto' => '¿Cómo convencerías a alguien para comprar en una tienda de segunda mano?',
+                'tipo_pregunta' => 'free',
             ],
         ];
 
-        foreach ($preguntas as $carta_id => $pregunta) {
+        // ── INSERTAR TODO ────────────────────────────
+        foreach ($data as $carta_id => $p) {
             $pregunta_id = DB::table('preguntas')->insertGetId([
-                'carta_id' => $carta_id,
-                'texto' => $pregunta['texto'],
+                'carta_id'      => $carta_id,
+                'texto'         => $p['texto'],
+                'tipo_pregunta' => $p['tipo_pregunta'],
+                'rango_min'     => $p['rango_min'] ?? null,
+                'rango_max'     => $p['rango_max'] ?? null,
+                'created_at'    => now(),
+                'updated_at'    => now(),
             ]);
 
-            foreach ($pregunta['opciones'] as $opcion) {
-                DB::table('opciones_respuesta')->insert([
-                    'pregunta_id' => $pregunta_id,
-                    'texto' => $opcion['texto'],
-                    'correcta' => $opcion['correcta'],
-                ]);
+            if ($p['tipo_pregunta'] === 'options' && isset($p['opciones'])) {
+                foreach ($p['opciones'] as $o) {
+                    DB::table('opciones_respuesta')->insert([
+                        'pregunta_id' => $pregunta_id,
+                        'texto'       => $o['texto'],
+                        'correcta'    => $o['correcta'],
+                        'created_at'  => now(),
+                        'updated_at'  => now(),
+                    ]);
+                }
             }
         }
     }

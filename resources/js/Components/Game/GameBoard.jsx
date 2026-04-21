@@ -1,7 +1,8 @@
 import { ROLES } from '../../data/gameData';
 import { GameProvider } from './Core/GameProvider';
 import { useGameChannel } from '../../hooks/useGameChannel';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import axios from 'axios';
 
 // Importación de Tableros por Modo
 import LocalDisplayBoard from './Modes/LocalDisplayBoard';
@@ -18,6 +19,7 @@ export function GameBoard({
     const [sectorsState, setSectorsState] = useState([]);
     const [currentChallenge, setCurrentChallenge] = useState({});
     const [turnNumber, setTurnNumber] = useState(tutorialStep > 0 ? 0 : 1);
+    const [isLoadingChallenge, setIsLoadingChallenge] = useState(false);
 
     // ── WebSocket: Escuchar el estado global del juego ────────────────────────
     const { gameState: serverGameState, votes } = useGameChannel(roomCode, 'host', 'Host');
@@ -35,6 +37,37 @@ export function GameBoard({
             }
         }
     }, [serverGameState]);
+    // ─────────────────────────────────────────────────────────────────────────
+
+    // ── Carga aleatoria de preguntas desde la BD ─────────────────────────────
+    const fetchRandomChallenge = useCallback(async () => {
+        setIsLoadingChallenge(true);
+        try {
+            const response = await axios.get('/api/preguntas/random');
+            const challenge = response.data;
+            // Añadir el turno actual
+            challenge.turn = `${turnNumber}/15`;
+            setCurrentChallenge(challenge);
+        } catch (error) {
+            console.error('[HUE-CO2] Error al cargar pregunta:', error);
+            // Fallback: dejar el challenge vacío para que ChallengeCard muestre "Esperando Reto"
+        } finally {
+            setIsLoadingChallenge(false);
+        }
+    }, [turnNumber]);
+
+    // Cargar una pregunta al montar si no hay challenge activo
+    useEffect(() => {
+        if (!currentChallenge || Object.keys(currentChallenge).length === 0) {
+            fetchRandomChallenge();
+        }
+    }, []);
+
+    // Función para cargar la siguiente pregunta (avanzar turno)
+    const nextChallenge = useCallback(() => {
+        setTurnNumber(prev => prev + 1);
+        fetchRandomChallenge();
+    }, [fetchRandomChallenge]);
     // ─────────────────────────────────────────────────────────────────────────
 
     // Preparación de datos de sectores con estilos consistentes
@@ -83,4 +116,3 @@ export function GameBoard({
         </GameProvider>
     );
 };
-
