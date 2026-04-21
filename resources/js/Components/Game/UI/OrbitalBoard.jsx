@@ -21,7 +21,7 @@ export default function OrbitalBoard({ sectors }) {
 
 
     return (
-        <div className="flex-1 relative flex items-center justify-center aspect-square max-w-[350px] lg:max-w-[480px]">
+        <div className="flex-1 relative flex items-center justify-center aspect-square max-w-[300px] lg:max-w-[430px] max-h-[300px] lg:max-h-[430px]">
             {/* Glow de Fondo */}
             <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,_#e9d5ff_0%,_transparent_70%)] opacity-30 animate-pulse" />
 

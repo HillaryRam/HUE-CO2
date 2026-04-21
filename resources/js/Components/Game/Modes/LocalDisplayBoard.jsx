@@ -81,8 +81,8 @@ export default function LocalDisplayBoard({ sectors, challenge, roomCode, turnNu
 
             {/* Cabecera integrada en el layout principal */}
             {/* Cabecera integrada en el layout principal */}
-            <div className="pt-8 px-8 w-full max-w-[1750px] mx-auto z-50">
-                <div className="flex items-end justify-between mb-12">
+            <div className="pt-4 lg:pt-6 px-8 w-full max-w-[1750px] mx-auto z-50">
+                <div className="flex items-end justify-between mb-2 lg:mb-3">
                     {/* Columna 1: Sala Online (Encima del Termómetro) */}
                     <div className="flex-none">
                         <div className="bg-white/90 backdrop-blur-md px-6 py-3 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 flex items-center gap-3">
@@ -133,7 +133,7 @@ export default function LocalDisplayBoard({ sectors, challenge, roomCode, turnNu
             </div>
 
             <div className="px-8 flex-1 flex flex-col w-full max-w-[1750px] mx-auto min-h-0 relative z-10">
-                <main className="flex-1 flex items-center justify-between gap-8 mb-4">
+                <main className="flex-1 flex items-center justify-between gap-4 lg:gap-6 mb-2 min-h-0 overflow-hidden">
                     {/* Termómetro */}
                     <GlobalThermometer temperature={0.0} />
 
@@ -156,8 +156,8 @@ export default function LocalDisplayBoard({ sectors, challenge, roomCode, turnNu
             </div>
 
             {/* Barra Inferior de Sectores */}
-            <footer className="w-full bg-white border-t border-neutral-200 p-6 mt-auto shadow-sm relative z-10">
-                <div className="max-w-[1440px] mx-auto flex justify-between items-center gap-4 w-full">
+            <footer className="w-full bg-white border-t border-neutral-200 p-3 lg:p-4 mt-auto shadow-sm relative z-10">
+                <div className="max-w-[1440px] mx-auto flex justify-between items-center gap-2 lg:gap-3 w-full">
                     {displaySectors.map((sector, idx) => (
                         <SectorMiniCard key={sector.id} sector={sector} index={idx} />
                     ))}

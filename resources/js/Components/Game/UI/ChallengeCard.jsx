@@ -42,7 +42,7 @@ export default function ChallengeCard({
 
     if (!challenge || Object.keys(challenge).length === 0) {
         return (
-            <div className={`${isCompact ? 'w-[300px] h-[520px]' : 'w-[340px] lg:w-[400px] h-[600px]'} bg-white rounded-[2rem] border-4 border-dashed border-slate-200 flex flex-col items-center justify-center p-8 text-center shrink-0`}>
+            <div className={`${isCompact ? 'w-[280px] h-[460px]' : 'w-[340px] lg:w-[400px] h-[600px]'} bg-white rounded-[2rem] border-4 border-dashed border-slate-200 flex flex-col items-center justify-center p-8 text-center shrink-0`}>
                 <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6 animate-pulse">
                     <Clock className="w-10 h-10 text-slate-300" />
                 </div>
@@ -217,7 +217,7 @@ export default function ChallengeCard({
         <motion.div 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className={`${isCompact ? 'w-[300px] h-[520px]' : 'w-[340px] lg:w-[400px] h-[600px]'} relative shrink-0`}
+            className={`${isCompact ? 'w-[280px] h-[460px]' : 'w-[340px] lg:w-[400px] h-[600px]'} relative shrink-0`}
         >
             {/* Sombra 3D */}
             <div className={`absolute inset-0 top-[10px] ${c.base} rounded-[2rem]`} />

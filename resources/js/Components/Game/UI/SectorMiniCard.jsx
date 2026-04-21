@@ -38,7 +38,7 @@ export default function SectorMiniCard({ sector, index }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 * index }}
-            className={`flex-1 min-w-[160px] h-40 px-4 py-3 ${theme.bg} rounded-3xl ${theme.shadow} inline-flex flex-col justify-between items-start transition-transform active:translate-y-1 active:shadow-[0px_0px_0px_0px_transparent]`}
+            className={`flex-1 min-w-[120px] lg:min-w-[160px] h-28 lg:h-32 px-3 py-2 lg:px-4 lg:py-3 ${theme.bg} rounded-3xl ${theme.shadow} inline-flex flex-col justify-between items-start transition-transform active:translate-y-1 active:shadow-[0px_0px_0px_0px_transparent]`}
         >
             <div className="self-stretch inline-flex justify-between items-center w-full">
                 {/* Contenedor del Icono blanco*/}
@@ -58,7 +58,7 @@ export default function SectorMiniCard({ sector, index }) {
 
             <div className="flex flex-col justify-start items-start gap-2.5 w-full">
                 {/* Titulo del Sector dinámico */}
-                <div className={`${theme.textTitle} text-lg xl:text-[22px] font-bold tracking-tight leading-none truncate w-full`}>
+                <div className={`${theme.textTitle} text-sm lg:text-lg xl:text-[20px] font-bold tracking-tight leading-none truncate w-full`}>
                     {sector.name}
                 </div>
 
@@ -70,7 +70,7 @@ export default function SectorMiniCard({ sector, index }) {
                         </span>
                     </div>
                     {/* Nombre Jugador */}
-                    <div className="text-slate-600 text-[10px] font-bold truncate w-full">
+                    <div className="text-slate-600 text-[9px] font-bold truncate w-full hidden lg:block">
                         Jugador: {sector.playerName || 'Esperando...'}
                     </div>
                 </div>
