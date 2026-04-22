@@ -144,6 +144,29 @@ export default function MobileController({
             );
         }
 
+        if (localGameState === 'lobby') {
+            return (
+                <motion.div
+                    key="lobby"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="bg-white border-4 border-[#e7e5e4] rounded-[2.5rem] p-8 text-center shadow-[0_8px_0_0_#e7e5e4]"
+                >
+                    <div className="w-20 h-20 bg-[#f5f5f4] rounded-full flex items-center justify-center mx-auto mb-6">
+                        <HeartHandshake className="w-10 h-10 text-[#a8a29e] animate-bounce" />
+                    </div>
+                    <h2 className="text-2xl font-black mb-3 text-[#1c1917]">¡Estás dentro!</h2>
+                    <p className="text-sm text-[#78716c] font-medium leading-relaxed mb-6">
+                        Te has conectado correctamente a la sala. Espera a que el anfitrión inicie la partida en la pantalla grande.
+                    </p>
+                    <div className="flex items-center justify-center gap-2">
+                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-[#a8a29e]">Conexión Establecida</span>
+                    </div>
+                </motion.div>
+            );
+        }
+
         if (localGameState === 'waiting') {
             return (
                 <motion.div

@@ -66,7 +66,7 @@ class GameFlowService
                 $juego->estado === 'ended' ? 'ended' : 'challenge',
                 $challengeData,
                 $sectorsData,
-                $nuevaCarta ? $nuevaCarta->tiempo : 0,
+                $nuevaCarta ? ($nuevaCarta->tiempo ?? 90) : 0,
                 $juego->current_turn
             );
 

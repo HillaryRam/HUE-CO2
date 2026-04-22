@@ -131,7 +131,7 @@ export default function GuestPortal({ pin = null }) {
                             roomCode={roomCode}
                             playerName={myPlayerName}
                             role={myRole || { id: 'ciudadania', name: 'Ciudadanía' }}
-                            gameState="waiting"
+                            gameState="lobby"
                         />
                     </div>
                 )}
