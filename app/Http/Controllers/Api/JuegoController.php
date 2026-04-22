@@ -35,23 +35,9 @@ class JuegoController extends Controller
             'room_code'   => strtoupper(substr(bin2hex(random_bytes(3)), 0, 6)),
         ]);
 
-        // Añadir al participante que crea la partida (Host)
-        if ($request->user()) {
-            $participante = Participante::create([
-                'user_id' => $request->user()->id,
-                'usuario' => $request->user()->username ?? $request->user()->name,
-            ]);
-
-            $juego->participantes()->attach($participante->participante_id, [
-                'rol_id'      => $request->rol_id ?? null,
-                'eco_fichas'  => 12,
-                'puntuacion'  => 0,
-            ]);
-        }
-
         return response()->json([
             'message' => 'Juego creado correctamente',
-            'juego'   => $juego->load(['anillo', 'participantes']),
+            'juego'   => $juego->load(['anillo']),
         ], 201);
     }
 

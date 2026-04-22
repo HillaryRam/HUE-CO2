@@ -101,6 +101,17 @@ export function LobbyView({ mode, onBack, onStartGame, selectedPlayers, setSelec
                 </div>
             )}
 
+            {selectedPlayers && (
+                <div className="mb-8 p-4 bg-blue-50 border-2 border-blue-200 rounded-2xl flex items-start gap-3 text-left max-w-sm">
+                    <div className="bg-blue-500 text-white p-1 rounded-lg shrink-0">
+                        <User className="w-4 h-4" />
+                    </div>
+                    <p className="text-[11px] text-blue-800 font-bold leading-tight">
+                        ANFITRIÓN: Recuerda que tú también debes conectarte con tu móvil usando el código de arriba para poder jugar y responder.
+                    </p>
+                </div>
+            )}
+
             <p className="text-[#78716c] text-sm font-medium italic mb-8">Los 6 sectores se repartirán automáticamente entre vosotros.</p>
 
             {selectedPlayers && (
