@@ -26,7 +26,40 @@ class GameFlowService
                 $turnResults = $this->processTurnResults($juego);
             }
 
-            // 2. Incrementar turno
+            // 2. Si es el primer turno y estamos en modo 'small', repartimos los roles
+            if ($juego->current_turn === 0 && $juego->modo === 'small') {
+                $participantes = $juego->participantes;
+                $numParticipantes = $participantes->count();
+                
+                if ($numParticipantes > 0 && $numParticipantes < 6) {
+                    $rolesIds = \Illuminate\Support\Facades\DB::table('roles')->pluck('rol_id')->toArray();
+                    shuffle($rolesIds);
+                    
+                    \Illuminate\Support\Facades\DB::table('juego_participante')
+                        ->where('juego_id', $juego->juego_id)
+                        ->delete();
+                    
+                    $inserts = [];
+                    $pIndex = 0;
+                    foreach ($rolesIds as $rol_id) {
+                        $p = $participantes[$pIndex % $numParticipantes];
+                        $inserts[] = [
+                            'juego_id' => $juego->juego_id,
+                            'participante_id' => $p->participante_id,
+                            'rol_id' => $rol_id,
+                            'eco_fichas' => 12,
+                            'puntuacion' => 0,
+                        ];
+                        $pIndex++;
+                    }
+                    \Illuminate\Support\Facades\DB::table('juego_participante')->insert($inserts);
+                    
+                    // Recargar participantes para reflejar los nuevos roles
+                    $juego->load('participantes');
+                }
+            }
+
+            // 3. Incrementar turno
             $juego->current_turn += 1;
 
             // 3. Seleccionar nueva carta del anillo actual

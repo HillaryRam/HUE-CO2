@@ -63,7 +63,7 @@ const VALIDATE_OPTIONS = [
  *  - onActivatePower: fn() — callback al activar poder especial
  */
 export default function MobileController({
-    role,
+    roles = [],
     playerName = 'Jugador',
     tokens = 4,
     timeLeft = 90,
@@ -76,6 +76,13 @@ export default function MobileController({
     onChat,
     onActivatePower,
 }) {
+    // ── Soporte Multi-Rol (Modo Local) ──
+    const safeRoles = roles.length > 0 ? roles : [{ id: 'ciudadania', name: 'Ciudadanía' }];
+    
+    // El tema visual se basa en el primer rol para mantener coherencia
+    const primaryRole = safeRoles[0];
+    const theme = ROLE_CONFIG[primaryRole?.id] ?? ROLE_CONFIG.ciudadania;
+
     const [localGameState, setLocalGameState] = useState(gameState);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [sliderValue, setSliderValue] = useState(challenge.sliderDefault ?? 50);
@@ -85,7 +92,7 @@ export default function MobileController({
     // ── WebSocket: Conectar al canal de la sala ───────────────────────────────
     const { isConnected, gameState: serverGameState, sendVote, sendProposal } = useGameChannel(
         roomCode,
-        role?.id,
+        primaryRole?.id, // ID por defecto
         playerName
     );
 
@@ -102,21 +109,25 @@ export default function MobileController({
     }, [serverGameState]);
     // ───────────────────────────────────────────────────────────────
 
-    const theme = ROLE_CONFIG[role?.id] ?? ROLE_CONFIG.ciudadania;
-    const icon = ROLE_ICONS[role?.id] ?? <Users />;
     const challengeType = currentChallenge.type ?? 'options';
 
     const formatTime = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
     const handleVote = async (answer) => {
         setSelectedAnswer(answer);
-        await sendVote(answer, challengeType);
+        // Votación en bloque para todos los sectores asignados
+        for (const r of safeRoles) {
+            await sendVote(answer, challengeType, r.id);
+        }
         setLocalGameState('voted');
     };
 
     const handleProposal = async () => {
         if (!proposalText.trim()) return;
-        await sendProposal(proposalText);
+        // Propuesta en bloque para todos los sectores asignados
+        for (const r of safeRoles) {
+            await sendProposal(proposalText, r.id);
+        }
         setLocalGameState('voted');
     };
 
@@ -340,25 +351,34 @@ export default function MobileController({
                     </div>
                 </header>
 
-                {/* ── IDENTIDAD DEL JUGADOR ── */}
+                {/* ── SELECTOR MULTI-ROL (ELIMINADO por unificación) ── */}
+
+                {/* ── IDENTIDAD DEL JUGADOR (UNIFICADA) ── */}
                 <div className={`px-5 pt-5 pb-7 ${theme.color} border-b-4 ${theme.border} rounded-b-[2.5rem] shrink-0 transition-colors duration-500`}>
                     <div className="flex justify-between items-start mb-5">
-                        {/* Icono del Rol */}
-                        <div className={`bg-white p-3 rounded-2xl shadow-sm border-2 ${theme.border}/30`}>
-                            {React.cloneElement(icon, { className: `w-7 h-7 ${theme.text}` })}
+                        {/* Iconos de los Roles */}
+                        <div className="flex -space-x-2">
+                            {safeRoles.map((r, idx) => {
+                                const rIcon = ROLE_ICONS[r.id] ?? <Users />;
+                                const rTheme = ROLE_CONFIG[r.id] ?? ROLE_CONFIG.ciudadania;
+                                return (
+                                    <div key={idx} className={`bg-white p-2.5 rounded-2xl shadow-sm border-2 ${rTheme.border} relative z-[${10 - idx}]`}>
+                                        {React.cloneElement(rIcon, { className: `w-6 h-6 ${rTheme.text}` })}
+                                    </div>
+                                );
+                            })}
                         </div>
-                        {/* EcoTokens */}
+                        {/* EcoTokens (Total Sumado) */}
                         <div className={`bg-[#1c1917] text-white px-4 py-2 rounded-[1.5rem] flex items-center gap-2 shadow-lg rotate-2`}>
                             <Zap className="w-5 h-5 fill-current text-amber-400" />
                             <span className="font-black text-xl">{tokens}</span>
                         </div>
                     </div>
                     <div>
-                        <h1 className={`text-2xl font-black leading-none mb-2 ${theme.text}`}>{role?.name ?? 'Sector'}</h1>
+                        <h1 className={`text-xl font-black leading-tight mb-2 ${theme.text}`}>
+                            {safeRoles.map(r => r.name).join(' + ')}
+                        </h1>
                         <div className="flex items-center gap-2 flex-wrap">
-                            <span className={`bg-white/60 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest`}>
-                                {role?.specialist ?? 'Especialista'}
-                            </span>
                             <span className={`font-bold text-xs opacity-70 ${theme.text}`}>
                                 Jugador: {playerName}
                             </span>
@@ -372,33 +392,44 @@ export default function MobileController({
                         {renderChallengeContent()}
                     </AnimatePresence>
 
-                    {/* ── TARJETA DE HABILIDADES (Siempre visible) ── */}
-                    <div className="bg-white border-4 border-[#e7e5e4] rounded-[2.5rem] p-5">
-                        <h3 className="text-[9px] font-black uppercase text-[#a8a29e] tracking-widest mb-4">Tus Habilidades</h3>
-                        <div className="space-y-4">
-                            <div className="flex items-start gap-3">
-                                <div className="p-1.5 bg-[#f5f5f4] rounded-lg mt-0.5 shrink-0">
-                                    <ShieldCheck className="w-4 h-4 text-[#a8a29e]" />
+                    {/* ── TARJETA DE HABILIDADES (Unificada) ── */}
+                    <div className="bg-white border-4 border-[#e7e5e4] rounded-[2.5rem] p-5 space-y-6">
+                        {safeRoles.map((r, idx) => {
+                            const rTheme = ROLE_CONFIG[r.id] ?? ROLE_CONFIG.ciudadania;
+                            const rIcon = ROLE_ICONS[r.id] ?? <Users />;
+                            return (
+                                <div key={idx} className="space-y-4">
+                                    <div className="flex items-center gap-2">
+                                        {React.cloneElement(rIcon, { className: `w-4 h-4 ${rTheme.text}` })}
+                                        <h3 className={`text-[10px] font-black uppercase ${rTheme.text} tracking-widest`}>
+                                            {r.name}
+                                        </h3>
+                                    </div>
+                                    <div className="space-y-3 pl-2 border-l-2 border-[#f5f5f4]">
+                                        <div className="flex items-start gap-3">
+                                            <div className="p-1.5 bg-[#f5f5f4] rounded-lg mt-0.5 shrink-0">
+                                                <ShieldCheck className="w-4 h-4 text-[#a8a29e]" />
+                                            </div>
+                                            <div>
+                                                <div className="text-[9px] font-black uppercase mb-1 text-[#78716c]">Pasiva</div>
+                                                <div className="text-xs font-medium text-[#78716c] leading-tight">{r.passiveDesc ?? '—'}</div>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={onActivatePower}
+                                            className={`w-full ${rTheme.btn} text-white p-3 rounded-xl font-black flex items-center justify-between shadow-md active:scale-95 transition-all`}
+                                        >
+                                            <span className="text-left leading-tight text-xs">
+                                                Poder Especial
+                                                <br />
+                                                <span className="text-[8px] uppercase opacity-80 font-bold">Cuesta {r.activeCost ?? 3} Tokens</span>
+                                            </span>
+                                            <Zap className="w-5 h-5 fill-current text-white/40" />
+                                        </button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <div className="text-[9px] font-black uppercase mb-1 text-[#78716c]">Pasiva</div>
-                                    <div className="text-xs font-medium text-[#78716c] leading-tight">{role?.passiveDesc ?? '—'}</div>
-                                </div>
-                            </div>
-                            <div className="pt-4 border-t-2 border-[#f5f5f4]">
-                                <button
-                                    onClick={onActivatePower}
-                                    className={`w-full ${theme.btn} text-white p-4 rounded-2xl font-black flex items-center justify-between shadow-lg active:scale-95 transition-all`}
-                                >
-                                    <span className="text-left leading-tight text-sm">
-                                        Activar Poder Especial
-                                        <br />
-                                        <span className="text-[9px] uppercase opacity-80 font-bold">Cuesta {role?.activeCost ?? 3} Tokens</span>
-                                    </span>
-                                    <Zap className="w-6 h-6 fill-current text-white/40" />
-                                </button>
-                            </div>
-                        </div>
+                            );
+                        })}
                     </div>
                 </main>
 

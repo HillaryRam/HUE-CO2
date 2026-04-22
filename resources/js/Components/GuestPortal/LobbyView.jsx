@@ -1,10 +1,42 @@
-import React from 'react';
-import { ChevronLeft, User, Play, Clock } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronLeft, User, Play, Clock, Users } from 'lucide-react';
+import axios from 'axios'; // We need axios if we wanted to fetch initial players, but let's just listen
 
 export function LobbyView({ mode, onBack, onStartGame, selectedPlayers, setSelectedPlayers, roomCode }) {
     console.log('[HUE-CO2] LobbyView Render Props:', { mode, roomCode, selectedPlayers });
 
     const safeRoomCode = String(roomCode || "");
+    const [connectedPlayers, setConnectedPlayers] = useState([]);
+
+    useEffect(() => {
+        if (!safeRoomCode) return;
+        
+        // Cargar jugadores que ya estén en la sala
+        const fetchPlayers = async () => {
+            try {
+                const res = await axios.get(`/api/juego/${safeRoomCode}/estado`);
+                if (res.data && res.data.sectors) {
+                    const players = res.data.sectors.map(s => s.playerName);
+                    setConnectedPlayers([...new Set(players)]);
+                }
+            } catch (e) {
+                console.error('Error fetching players', e);
+            }
+        };
+        fetchPlayers();
+
+        // Escuchar nuevos jugadores
+        const channelName = `game.${safeRoomCode}`;
+        const channel = window.Echo.channel(channelName);
+        channel.listen('.player.joined', (e) => {
+            setConnectedPlayers(prev => {
+                if (prev.includes(e.playerName)) return prev;
+                return [...prev, e.playerName];
+            });
+        });
+
+        return () => window.Echo.leave(channelName);
+    }, [safeRoomCode]);
 
     const renderSoloLobby = () => (
         <div className="flex flex-col items-center text-center">
@@ -24,7 +56,10 @@ export function LobbyView({ mode, onBack, onStartGame, selectedPlayers, setSelec
         </div>
     );
 
-    const renderSmallLobby = () => (
+    const renderSmallLobby = () => {
+        const isReady = selectedPlayers && connectedPlayers.length >= selectedPlayers;
+        
+        return (
         <div className="flex flex-col items-center text-center">
             <h3 className="text-2xl font-black mb-6 text-stone-900">Grupo de 2 a 5 Jugadores</h3>
             <div className="grid grid-cols-2 gap-4 mb-8 w-full max-w-sm">
@@ -41,21 +76,52 @@ export function LobbyView({ mode, onBack, onStartGame, selectedPlayers, setSelec
                     </button>
                 ))}
             </div>
+            
+            {selectedPlayers && (
+                <div className="mb-6 w-full max-w-sm">
+                    <div className="flex items-center justify-between bg-[#f5f5f4] p-4 rounded-2xl border-2 border-stone-200">
+                        <div className="flex items-center gap-2">
+                            <Users className="w-5 h-5 text-stone-500" />
+                            <span className="font-bold text-stone-600">Jugadores Conectados</span>
+                        </div>
+                        <div className="text-xl font-black">
+                            <span className={connectedPlayers.length >= selectedPlayers ? "text-[#16a34a]" : "text-[#fb923c]"}>
+                                {connectedPlayers.length}
+                            </span>
+                            <span className="text-stone-400"> / {selectedPlayers}</span>
+                        </div>
+                    </div>
+                    {connectedPlayers.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-3 justify-center">
+                            {connectedPlayers.map((name, i) => (
+                                <span key={i} className="bg-stone-200 text-stone-700 px-3 py-1 rounded-full text-xs font-bold">{name}</span>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
+
             <p className="text-[#78716c] text-sm font-medium italic mb-8">Los 6 sectores se repartirán automáticamente entre vosotros.</p>
 
             {selectedPlayers && (
                 <button
                     onClick={() => onStartGame({ players: selectedPlayers, mode: 'small' })}
-                    className="w-full max-w-sm bg-[#fb923c] text-white py-5 rounded-[2rem] font-black text-xl shadow-[0_8px_0_0_#ea580c] hover:shadow-[0_4px_0_0_#ea580c] hover:translate-y-1 active:shadow-none active:translate-y-2 transition-all flex items-center justify-center gap-3"
+                    disabled={!isReady}
+                    className={`w-full max-w-sm text-white py-5 rounded-[2rem] font-black text-xl transition-all flex items-center justify-center gap-3
+                        ${isReady 
+                            ? 'bg-[#fb923c] shadow-[0_8px_0_0_#ea580c] hover:shadow-[0_4px_0_0_#ea580c] hover:translate-y-1 active:shadow-none active:translate-y-2' 
+                            : 'bg-stone-300 shadow-none cursor-not-allowed opacity-50'}`}
                 >
-                    ¡Comenzar Partida! <Play className="w-6 h-6 fill-current" />
+                    {isReady ? '¡Comenzar Partida!' : 'Esperando Jugadores...'} 
+                    {isReady && <Play className="w-6 h-6 fill-current" />}
                 </button>
             )}
         </div>
-    );
+    )};
 
     return (
         <div className="w-full max-w-2xl bg-white border-4 border-[#e7e5e4] p-8 md:p-12 rounded-[3.5rem] shadow-2xl relative transition-all duration-300">
+
             <button 
                 onClick={onBack} 
                 className="absolute top-8 left-8 text-[#a8a29e] hover:text-[#1c1917] flex items-center gap-1 font-bold text-sm bg-white p-2 rounded-xl z-10"

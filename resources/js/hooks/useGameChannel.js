@@ -70,11 +70,12 @@ export function useGameChannel(roomCode, sectorId, playerName) {
     }, [roomCode]);
 
     // ── Enviar Voto (MobileController → Backend → Reverb → LocalDisplayBoard) ──
-    const sendVote = useCallback(async (answer, type = 'options') => {
-        if (!roomCode || !sectorId) return;
+    const sendVote = useCallback(async (answer, type = 'options', sectorIdOverride = null) => {
+        const finalSectorId = sectorIdOverride || sectorId;
+        if (!roomCode || !finalSectorId) return;
         try {
             await axios.post(`/api/game/${roomCode}/vote`, {
-                sector_id:   sectorId,
+                sector_id:   finalSectorId,
                 player_name: playerName,
                 answer,
                 type,
@@ -85,11 +86,12 @@ export function useGameChannel(roomCode, sectorId, playerName) {
     }, [roomCode, sectorId, playerName]);
 
     // ── Enviar Propuesta (Texto Libre) ────────────────────────────────────────
-    const sendProposal = useCallback(async (text) => {
-        if (!roomCode || !sectorId || !text.trim()) return;
+    const sendProposal = useCallback(async (text, sectorIdOverride = null) => {
+        const finalSectorId = sectorIdOverride || sectorId;
+        if (!roomCode || !finalSectorId || !text.trim()) return;
         try {
             await axios.post(`/api/game/${roomCode}/proposal`, {
-                sector_id:     sectorId,
+                sector_id:     finalSectorId,
                 player_name:   playerName,
                 proposal_text: text,
             });

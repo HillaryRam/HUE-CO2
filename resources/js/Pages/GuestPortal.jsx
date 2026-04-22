@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head, router } from '@inertiajs/react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Crown, Gamepad2 } from 'lucide-react';
 
 // Importación de componentes modulares
 import { MainMenuView } from '../Components/GuestPortal/MainMenuView';
@@ -10,6 +11,37 @@ import { LobbyView } from '../Components/GuestPortal/LobbyView';
 import { JoinView } from '../Components/GuestPortal/JoinView';
 import MobileController from '../Components/Game/Modes/MobileController';
 import axios from 'axios';
+import { ROLES } from '../data/gameData';
+import { useGameChannel } from '../hooks/useGameChannel';
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null, errorInfo: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+  componentDidCatch(error, errorInfo) {
+    this.setState({ error, errorInfo });
+    console.error('ErrorBoundary caught:', error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-8 bg-red-50 text-red-900 min-h-screen">
+            <h1 className="text-2xl font-bold mb-4">React Crash</h1>
+            <pre className="text-sm bg-white p-4 rounded overflow-auto border border-red-200">
+                {this.state.error && this.state.error.toString()}
+                <br/>
+                {this.state.errorInfo && this.state.errorInfo.componentStack}
+            </pre>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 export default function GuestPortal({ pin = null }) {
     const [view, setView] = useState(pin ? 'join' : 'main');
@@ -17,20 +49,62 @@ export default function GuestPortal({ pin = null }) {
     const [roomCode, setRoomCode] = useState(pin ? pin.toString() : null);
     const [selectedPlayers, setSelectedPlayers] = useState(null);
     const [myPlayerName, setMyPlayerName] = useState('');
-    const [myRole, setMyRole] = useState(null);
+    const [myRoles, setMyRoles] = useState([]);
+    const [myTotalTokens, setMyTotalTokens] = useState(0);
+    
+    // Escuchar el canal del juego para recibir el estado en tiempo real (y con él los roles asignados)
+    const { gameState: serverGameState } = useGameChannel(roomCode, null, myPlayerName);
+
+    // Actualizar datos del rol cuando el servidor manda el estado de sectores
+    useEffect(() => {
+        if (serverGameState && serverGameState.sectors) {
+            // Buscar todos los sectores que pertenecen a este jugador
+            const myServerSectors = serverGameState.sectors.filter(s => s.playerName === myPlayerName);
+            if (myServerSectors.length > 0) {
+                const assignedRoles = myServerSectors.map(s => ROLES.find(r => r.id === s.id)).filter(Boolean);
+                const totalTokens = myServerSectors.reduce((sum, s) => sum + (s.tokens || 0), 0);
+                
+                setMyRoles(assignedRoles);
+                setMyTotalTokens(totalTokens);
+            }
+        }
+    }, [serverGameState, myPlayerName]);
 
     const navigateTo = (newView) => {
         setView(newView);
-        setSelectedPlayers(null); // Reset selection when moving back or changing views
+        if (newView === 'main') {
+            setMode(null);
+            setRoomCode(pin ? pin.toString() : null);
+        }
     };
 
     const handleSelectMode = (selectedMode) => {
         setMode(selectedMode);
-        setView('lobby');
+        if (selectedMode === 'solo' || selectedMode === 'small') {
+            navigateTo('lobby');
+        } else {
+            // Ir al tablero en nueva pestaña para Classic/Class
+            router.get('/tablero', { mode: selectedMode });
+        }
     };
 
-    const startLocalGame = (params = {}) => {
-        router.get('/juego-local', params);
+    const startLocalGame = async (params = {}) => {
+        try {
+            const response = await axios.post('/juego/crear', {
+                modo: params.mode || mode,
+                anillo_id: 1,
+                temperatura: '+0.0°C'
+            });
+            const code = response.data.room_code;
+            
+            // Ir al tablero
+            router.get(`/tablero/${code}`, { 
+                mode: params.mode || mode,
+                players: params.players || selectedPlayers
+            });
+        } catch (error) {
+            console.error('[HUE-CO2] Error creando partida local:', error);
+        }
     };
 
     const handleConnect = async (data) => {
@@ -38,22 +112,22 @@ export default function GuestPortal({ pin = null }) {
             const cleanPin = data.pin.replace(/\s/g, '');
             const response = await axios.post('/api/juegos/join', {
                 room_code: cleanPin,
-                usuario: data.nickname
+                usuario: data.nickname,
+                rol_id: null
             });
             
             setRoomCode(cleanPin);
             setMyPlayerName(data.nickname);
-            // Por ahora, si se une con éxito, vamos al mando (MobileController)
-            // En un flujo real, aquí elegiría rol si no se le asigna uno
-            setView('playing'); 
+            navigateTo('playing');
+
         } catch (error) {
-            console.error('Error al conectar:', error);
-            const errorMsg = error.response?.data?.error || error.response?.data?.message || 'No se pudo conectar. Revisa el PIN.';
-            alert(errorMsg);
+            console.error('[HUE-CO2] Error al conectar:', error);
+            alert('PIN incorrecto o sala no disponible');
         }
     };
 
     return (
+        <ErrorBoundary>
         <div className="min-h-screen bg-[#fafaf9] font-sans text-[#44403c] flex flex-col items-center justify-center p-6 relative overflow-hidden transition-colors duration-500">
             <Head title="Portal de Invitado | HUE-CO2" />
 
@@ -86,17 +160,16 @@ export default function GuestPortal({ pin = null }) {
                 {/* VISTA 1.5: OPCIONES DE ANFITRIÓN */}
                 {view === 'host_auth' && (
                     <HostAuthView 
-                        key="host" 
-                        isGuest={true}
+                        key="host_auth" 
                         onBack={() => navigateTo('main')} 
-                        onSelectMode={() => navigateTo('select_mode')} 
+                        onSuccess={() => navigateTo('select_mode')} 
                     />
                 )}
 
-                {/* VISTA 2: SELECCIÓN DE MODO */}
+                {/* VISTA 2.5: SELECT MODE */}
                 {view === 'select_mode' && (
                     <ModeSelectionView 
-                        key="select" 
+                        key="select_mode" 
                         onBack={() => navigateTo('host_auth')} 
                         onSelectMode={handleSelectMode} 
                     />
@@ -130,12 +203,14 @@ export default function GuestPortal({ pin = null }) {
                         <MobileController 
                             roomCode={roomCode}
                             playerName={myPlayerName}
-                            role={myRole || { id: 'ciudadania', name: 'Ciudadanía' }}
+                            roles={myRoles.length > 0 ? myRoles : [{ id: 'ciudadania', name: 'Ciudadanía' }]}
+                            tokens={myTotalTokens}
                             gameState="lobby"
                         />
                     </div>
                 )}
             </AnimatePresence>
         </div>
+        </ErrorBoundary>
     );
 }
