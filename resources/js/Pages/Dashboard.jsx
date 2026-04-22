@@ -16,6 +16,7 @@ export default function Dashboard() {
     const [mode, setMode] = useState(null);
     const [selectedPlayers, setSelectedPlayers] = useState(null);
     const [roomCode, setRoomCode] = useState('');
+    const [juegoId, setJuegoId] = useState(null);
     const [isCreating, setIsCreating] = useState(false);
 
     const navigateTo = (newView) => {
@@ -38,6 +39,7 @@ export default function Dashboard() {
 
             if (response.data?.juego?.room_code) {
                 setRoomCode(response.data.juego.room_code);
+                setJuegoId(response.data.juego.juego_id);
                 setView('lobby');
             } else {
                 throw new Error('No se recibió el código de sala');
@@ -48,6 +50,21 @@ export default function Dashboard() {
             alert('Error al crear la sala: ' + msg);
         } finally {
             setIsCreating(false);
+        }
+    };
+
+    const handleSetSelectedPlayers = async (num) => {
+        setSelectedPlayers(num);
+        if (!juegoId) return;
+        
+        try {
+            // Sincronizar el límite de jugadores con el backend (vía web route con sesión)
+            await axios.put(`/juego/${juegoId}`, {
+                max_players: num
+            });
+            console.log(`[HUE-CO2] Límite de jugadores actualizado a ${num}`);
+        } catch (error) {
+            console.error('Error al actualizar límite de jugadores:', error);
         }
     };
 
@@ -156,7 +173,7 @@ export default function Dashboard() {
                             mode={mode}
                             roomCode={roomCode}
                             selectedPlayers={selectedPlayers}
-                            setSelectedPlayers={setSelectedPlayers}
+                            setSelectedPlayers={handleSetSelectedPlayers}
                             onBack={() => navigateTo('select_mode')}
                             onStartGame={startLocalGame}
                         />

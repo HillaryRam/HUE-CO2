@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Head, router } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Crown, Gamepad2 } from 'lucide-react';
+import { Crown, Gamepad2, AlertCircle } from 'lucide-react';
 
 // Importación de componentes modulares
 import { MainMenuView } from '../Components/GuestPortal/MainMenuView';
@@ -51,6 +51,7 @@ export default function GuestPortal({ pin = null }) {
     const [myPlayerName, setMyPlayerName] = useState('');
     const [myRoles, setMyRoles] = useState([]);
     const [myTotalTokens, setMyTotalTokens] = useState(0);
+    const [joinError, setJoinError] = useState(null);
     
     // Escuchar el canal del juego para recibir el estado en tiempo real (y con él los roles asignados)
     const { gameState: serverGameState } = useGameChannel(roomCode, null, myPlayerName);
@@ -122,7 +123,8 @@ export default function GuestPortal({ pin = null }) {
 
         } catch (error) {
             console.error('[HUE-CO2] Error al conectar:', error);
-            alert('PIN incorrecto o sala no disponible');
+            const msg = error.response?.data?.error || 'PIN incorrecto o sala no disponible';
+            setJoinError(msg);
         }
     };
 
@@ -207,6 +209,34 @@ export default function GuestPortal({ pin = null }) {
                             tokens={myTotalTokens}
                             gameState="lobby"
                         />
+                    </div>
+                )}
+            </AnimatePresence>
+
+            {/* POPUP DE ERROR (Sala llena, PIN incorrecto, etc.) */}
+            <AnimatePresence>
+                {joinError && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm">
+                        <motion.div 
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="bg-white rounded-[2rem] p-8 max-w-sm w-full shadow-2xl text-center border-4 border-[#fb923c]/20"
+                        >
+                            <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <AlertCircle className="w-8 h-8" />
+                            </div>
+                            <h3 className="text-2xl font-black text-stone-900 mb-2">¡Ups! Algo ha pasado</h3>
+                            <p className="text-stone-600 font-bold mb-8 leading-relaxed">
+                                {joinError}
+                            </p>
+                            <button 
+                                onClick={() => setJoinError(null)}
+                                className="w-full py-4 bg-stone-900 text-white rounded-2xl font-black text-lg hover:bg-stone-800 transition-all active:scale-95 shadow-lg shadow-stone-200"
+                            >
+                                Entendido
+                            </button>
+                        </motion.div>
                     </div>
                 )}
             </AnimatePresence>

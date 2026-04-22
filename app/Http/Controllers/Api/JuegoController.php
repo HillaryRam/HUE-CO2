@@ -29,6 +29,7 @@ class JuegoController extends Controller
 
         $juego = Juego::create([
             'modo'        => $request->modo,
+            'max_players' => $request->max_players,
             'temperatura' => 0,
             'anillo_id'   => $request->anillo_id,
             'estado'      => 'lobby',
@@ -53,7 +54,7 @@ class JuegoController extends Controller
     {
         $juego = Juego::findOrFail($id);
 
-        $juego->update($request->only(['modo', 'temperatura', 'anillo_id', 'estado']));
+        $juego->update($request->only(['modo', 'max_players', 'temperatura', 'anillo_id', 'estado']));
 
         return response()->json([
             'message' => 'Juego actualizado',
@@ -90,6 +91,11 @@ class JuegoController extends Controller
         
         if (!$juego) {
             return response()->json(['error' => 'La sala no existe o el PIN es incorrecto'], 404);
+        }
+
+        // Verificar si la sala ya está llena
+        if ($juego->max_players && $juego->participantes()->count() >= $juego->max_players) {
+            return response()->json(['error' => 'La sala ya está completa'], 403);
         }
 
         // Crear el participante

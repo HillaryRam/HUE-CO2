@@ -48,6 +48,7 @@ Route::get('/juego-local', function () {
 // Rutas DE JUEGO con sesión web (para Dashboard con Breeze auth)
 Route::middleware(['auth'])->group(function () {
     Route::post('/juego/crear', [App\Http\Controllers\Api\JuegoController::class, 'store'])->name('juego.crear');
+    Route::put('/juego/{id}', [App\Http\Controllers\Api\JuegoController::class, 'update'])->name('juego.update');
 });
 
 // Ruta de prueba Reverb (temporal)
