@@ -120,8 +120,12 @@ class JuegoController extends Controller
             'puntuacion' => 0,
         ]);
 
-        // Disparar evento para tiempo real
-        PlayerJoined::dispatch($juego->room_code, $participante->usuario, $participante->participante_id);
+        // Disparar evento para tiempo real (si falla Reverb, el jugador sigue unido)
+        try {
+            PlayerJoined::dispatch($juego->room_code, $participante->usuario, $participante->participante_id);
+        } catch (\Exception $e) {
+            \Log::error('[HUE-CO2] Error al transmitir PlayerJoined: ' . $e->getMessage());
+        }
 
         return response()->json([
             'message' => 'Te has unido a la partida',

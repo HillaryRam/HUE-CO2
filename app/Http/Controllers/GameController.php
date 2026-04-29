@@ -105,4 +105,33 @@ class GameController extends Controller
 
         return response()->json(['status' => 'ok', 'turn' => $juego->current_turn]);
     }
+
+    /**
+     * GET /api/juego/{roomCode}/estado
+     * Retorna el estado actual del juego (sectores, jugadores, reto activo).
+     */
+    public function estado(string $roomCode): JsonResponse
+    {
+        $juego = Juego::where('room_code', $roomCode)->first();
+
+        if (!$juego) {
+            return response()->json(['error' => 'Sala no encontrada'], 404);
+        }
+
+        // Obtener sectores con nombres de jugadores
+        $sectors = $juego->participantes->map(function ($p) {
+            return [
+                'id' => $p->pivot->rol_id,
+                'tokens' => $p->pivot->eco_fichas,
+                'playerName' => $p->usuario,
+            ];
+        });
+
+        return response()->json([
+            'state' => $juego->estado,
+            'turnNumber' => $juego->current_turn,
+            'sectors' => $sectors,
+            'challenge' => $juego->current_carta_id ? \App\Models\Carta::find($juego->current_carta_id) : null,
+        ]);
+    }
 }

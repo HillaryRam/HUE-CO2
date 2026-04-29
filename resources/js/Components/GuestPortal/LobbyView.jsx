@@ -9,7 +9,7 @@ export function LobbyView({ mode, onBack, onStartGame, selectedPlayers, setSelec
     const [connectedPlayers, setConnectedPlayers] = useState([]);
 
     useEffect(() => {
-        if (!safeRoomCode) return;
+        if (!safeRoomCode || safeRoomCode.startsWith('LOCAL_')) return;
         
         // Cargar jugadores que ya estén en la sala
         const fetchPlayers = async () => {

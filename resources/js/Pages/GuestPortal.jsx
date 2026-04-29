@@ -117,7 +117,17 @@ export default function GuestPortal({ pin = null }) {
 
         } catch (error) {
             console.error('[HUE-CO2] Error al conectar:', error);
-            const msg = error.response?.data?.error || 'PIN incorrecto o sala no disponible';
+            let msg = 'PIN incorrecto o sala no disponible';
+            if (error.response?.data?.errors) {
+                // Si hay errores de validación (422)
+                msg = Object.values(error.response.data.errors).flat().join(', ');
+            } else if (error.response?.data?.error) {
+                // Si hay un error específico (403, 404, etc)
+                msg = error.response.data.error;
+            } else if (error.response?.data?.message) {
+                // Mensaje genérico de Laravel
+                msg = error.response.data.message;
+            }
             setJoinError(msg);
         }
     };
