@@ -26,7 +26,7 @@ export default function OrbitalBoard({ sectors, turnNumber = 1, activeSectorId =
     });
 
     return (
-        <div className="flex-1 relative flex items-center justify-center aspect-square max-w-[300px] lg:max-w-[430px] max-h-[300px] lg:max-h-[430px]">
+        <div className="flex-1 relative flex items-center justify-center aspect-square max-w-[40vw] max-h-[70vh]">
             {/* Glow de Fondo */}
             <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,_#e9d5ff_0%,_transparent_70%)] opacity-30 animate-pulse" />
 
@@ -99,7 +99,7 @@ export default function OrbitalBoard({ sectors, turnNumber = 1, activeSectorId =
                     transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                     src="/images/earth_icon.png"
                     alt="Tierra"
-                    className="z-10 w-[100px] h-[100px] lg:w-[130px] lg:h-[130px] object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]"
+                    className="z-10 w-[8vw] h-[8vw] min-w-[80px] min-h-[80px] object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]"
                 />
 
                 {/* NODOS ORBITANDO */}
@@ -122,10 +122,10 @@ export default function OrbitalBoard({ sectors, turnNumber = 1, activeSectorId =
                                 scale: isActive ? 1.2 : 1,
                                 boxShadow: isActive ? "0 0 30px rgba(251,191,36,0.6)" : "0 4px 10px rgba(0,0,0,0.2)"
                             }}
-                            className={`absolute w-12 h-12 lg:w-14 lg:h-14 -ml-6 -mt-6 lg:-ml-7 lg:-mt-7 rounded-full ${p.bg} ${p.text} flex items-center justify-center z-20 shadow-lg border-2 ${isActive ? 'border-yellow-400' : p.border} transition-all duration-500`}
+                            className={`absolute w-[3.5vw] h-[3.5vw] min-w-[40px] min-h-[40px] -ml-[1.75vw] -mt-[1.75vw] rounded-full ${p.bg} ${p.text} flex items-center justify-center z-20 shadow-lg border-2 ${isActive ? 'border-yellow-400' : p.border} transition-all duration-500`}
                             style={{ left: `${x}%`, top: `${y}%` }}
                         >
-                            <div className="w-7 h-7 lg:w-8 lg:h-8">
+                            <div className="w-[60%] h-[60%]">
                                 {getRoleIcon(p.iconName, p.id)}
                             </div>
                             

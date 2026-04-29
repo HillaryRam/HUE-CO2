@@ -42,11 +42,11 @@ export default function SectorMiniCard({ sector, index, isActive = false }) {
                 scale: isActive ? 1.05 : 1,
             }}
             transition={{ delay: 0.1 * index }}
-            className={`flex-1 min-w-[120px] lg:min-w-[160px] h-28 lg:h-32 px-3 py-2 lg:px-4 lg:py-3 ${isActive ? 'bg-stone-50 ring-4 ring-amber-400' : theme.bg} rounded-3xl ${isActive ? 'shadow-xl' : theme.shadow} inline-flex flex-col justify-between items-start transition-all duration-300`}
+            className={`flex-1 min-w-[11vw] h-[14vh] px-3 py-2 lg:px-4 lg:py-3 ${isActive ? 'bg-stone-50 ring-4 ring-amber-400' : theme.bg} rounded-3xl ${isActive ? 'shadow-xl' : theme.shadow} inline-flex flex-col justify-between items-start transition-all duration-300`}
         >
             <div className="self-stretch inline-flex justify-between items-center w-full">
                 {/* Contenedor del Icono blanco*/}
-                <div className="w-8 h-8 p-1 bg-white rounded-lg flex justify-center items-center shrink-0">
+                <div className="w-[1.8vw] h-[1.8vw] min-w-[28px] min-h-[28px] p-1 bg-white rounded-lg flex justify-center items-center shrink-0">
                     <div className={`relative w-full h-full ${theme.iconClass}`}>
                         {getRoleIcon(sector.iconName, sector.id)}
                     </div>
@@ -60,22 +60,22 @@ export default function SectorMiniCard({ sector, index, isActive = false }) {
                 </div>
             </div>
 
-            <div className="flex flex-col justify-start items-start gap-2.5 w-full">
+            <div className="flex flex-col justify-start items-start gap-1 w-full min-h-0 overflow-hidden">
                 {/* Titulo del Sector dinámico */}
-                <div className={`${theme.textTitle} text-sm lg:text-lg xl:text-[20px] font-bold tracking-tight leading-none truncate w-full`}>
+                <div className={`${theme.textTitle} text-xs lg:text-sm xl:text-base font-bold tracking-tight leading-none truncate w-full`}>
                     {sector.name}
                 </div>
 
-                <div className="flex flex-col justify-center items-start gap-1 w-full">
+                <div className="flex flex-col justify-center items-start gap-0.5 w-full overflow-hidden">
                     {/* Cápsula de Especialista */}
-                    <div className="h-5 px-2 bg-white/50 rounded-full outline outline-[0.38px] outline-slate-400 inline-flex justify-center items-center">
-                        <span className="text-slate-600 text-[9px] font-bold uppercase tracking-wider">
+                    <div className="h-4 px-1.5 bg-white/50 rounded-full border border-slate-300 inline-flex justify-center items-center">
+                        <span className="text-slate-600 text-[8px] font-bold uppercase tracking-tight">
                             {sector.specialist || 'Especialista'}
                         </span>
                     </div>
                     {/* Nombre Jugador */}
-                    <div className="text-slate-600 text-[9px] font-bold truncate w-full hidden lg:block">
-                        Jugador: {sector.playerName || 'Esperando...'}
+                    <div className="text-slate-500 text-[9px] font-bold truncate w-full leading-tight">
+                        {sector.playerName ? `P: ${sector.playerName}` : 'Esperando...'}
                     </div>
                 </div>
             </div>

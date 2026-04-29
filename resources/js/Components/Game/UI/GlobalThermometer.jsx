@@ -10,7 +10,7 @@ export default function GlobalThermometer({ temperature = 0.5 }) {
         <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="w-[64px] h-full max-h-[380px] bg-white/80 backdrop-blur-md rounded-full p-2 flex flex-col items-center justify-between shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-white shrink-0 z-20"
+            className="w-[4vw] min-w-[50px] h-[60vh] bg-white/80 backdrop-blur-md rounded-full p-2 flex flex-col items-center justify-between shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-white shrink-0 z-20"
         >
             <div className="flex flex-col items-center gap-1 mt-2">
                 <Flame className="text-rose-500 w-8 h-8" strokeWidth={2.5} />
