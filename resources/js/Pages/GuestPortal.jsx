@@ -91,16 +91,10 @@ export default function GuestPortal({ pin = null }) {
 
     const startLocalGame = async (params = {}) => {
         try {
-            const response = await axios.post('/juego/crear', {
-                modo: params.mode || mode,
-                anillo_id: 1,
-                temperatura: '+0.0°C'
-            });
-            const code = response.data.room_code;
-            
-            // Ir al tablero
-            router.get(`/tablero/${code}`, { 
-                mode: params.mode || mode,
+            const gameMode = params.mode || mode;
+            // Usar la ruta pública /juego-local (no requiere autenticación)
+            router.get('/juego-local', { 
+                mode: gameMode,
                 players: params.players || selectedPlayers
             });
         } catch (error) {
@@ -164,7 +158,7 @@ export default function GuestPortal({ pin = null }) {
                     <HostAuthView 
                         key="host_auth" 
                         onBack={() => navigateTo('main')} 
-                        onSuccess={() => navigateTo('select_mode')} 
+                        onSelectMode={() => navigateTo('select_mode')} 
                     />
                 )}
 

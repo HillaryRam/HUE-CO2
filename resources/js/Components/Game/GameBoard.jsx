@@ -18,7 +18,7 @@ export function GameBoard({
 }) {
     const [sectorsState, setSectorsState] = useState([]);
     const [currentChallenge, setCurrentChallenge] = useState({});
-    const [turnNumber, setTurnNumber] = useState(tutorialStep > 0 ? 0 : 1);
+    const [turnNumber, setTurnNumber] = useState(0);
     const [isLoadingChallenge, setIsLoadingChallenge] = useState(false);
 
     // ── WebSocket: Escuchar el estado global del juego ────────────────────────
@@ -39,18 +39,28 @@ export function GameBoard({
     }, [serverGameState]);
     // ─────────────────────────────────────────────────────────────────────────
 
+    // ── Detectar si es un juego local (sin BD) ─────────────────────────────
+    const isLocalGame = roomCode && roomCode.startsWith('LOCAL_');
+
     // ── Carga de retos desde el servidor (avanzar turno) ─────────────────────
     const nextChallenge = useCallback(async () => {
         setIsLoadingChallenge(true);
         try {
-            await axios.post(`/api/game/${roomCode}/advance`);
-            // No seteamos nada aquí, esperamos el evento GameStateChanged vía WebSocket
+            if (isLocalGame) {
+                // Modo local: cargar pregunta aleatoria directamente de la API
+                const response = await axios.get('/api/preguntas/random');
+                setCurrentChallenge(response.data);
+                setTurnNumber(prev => prev + 1);
+            } else {
+                await axios.post(`/api/game/${roomCode}/advance`);
+                // No seteamos nada aquí, esperamos el evento GameStateChanged vía WebSocket
+            }
         } catch (error) {
             console.error('[HUE-CO2] Error al avanzar turno:', error);
         } finally {
             setIsLoadingChallenge(false);
         }
-    }, [roomCode]);
+    }, [roomCode, isLocalGame]);
 
     // Al montar, si no hay reto, pedimos al servidor que inicie el primero
     useEffect(() => {
@@ -90,7 +100,7 @@ export function GameBoard({
             case 'shared':
             case 'solo':
             case 'small':
-                return <LocalDisplayBoard sectors={sectors} challenge={currentChallenge} roomCode={roomCode} turnNumber={turnNumber} />;
+                return <LocalDisplayBoard sectors={sectors} challenge={currentChallenge} roomCode={roomCode} turnNumber={turnNumber} onNextChallenge={nextChallenge} />;
             
             case 'multiplayer':
                 return <OnlinePlayerBoard sectors={sectors} challenge={currentChallenge} roomCode={roomCode} myRole={myRole} />;

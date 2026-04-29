@@ -25,7 +25,12 @@ export function LobbyView({ mode, onBack, onStartGame, selectedPlayers, setSelec
         };
         fetchPlayers();
 
-        // Escuchar nuevos jugadores
+        // Escuchar nuevos jugadores (solo si Echo/Reverb está disponible)
+        if (!window.Echo) {
+            console.info('[HUE-CO2] Echo no disponible — lobby sin WebSocket.');
+            return;
+        }
+
         const channelName = `game.${safeRoomCode}`;
         const channel = window.Echo.channel(channelName);
         channel.listen('.player.joined', (e) => {

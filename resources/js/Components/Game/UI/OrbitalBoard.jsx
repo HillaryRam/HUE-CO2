@@ -17,8 +17,13 @@ const getRoleIcon = (iconName, id) => {
     }
 };
 
-export default function OrbitalBoard({ sectors }) {
+export default function OrbitalBoard({ sectors, turnNumber = 1 }) {
 
+    // Calcular el progreso del anillo exterior
+    // r = 220
+    const circumference = 2 * Math.PI * 220;
+    const answeredQuestions = Math.max(0, Math.min(turnNumber - 1, 6));
+    const offset = circumference - (circumference * (answeredQuestions / 6));
 
     return (
         <div className="flex-1 relative flex items-center justify-center aspect-square max-w-[300px] lg:max-w-[430px] max-h-[300px] lg:max-h-[430px]">
@@ -33,7 +38,23 @@ export default function OrbitalBoard({ sectors }) {
                     <circle cx="250" cy="250" r="115" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="4" />
                     <circle cx="250" cy="250" r="150" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="4" />
                     <circle cx="250" cy="250" r="185" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="4" />
-                    <circle cx="250" cy="250" r="220" fill="none" stroke="#3b82f6" strokeWidth="8" />
+                    
+                    {/* Anillo base (blanco) */}
+                    <circle cx="250" cy="250" r="220" fill="none" stroke="rgba(255,255,255,0.8)" strokeWidth="8" />
+                    
+                    {/* Anillo de progreso (azul) */}
+                    <circle 
+                        cx="250" 
+                        cy="250" 
+                        r="220" 
+                        fill="none" 
+                        stroke="#3b82f6" 
+                        strokeWidth="8"
+                        strokeDasharray={circumference}
+                        strokeDashoffset={offset}
+                        className="transition-all duration-1000 ease-in-out"
+                        strokeLinecap="round"
+                    />
                 </svg>
 
                 {/* Tierra en el Centro con animación de flotación */}

@@ -16,8 +16,8 @@ Se suscribe al canal Reverb para mostrar en tiempo real:
  - La propuesta de texto enviada por un jugador (cambia ChallengeCard a modo validate)
 */
 
-export default function LocalDisplayBoard({ sectors, challenge, roomCode, turnNumber = 1 }) {
-    const { timeLeft, setTimeLeft, intensity } = useGame();
+export default function LocalDisplayBoard({ sectors, challenge, roomCode, turnNumber = 1, onNextChallenge }) {
+    const { timeLeft, setTimeLeft, intensity, setIntensity } = useGame();
 
     // ── WebSocket: Escuchar eventos de la sala ──────────────────────────────
     const { votes, proposal, isConnected } = useGameChannel(roomCode, 'host', 'Pantalla');
@@ -52,8 +52,14 @@ export default function LocalDisplayBoard({ sectors, challenge, roomCode, turnNu
         }
     }, [timeLeft]);
 
+    const isLocalGame = roomCode && roomCode.startsWith('LOCAL_');
+
     const handleAdvance = async () => {
         try {
+            if (isLocalGame) {
+                if (onNextChallenge) onNextChallenge();
+                return;
+            }
             await axios.post(`/api/game/${roomCode}/advance`);
         } catch (error) {
             console.error('[HUE-CO2] Error al avanzar turno:', error);
@@ -137,7 +143,7 @@ export default function LocalDisplayBoard({ sectors, challenge, roomCode, turnNu
 
                     {/* Planetario Central */}
                     <div className="flex-1 flex justify-center">
-                        <OrbitalBoard sectors={displaySectors} />
+                        <OrbitalBoard sectors={displaySectors} turnNumber={turnNumber} />
                     </div>
 
                     {/* Reto — reacciona al tipo activo (puede cambiar a 'validate' al recibir propuesta) */}
@@ -145,7 +151,9 @@ export default function LocalDisplayBoard({ sectors, challenge, roomCode, turnNu
                         <ChallengeCard
                             challenge={activeChallenge}
                             intensity={intensity}
-                            readOnly={true}
+                            setIntensity={setIntensity}
+                            onApply={handleAdvance}
+                            readOnly={!isLocalGame}
                             sectorColor="blue"
                             isCompact={true}
                         />
