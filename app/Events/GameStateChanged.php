@@ -19,10 +19,12 @@ class GameStateChanged implements ShouldBroadcast
 
     public string $roomCode;
     public string $state;     // 'challenge' | 'waiting' | 'results' | 'ended'
-    public array  $challenge; // El nuevo objeto de reto (null si es 'waiting')
+    public array  $challenge; // El nuevo objeto de reto
     public array  $sectors;   // Estado de todos los sectores (tokens, etc.)
     public int    $timeLeft;  // Segundos restantes del turno
     public int    $turnNumber;
+    public float  $temperature; // Temperatura global actual
+    public bool   $lastTurnCorrect; // Indica si el último turno procesado fue correcto
 
     public function __construct(
         string $roomCode,
@@ -30,7 +32,9 @@ class GameStateChanged implements ShouldBroadcast
         array  $challenge = [],
         array  $sectors = [],
         int    $timeLeft  = 90,
-        int    $turnNumber = 1
+        int    $turnNumber = 1,
+        float  $temperature = 0.0,
+        bool   $lastTurnCorrect = false
     ) {
         $this->roomCode   = $roomCode;
         $this->state      = $state;
@@ -38,6 +42,8 @@ class GameStateChanged implements ShouldBroadcast
         $this->sectors    = $sectors;
         $this->timeLeft   = $timeLeft;
         $this->turnNumber = $turnNumber;
+        $this->temperature = $temperature;
+        $this->lastTurnCorrect = $lastTurnCorrect;
     }
 
     public function broadcastOn(): array

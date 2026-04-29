@@ -38,6 +38,7 @@ class GameController extends Controller
             'player_name' => 'required|string|max:50',
             'answer'      => 'required',
             'type'        => 'required|in:options,slider,validate',
+            'participant_id' => 'nullable|integer',
         ]);
 
         $juego = Juego::where('room_code', $roomCode)->firstOrFail();
@@ -47,7 +48,7 @@ class GameController extends Controller
             [
                 'juego_id'        => $juego->juego_id,
                 'carta_id'        => $juego->current_carta_id,
-                'participante_id' => $request->participante_id, // Usar participante_id enviado desde la App
+                'participante_id' => $request->participant_id ?? $request->participante_id, 
             ],
             [
                 'resultado' => is_array($validated['answer']) ? json_encode($validated['answer']) : $validated['answer'],

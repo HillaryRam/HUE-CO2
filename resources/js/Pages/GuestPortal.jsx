@@ -51,6 +51,7 @@ export default function GuestPortal({ pin = null }) {
     const [myPlayerName, setMyPlayerName] = useState('');
     const [myRoles, setMyRoles] = useState([]);
     const [myTotalTokens, setMyTotalTokens] = useState(0);
+    const [myParticipantId, setMyParticipantId] = useState(null);
     const [joinError, setJoinError] = useState(null);
     
     // Escuchar el canal del juego para recibir el estado en tiempo real (y con él los roles asignados)
@@ -113,6 +114,7 @@ export default function GuestPortal({ pin = null }) {
             
             setRoomCode(cleanPin);
             setMyPlayerName(data.nickname);
+            setMyParticipantId(response.data.participante?.participante_id);
             navigateTo('playing');
 
         } catch (error) {
@@ -208,6 +210,7 @@ export default function GuestPortal({ pin = null }) {
                     <div className="fixed inset-0 z-50 bg-white">
                         <MobileController 
                             roomCode={roomCode}
+                            participantId={myParticipantId}
                             playerName={myPlayerName}
                             roles={myRoles.length > 0 ? myRoles : [{ id: 'ciudadania', name: 'Ciudadanía' }]}
                             tokens={myTotalTokens}

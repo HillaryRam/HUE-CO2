@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, LogOut } from 'lucide-react';
+import { Clock, LogOut, Zap, CheckCircle2, AlertTriangle } from 'lucide-react';
 import OrbitalBoard from '../UI/OrbitalBoard';
 import GlobalThermometer from '../UI/GlobalThermometer';
 import ChallengeCard from '../UI/ChallengeCard';
@@ -13,7 +13,7 @@ export default function LocalDisplayBoard({ sectors, challenge, roomCode, turnNu
     const { timeLeft, setTimeLeft, intensity, setIntensity } = useGame();
 
     // ── WebSocket: Escuchar eventos de la sala ──────────────────────────────
-    const { votes, proposal, isConnected } = useGameChannel(roomCode, 'host', 'Pantalla');
+    const { votes, proposal, isConnected, gameState: serverGameState } = useGameChannel(roomCode, 'host', 'Pantalla');
 
     // Cuando llega una propuesta, transformar el reto al modo validate
     const [activeChallenge, setActiveChallenge] = useState(challenge);
@@ -45,19 +45,26 @@ export default function LocalDisplayBoard({ sectors, challenge, roomCode, turnNu
         }
     }, [timeLeft]);
 
-    const isLocalGame = roomCode && roomCode.startsWith('LOCAL_');
+    // Cuando el servidor cambia el estado del juego, actualizar nuestra vista
+    useEffect(() => {
+        if (!serverGameState) return;
+        
+        // Sincronizar temperatura global
+        if (serverGameState.temperature !== undefined) {
+            setIntensity(serverGameState.temperature);
+        }
+    }, [serverGameState]);
 
     const handleAdvance = async () => {
         try {
-            if (isLocalGame) {
-                if (onNextChallenge) onNextChallenge();
-                return;
-            }
             await axios.post(`/api/game/${roomCode}/advance`);
         } catch (error) {
             console.error('[HUE-CO2] Error al avanzar turno:', error);
         }
     };
+
+    const isLocalGame = roomCode && roomCode.startsWith('LOCAL_');
+    const gameState = serverGameState?.state || 'challenge'; // 'challenge' | 'results' | 'ended'
 
     // Sectores procesados para UI
     const displaySectors = sectors.map((s) => ({
@@ -149,7 +156,7 @@ export default function LocalDisplayBoard({ sectors, challenge, roomCode, turnNu
             </main>
 
             {/* Footer con Sectores */}
-            <footer className="bg-white border-t border-slate-200 p-6">
+            <footer className="bg-white border-t border-slate-200 p-6 relative">
                 <div className="max-w-[1600px] mx-auto flex justify-between gap-4">
                     {displaySectors.map((sector, idx) => (
                         <SectorMiniCard 
@@ -160,7 +167,63 @@ export default function LocalDisplayBoard({ sectors, challenge, roomCode, turnNu
                         />
                     ))}
                 </div>
+
+                {/* BOTÓN SIGUIENTE (Solo en modo resultados) */}
+                <AnimatePresence>
+                    {gameState === 'results' && (
+                        <motion.div 
+                            initial={{ opacity: 0, y: 50 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 50 }}
+                            className="absolute inset-0 bg-white/60 backdrop-blur-md flex items-center justify-center z-[60]"
+                        >
+                            <button 
+                                onClick={handleAdvance}
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white px-12 py-4 rounded-2xl font-black text-xl shadow-xl hover:scale-105 transition-all flex items-center gap-3 group"
+                            >
+                                <Zap className="w-6 h-6 text-yellow-300 group-hover:rotate-12 transition-transform" />
+                                SIGUIENTE RETO
+                            </button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </footer>
+
+            {/* OVERLAY DE RESULTADO DE TURNO */}
+            <AnimatePresence>
+                {gameState === 'results' && (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 z-[100] flex items-center justify-center pointer-events-none"
+                    >
+                        <motion.div 
+                            initial={{ scale: 0.5, rotate: -5 }}
+                            animate={{ scale: 1, rotate: 0 }}
+                            className={`p-16 rounded-[4rem] shadow-2xl flex flex-col items-center gap-6 border-8 ${serverGameState?.lastTurnCorrect ? 'bg-emerald-500 border-emerald-400' : 'bg-rose-600 border-rose-500'}`}
+                        >
+                            {serverGameState?.lastTurnCorrect ? (
+                                <>
+                                    <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-inner">
+                                        <CheckCircle2 className="w-20 h-20 text-emerald-500" />
+                                    </div>
+                                    <h1 className="text-white text-7xl font-black uppercase tracking-tighter">¡LOGRADO!</h1>
+                                    <p className="text-emerald-100 text-xl font-bold uppercase tracking-widest">+1 PUNTO PARA EL SECTOR</p>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-inner animate-bounce">
+                                        <AlertTriangle className="w-20 h-20 text-rose-500" />
+                                    </div>
+                                    <h1 className="text-white text-7xl font-black uppercase tracking-tighter">¡FALLO!</h1>
+                                    <p className="text-rose-100 text-xl font-bold uppercase tracking-widest">+0.15°C A LA TEMPERATURA GLOBAL</p>
+                                </>
+                            )}
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

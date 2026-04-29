@@ -21,7 +21,7 @@ import axios from 'axios';
  *   isConnected:   boolean,
  * }}
  */
-export function useGameChannel(roomCode, sectorId, playerName) {
+export function useGameChannel(roomCode, sectorId, playerName, participantId = null) {
     const channelRef = useRef(null);
 
     const [isConnected, setIsConnected]   = useState(false);
@@ -75,15 +75,16 @@ export function useGameChannel(roomCode, sectorId, playerName) {
         if (!roomCode || !finalSectorId) return;
         try {
             await axios.post(`/api/game/${roomCode}/vote`, {
-                sector_id:   finalSectorId,
-                player_name: playerName,
+                sector_id:       finalSectorId,
+                player_name:     playerName,
+                participant_id:  participantId,
                 answer,
                 type,
             });
         } catch (err) {
             console.error('[HUE-CO2] Error al enviar voto:', err);
         }
-    }, [roomCode, sectorId, playerName]);
+    }, [roomCode, sectorId, playerName, participantId]);
 
     // ── Enviar Propuesta (Texto Libre) ────────────────────────────────────────
     const sendProposal = useCallback(async (text, sectorIdOverride = null) => {
@@ -91,14 +92,15 @@ export function useGameChannel(roomCode, sectorId, playerName) {
         if (!roomCode || !finalSectorId || !text.trim()) return;
         try {
             await axios.post(`/api/game/${roomCode}/proposal`, {
-                sector_id:     finalSectorId,
-                player_name:   playerName,
-                proposal_text: text,
+                sector_id:       finalSectorId,
+                player_name:     playerName,
+                participant_id:  participantId,
+                proposal_text:   text,
             });
         } catch (err) {
             console.error('[HUE-CO2] Error al enviar propuesta:', err);
         }
-    }, [roomCode, sectorId, playerName]);
+    }, [roomCode, sectorId, playerName, participantId]);
 
     return {
         isConnected,
