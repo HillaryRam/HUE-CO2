@@ -244,9 +244,11 @@ export default function ChallengeCard({
                         <h2 className={`${isCompact ? 'text-[18px]' : 'text-[22px]'} text-slate-900 font-black tracking-tight leading-none`}>
                             {challenge.title ?? 'Título del Desafío'}
                         </h2>
-                        <p className={`text-slate-500 font-medium leading-relaxed ${challengeType === 'validate' || challengeType === 'options' ? 'text-[12px]' : 'text-sm'}`}>
-                            {challenge.description ?? 'Descripción del reto.'}
-                        </p>
+                        {challenge.description && challenge.description !== challenge.title && (
+                            <p className={`text-slate-500 font-medium leading-relaxed ${challengeType === 'validate' || challengeType === 'options' ? 'text-[12px]' : 'text-sm'}`}>
+                                {challenge.description}
+                            </p>
+                        )}
                     </div>
 
                     {/* Contenido Dinámico */}

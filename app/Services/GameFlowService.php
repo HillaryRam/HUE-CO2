@@ -249,7 +249,7 @@ class GameFlowService
             'id' => $carta->carta_id,
             'type' => $pregunta ? $pregunta->tipo_pregunta : 'options',
             'title' => $pregunta ? $pregunta->texto : $carta->texto,
-            'description' => $carta->texto,
+            'description' => $pregunta ? '' : $carta->texto, // Si hay pregunta, el título ya la muestra.
             'ring' => $juego->anillo ? $juego->anillo->nombre : 'General',
             'options' => $pregunta ? $pregunta->opciones->pluck('texto')->toArray() : [],
             'time' => $carta->tiempo ?? 20,
