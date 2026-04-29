@@ -21,7 +21,7 @@ const getRoleIcon = (iconName, id) => {
 };
 
 // Colores de los sectores
-export default function SectorMiniCard({ sector, index }) {
+export default function SectorMiniCard({ sector, index, isActive = false }) {
     const figmaColors = {
         'ciencia': { bg: 'bg-[#DEB8FF]', shadow: 'shadow-[0px_4px_0px_0px_rgba(150,64,255,1.0)]', textTitle: 'text-purple-600', iconClass: 'text-[#9640FF]' },
         'primario': { bg: 'bg-[#E2F1C3]', shadow: 'shadow-[0px_4px_0px_0px_rgba(101,132,55,1.0)]', textTitle: 'text-lime-700', iconClass: 'text-[#658437]' },
@@ -36,9 +36,13 @@ export default function SectorMiniCard({ sector, index }) {
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            animate={{ 
+                opacity: 1, 
+                y: isActive ? -10 : 0,
+                scale: isActive ? 1.05 : 1,
+            }}
             transition={{ delay: 0.1 * index }}
-            className={`flex-1 min-w-[120px] lg:min-w-[160px] h-28 lg:h-32 px-3 py-2 lg:px-4 lg:py-3 ${theme.bg} rounded-3xl ${theme.shadow} inline-flex flex-col justify-between items-start transition-transform active:translate-y-1 active:shadow-[0px_0px_0px_0px_transparent]`}
+            className={`flex-1 min-w-[120px] lg:min-w-[160px] h-28 lg:h-32 px-3 py-2 lg:px-4 lg:py-3 ${isActive ? 'bg-stone-50 ring-4 ring-amber-400' : theme.bg} rounded-3xl ${isActive ? 'shadow-xl' : theme.shadow} inline-flex flex-col justify-between items-start transition-all duration-300`}
         >
             <div className="self-stretch inline-flex justify-between items-center w-full">
                 {/* Contenedor del Icono blanco*/}

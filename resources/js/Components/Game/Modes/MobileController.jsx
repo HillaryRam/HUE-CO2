@@ -133,6 +133,33 @@ export default function MobileController({
 
     // ── Contenido del Área Principal según tipo de reto ──
     const renderChallengeContent = () => {
+        // Verificar si es nuestro turno (o si no hay un sector activo definido, en cuyo caso todos pueden votar)
+        const activeSectorId = currentChallenge.activeSectorId;
+        const isMyTurn = !activeSectorId || safeRoles.some(r => r.id === activeSectorId);
+
+        if (!isMyTurn) {
+            return (
+                <motion.div
+                    key="waiting-turn"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-stone-50 border-4 border-stone-200 rounded-[2.5rem] p-10 text-center"
+                >
+                    <div className="w-20 h-20 bg-stone-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <Clock className="w-10 h-10 text-stone-400 animate-pulse" />
+                    </div>
+                    <h2 className="text-xl font-black text-stone-400 mb-2 uppercase tracking-widest">Turno de otro sector</h2>
+                    <p className="text-stone-500 font-medium">
+                        Ahora es el turno de: <br/>
+                        <span className="text-stone-800 font-black text-2xl uppercase">{activeSectorId}</span>
+                    </p>
+                    <div className="mt-8 p-4 bg-white rounded-2xl border-2 border-stone-100 text-xs text-stone-400 italic">
+                        "Prepara tu estrategia, tu turno llegará pronto"
+                    </div>
+                </motion.div>
+            );
+        }
+
         if (localGameState === 'voted') {
             return (
                 <motion.div

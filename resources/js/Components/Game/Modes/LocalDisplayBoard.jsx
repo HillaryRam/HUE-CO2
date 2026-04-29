@@ -7,14 +7,7 @@ import SectorMiniCard from '../UI/SectorMiniCard';
 import { useGame } from '../Core/GameProvider';
 import { useGameChannel } from '../../../hooks/useGameChannel';
 import axios from 'axios';
-
-/*
-Tablero de visualización para el Modo Local (Kahoot).
-Se muestra en la pantalla grande — solo lectura, sin interacción del usuario.
-Se suscribe al canal Reverb para mostrar en tiempo real:
- - Cuántos jugadores/sectores han votado ya (conteo en la MiniCard)
- - La propuesta de texto enviada por un jugador (cambia ChallengeCard a modo validate)
-*/
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function LocalDisplayBoard({ sectors, challenge, roomCode, turnNumber = 1, onNextChallenge }) {
     const { timeLeft, setTimeLeft, intensity, setIntensity } = useGame();
@@ -65,111 +58,109 @@ export default function LocalDisplayBoard({ sectors, challenge, roomCode, turnNu
             console.error('[HUE-CO2] Error al avanzar turno:', error);
         }
     };
-    // ───────────────────────────────────────────────────────────────────────
 
-    // Usar los datos reales de los sectores (que incluyen playerName desde GameBoard)
+    // Sectores procesados para UI
     const displaySectors = sectors.map((s) => ({
         ...s,
-        // Marcar si ya votaron — compara con los votos recibidos por Reverb
         hasVoted: !!votes[s.id],
     }));
 
-    const voteCount  = Object.keys(votes).length;
-    const totalCount = sectors.length;
+    const activeSectorId = activeChallenge?.activeSectorId;
+    const activeSector = sectors.find(s => s.id === activeSectorId);
 
     return (
         <div className="h-screen w-full bg-[#f8fafc] flex flex-col font-sans p-0 overflow-hidden relative">
-            {/* Fondo decorativo sutil */}
+            {/* Fondo decorativo */}
             <div className="absolute inset-0 pointer-events-none opacity-40"
                 style={{ background: 'radial-gradient(circle at 50% 0%, #f1f5f9 0%, transparent 60%)' }} />
 
-            {/* Cabecera integrada en el layout principal */}
-            {/* Cabecera integrada en el layout principal */}
-            <div className="pt-4 lg:pt-6 px-8 w-full max-w-[1750px] mx-auto z-50">
-                <div className="flex items-end justify-between mb-2 lg:mb-3">
-                    {/* Columna 1: Sala Online (Encima del Termómetro) */}
-                    <div className="flex-none">
-                        <div className="bg-white/90 backdrop-blur-md px-6 py-3 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 flex items-center gap-3">
-                            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]"></div>
-                            <span className="text-[11px] font-black text-slate-400 tracking-[0.3em] uppercase">
-                                SALA: <span className="text-slate-900 ml-1">{roomCode || "6 5 4 8 9 0"}</span>
-                            </span>
-                        </div>
+            {/* Cabecera Superior */}
+            <div className="pt-6 px-10 w-full z-50">
+                <div className="flex items-center justify-between">
+                    {/* Código Sala */}
+                    <div className="bg-white/90 backdrop-blur-md px-6 py-3 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-3">
+                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-[11px] font-black text-slate-400 tracking-[0.3em] uppercase">
+                            SALA: <span className="text-slate-900 ml-1">{roomCode || "--- ---"}</span>
+                        </span>
                     </div>
 
-                    {/* Columna 2: Espacio Central (Encima del Planeta) */}
-                    <div className="flex-1 flex justify-center">
-                        {/* Espacio reservado para mantener simetría con el OrbitalBoard */}
-                    </div>
-
-                    {/* Columna 3: Tiempo y Controles (Encima de la carta de reto) */}
-                    <div className="flex-none pr-4">
-                        <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-4 bg-white/90 backdrop-blur-md px-6 py-2.5 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50">
-                                <Clock className="w-6 h-6 text-slate-300" strokeWidth={2.5} />
-                                <div className="flex flex-col -gap-1">
-                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Tiempo</span>
-                                    <span className={`font-black text-3xl tabular-nums tracking-tighter leading-none ${timeLeft < 30 ? 'text-rose-500 animate-pulse' : 'text-slate-800'}`}>
-                                        {Math.floor(timeLeft / 60)}:{timeLeft % 60 < 10 ? '0' : ''}{timeLeft % 60}
-                                    </span>
-                                </div>
-                            </div>
-                            <button 
-                                onClick={() => alert('Salir')}
-                                className="bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 text-slate-400 hover:text-rose-500 hover:bg-rose-50 hover:border-rose-100 transition-all group shrink-0"
-                                title="Salir del juego"
+                    {/* Banner de Turno Activo */}
+                    <AnimatePresence mode="wait">
+                        {activeSector && (
+                            <motion.div 
+                                key={activeSector.id}
+                                initial={{ y: -20, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                exit={{ y: 20, opacity: 0 }}
+                                className="bg-amber-50 border-2 border-amber-200 px-8 py-3 rounded-2xl shadow-sm flex items-center gap-4"
                             >
-                                <LogOut className="w-6 h-6 transition-transform group-hover:scale-110" />
-                            </button>
+                                <div className="text-amber-600 font-black text-xs uppercase tracking-widest">Turno de:</div>
+                                <div className="text-amber-900 font-black text-xl">{activeSector.playerName}</div>
+                                <div className="px-3 py-1 bg-amber-200 text-amber-800 rounded-lg text-[10px] font-bold uppercase">{activeSector.id}</div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Tiempo y Salir */}
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4 bg-white/90 backdrop-blur-md px-6 py-2.5 rounded-2xl shadow-sm border border-slate-100">
+                            <Clock className="w-6 h-6 text-slate-300" />
+                            <div className="flex flex-col">
+                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Tiempo</span>
+                                <span className={`font-black text-3xl tabular-nums ${timeLeft < 30 ? 'text-rose-500 animate-pulse' : 'text-slate-800'}`}>
+                                    {Math.floor(timeLeft / 60)}:{timeLeft % 60 < 10 ? '0' : ''}{timeLeft % 60}
+                                </span>
+                            </div>
                         </div>
+                        <button className="bg-white p-4 rounded-2xl border border-slate-100 text-slate-400 hover:text-rose-500 transition-colors">
+                            <LogOut className="w-6 h-6" />
+                        </button>
                     </div>
                 </div>
             </div>
 
-            {/* Indicador de Conexión + Votos en tiempo real */}
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-3 z-50">
-                <div className={`w-2.5 h-2.5 rounded-full ${isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
-                {activeChallenge?.type !== 'waiting' && voteCount > 0 && (
-                    <span className="text-xs font-black text-slate-500 uppercase tracking-widest bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full border border-slate-100">
-                        Votos: {voteCount}/{totalCount}
-                    </span>
-                )}
-            </div>
+            {/* Contenido Central */}
+            <main className="flex-1 flex items-center justify-between px-10 gap-10">
+                {/* Termómetro */}
+                <div className="w-[120px] lg:w-[150px] h-[60vh]">
+                    <GlobalThermometer temperature={intensity} />
+                </div>
 
-            <div className="px-8 flex-1 flex flex-col w-full max-w-[1750px] mx-auto min-h-0 relative z-10">
-                <main className="flex-1 flex items-center justify-between gap-4 lg:gap-6 mb-2 min-h-0 overflow-hidden">
-                    {/* Termómetro */}
-                    <GlobalThermometer temperature={0.0} />
+                {/* Orbital Board */}
+                <div className="flex-1 flex justify-center items-center">
+                    <OrbitalBoard 
+                        sectors={displaySectors} 
+                        turnNumber={turnNumber} 
+                        activeSectorId={activeSectorId}
+                    />
+                </div>
 
-                    {/* Planetario Central */}
-                    <div className="flex-1 flex justify-center">
-                        <OrbitalBoard sectors={displaySectors} turnNumber={turnNumber} />
-                    </div>
+                {/* Carta de Reto */}
+                <div className="w-[350px] lg:w-[450px]">
+                    <ChallengeCard
+                        challenge={activeChallenge}
+                        intensity={intensity}
+                        setIntensity={setIntensity}
+                        onApply={handleAdvance}
+                        readOnly={!isLocalGame}
+                    />
+                </div>
+            </main>
 
-                    {/* Reto — reacciona al tipo activo (puede cambiar a 'validate' al recibir propuesta) */}
-                    <div className="pr-4">
-                        <ChallengeCard
-                            challenge={activeChallenge}
-                            intensity={intensity}
-                            setIntensity={setIntensity}
-                            onApply={handleAdvance}
-                            readOnly={!isLocalGame}
-                            sectorColor="blue"
-                            isCompact={true}
-                        />
-                    </div>
-                </main>
-            </div>
-
-            {/* Barra Inferior de Sectores */}
-            <footer className="w-full bg-white border-t border-neutral-200 p-3 lg:p-4 mt-auto shadow-sm relative z-10">
-                <div className="max-w-[1440px] mx-auto flex justify-between items-center gap-2 lg:gap-3 w-full">
+            {/* Footer con Sectores */}
+            <footer className="bg-white border-t border-slate-200 p-6">
+                <div className="max-w-[1600px] mx-auto flex justify-between gap-4">
                     {displaySectors.map((sector, idx) => (
-                        <SectorMiniCard key={sector.id} sector={sector} index={idx} />
+                        <SectorMiniCard 
+                            key={sector.id} 
+                            sector={sector} 
+                            index={idx}
+                            isActive={sector.id === activeSectorId}
+                        />
                     ))}
                 </div>
             </footer>
         </div>
     );
 }
-

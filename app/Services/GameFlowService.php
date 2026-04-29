@@ -62,7 +62,20 @@ class GameFlowService
             // 3. Incrementar turno
             $juego->current_turn += 1;
 
-            // 3. Seleccionar nueva carta del anillo actual
+            // 4. Seleccionar el sector (rol) que le toca responder
+            $rolesAsignados = DB::table('juego_participante')
+                ->where('juego_id', $juego->juego_id)
+                ->pluck('rol_id')
+                ->unique()
+                ->toArray();
+
+            if (!empty($rolesAsignados)) {
+                // Seleccionar por orden basado en el turno
+                $index = ($juego->current_turn - 1) % count($rolesAsignados);
+                $juego->current_rol_id = $rolesAsignados[$index];
+            }
+
+            // 5. Seleccionar nueva carta del anillo actual
             $nuevaCarta = $this->pickRandomCard($juego->anillo_id);
             
             if ($nuevaCarta) {
@@ -75,21 +88,25 @@ class GameFlowService
             $juego->last_turn_at = now();
             $juego->save();
 
-            // 4. Obtener estado de los sectores para el tablero
+            // 6. Obtener estado de los sectores para el tablero
+            $activeRol = DB::table('roles')->where('rol_id', $juego->current_rol_id)->first();
+            $activeSectorSlug = $activeRol ? $activeRol->slug : null;
+
             $sectorsData = $juego->participantes->map(function ($p) {
-                // Obtener el slug del rol
                 $rol = DB::table('roles')->where('rol_id', $p->pivot->rol_id)->first();
                 return [
                     'id' => $rol ? $rol->slug : 'ciudadania',
                     'playerName' => $p->usuario,
                     'tokens' => $p->pivot->eco_fichas,
+                    'points' => $p->pivot->puntuacion, // Para el progreso del anillo
                 ];
             })->toArray();
 
-            // 5. Disparar evento para que todos los dispositivos se actualicen
+            // 7. Formatear reto e incluir el sector activo
             $challengeData = $this->formatChallenge($nuevaCarta, $juego);
+            $challengeData['activeSectorId'] = $activeSectorSlug;
             
-            // Notificar a los móviles sobre sus resultados individuales del turno que acaba de terminar
+            // Notificar a los móviles sobre sus resultados individuales
             if (!empty($turnResults)) {
                 TurnResultBroadcast::dispatch($juego->room_code, $turnResults);
             }
@@ -120,6 +137,10 @@ class GameFlowService
         $feedbackMap = [];
 
         foreach ($jugadores as $jugador) {
+            // Solo procesar si es el rol que tenía el turno (o si es un evento global)
+            $esSuTurno = ($jugador->pivot->rol_id == $juego->current_rol_id);
+            if (!$esSuTurno) continue;
+
             $propia_pregunta = $carta->preguntas->first();
             
             $voto = Turno::where([
@@ -129,6 +150,7 @@ class GameFlowService
             ])->first();
 
             $tokensGanados = 0;
+            $puntosGanados = 0; // Para el anillo
             $penalizacion = 0;
             $mensaje = "";
             $esCorrecto = false;
@@ -140,9 +162,9 @@ class GameFlowService
                 if ($carta->tipo === 'pregunta' && $propia_pregunta) {
                     $opcionCorrecta = $propia_pregunta->opciones->where('correcta', true)->first();
                     
-                    // Lógica según tipo de pregunta (simplificada para ABC)
                     if ($opcionCorrecta && $voto->resultado == $opcionCorrecta->texto) {
                         $tokensGanados = $carta->puntos > 0 ? $carta->puntos : 2;
+                        $puntosGanados = 1; // Un acierto = un paso más en el anillo
                         $mensaje = "¡Excelente! Respuesta correcta. +" . $tokensGanados . " EcoFichas";
                         $esCorrecto = true;
                     } else {
@@ -153,20 +175,28 @@ class GameFlowService
                     // Es un evento
                     $mensaje = "Evento procesado. " . $carta->texto;
                     $esCorrecto = true;
+                    $puntosGanados = 1;
                 }
             }
 
-            if ($penalizacion > 0 || $tokensGanados > 0) {
-                $nuevasFichas = max(0, $jugador->pivot->eco_fichas - $penalizacion + $tokensGanados);
-                $juego->participantes()->updateExistingPivot($jugador->participante_id, [
-                    'eco_fichas' => $nuevasFichas
+            // Actualizar EcoFichas y Puntuación (Progreso de anillo)
+            $nuevasFichas = max(0, $jugador->pivot->eco_fichas - $penalizacion + $tokensGanados);
+            $nuevaPuntuacion = $jugador->pivot->puntuacion + $puntosGanados;
+
+            DB::table('juego_participante')
+                ->where('juego_id', $juego->juego_id)
+                ->where('participante_id', $jugador->participante_id)
+                ->where('rol_id', $jugador->pivot->rol_id)
+                ->update([
+                    'eco_fichas' => $nuevasFichas,
+                    'puntuacion' => $nuevaPuntuacion,
                 ]);
-            }
 
             $feedbackMap[$jugador->participante_id] = [
-                'success' => $esCorrecto,
+                'correct' => $esCorrecto,
                 'message' => $mensaje,
-                'tokens'  => $tokensGanados - $penalizacion,
+                'tokens'  => $nuevasFichas,
+                'points'  => $nuevaPuntuacion
             ];
         }
 
