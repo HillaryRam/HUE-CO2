@@ -5,42 +5,55 @@ import axios from 'axios'; // We need axios if we wanted to fetch initial player
 export function LobbyView({ mode, onBack, onStartGame, selectedPlayers, setSelectedPlayers, roomCode }) {
     console.log('[HUE-CO2] LobbyView Render Props:', { mode, roomCode, selectedPlayers });
 
-    const safeRoomCode = String(roomCode || "");
+    const safeRoomCode = String(roomCode || "").replace(/\s/g, '');
     const [connectedPlayers, setConnectedPlayers] = useState([]);
 
     useEffect(() => {
         if (!safeRoomCode || safeRoomCode.startsWith('LOCAL_')) return;
         
+        console.log(`[HUE-CO2] Inicializando Lobby para sala: ${safeRoomCode}`);
+
         // Cargar jugadores que ya estén en la sala
         const fetchPlayers = async () => {
             try {
                 const res = await axios.get(`/api/juego/${safeRoomCode}/estado`);
+                console.log('[HUE-CO2] Estado inicial recibido:', res.data);
                 if (res.data && res.data.sectors) {
                     const players = res.data.sectors.map(s => s.playerName);
                     setConnectedPlayers([...new Set(players)]);
                 }
             } catch (e) {
-                console.error('Error fetching players', e);
+                console.error('[HUE-CO2] Error fetching players:', e);
             }
         };
         fetchPlayers();
 
+        // Polling de seguridad cada 5 segundos (por si falla el WebSocket)
+        const pollInterval = setInterval(fetchPlayers, 5000);
+
         // Escuchar nuevos jugadores (solo si Echo/Reverb está disponible)
         if (!window.Echo) {
-            console.info('[HUE-CO2] Echo no disponible — lobby sin WebSocket.');
-            return;
+            console.info('[HUE-CO2] Echo no disponible — lobby por polling.');
+            return () => clearInterval(pollInterval);
         }
 
         const channelName = `game.${safeRoomCode}`;
+        console.log(`[HUE-CO2] Escuchando canal: ${channelName}`);
+        
         const channel = window.Echo.channel(channelName);
         channel.listen('.player.joined', (e) => {
+            console.log('[HUE-CO2] Evento PlayerJoined recibido vía WS:', e);
             setConnectedPlayers(prev => {
                 if (prev.includes(e.playerName)) return prev;
                 return [...prev, e.playerName];
             });
         });
 
-        return () => window.Echo.leave(channelName);
+        return () => {
+            console.log(`[HUE-CO2] Abandonando Lobby: ${safeRoomCode}`);
+            clearInterval(pollInterval);
+            window.Echo.leave(channelName);
+        };
     }, [safeRoomCode]);
 
     const renderSoloLobby = () => (
