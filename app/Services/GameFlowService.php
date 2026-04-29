@@ -62,17 +62,27 @@ class GameFlowService
             // 3. Incrementar turno
             $juego->current_turn += 1;
 
-            // 4. Seleccionar el sector (rol) que le toca responder
-            $rolesAsignados = DB::table('juego_participante')
+            // 4. Seleccionar el sector (rol) que le toca responder (Sentido Agujas del Reloj)
+            $clockwiseOrder = ['textil', 'ciencia', 'tech', 'primario', 'publico', 'ciudadania'];
+            
+            $rolesAsignadosSlugs = DB::table('juego_participante')
+                ->join('roles', 'juego_participante.rol_id', '=', 'roles.rol_id')
                 ->where('juego_id', $juego->juego_id)
-                ->pluck('rol_id')
+                ->pluck('roles.slug')
                 ->unique()
                 ->toArray();
 
-            if (!empty($rolesAsignados)) {
-                // Seleccionar por orden basado en el turno
-                $index = ($juego->current_turn - 1) % count($rolesAsignados);
-                $juego->current_rol_id = $rolesAsignados[$index];
+            // Filtrar el orden maestro por los roles que realmente están en esta partida
+            $ordenPartida = array_values(array_filter($clockwiseOrder, function($slug) use ($rolesAsignadosSlugs) {
+                return in_array($slug, $rolesAsignadosSlugs);
+            }));
+
+            if (!empty($ordenPartida)) {
+                $index = ($juego->current_turn - 1) % count($ordenPartida);
+                $activeSlug = $ordenPartida[$index];
+                
+                $activeRol = DB::table('roles')->where('slug', $activeSlug)->first();
+                $juego->current_rol_id = $activeRol ? $activeRol->rol_id : null;
             }
 
             // 5. Seleccionar nueva carta del anillo actual

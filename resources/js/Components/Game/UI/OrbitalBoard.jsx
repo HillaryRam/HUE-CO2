@@ -19,6 +19,12 @@ const getRoleIcon = (iconName, id) => {
 
 export default function OrbitalBoard({ sectors, turnNumber = 1, activeSectorId = null }) {
 
+    // Ordenar sectores en sentido horario para que coincidan con la lógica del servidor
+    const CLOCKWISE_ORDER = ['textil', 'ciencia', 'tech', 'primario', 'publico', 'ciudadania'];
+    const sortedSectors = [...sectors].sort((a, b) => {
+        return CLOCKWISE_ORDER.indexOf(a.id) - CLOCKWISE_ORDER.indexOf(b.id);
+    });
+
     return (
         <div className="flex-1 relative flex items-center justify-center aspect-square max-w-[300px] lg:max-w-[430px] max-h-[300px] lg:max-h-[430px]">
             {/* Glow de Fondo */}
@@ -38,8 +44,8 @@ export default function OrbitalBoard({ sectors, turnNumber = 1, activeSectorId =
                     <circle cx="250" cy="250" r="220" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="4" />
                     
                     {/* SECCIONES DEL ANILLO (Un arco por sector) */}
-                    {sectors.map((s, i) => {
-                        const totalSectors = sectors.length || 1;
+                    {sortedSectors.map((s, i) => {
+                        const totalSectors = sortedSectors.length || 1;
                         const arcLength = 360 / totalSectors;
                         const gap = 4; // grados de separación
                         const startAngle = (i * arcLength) + (gap / 2);
@@ -97,8 +103,8 @@ export default function OrbitalBoard({ sectors, turnNumber = 1, activeSectorId =
                 />
 
                 {/* NODOS ORBITANDO */}
-                {sectors.map((p, i) => {
-                    const totalSectors = sectors.length || 1;
+                {sortedSectors.map((p, i) => {
+                    const totalSectors = sortedSectors.length || 1;
                     const arcLength = 360 / totalSectors;
                     const angle = (i * arcLength + arcLength / 2) * (Math.PI / 180);
 
