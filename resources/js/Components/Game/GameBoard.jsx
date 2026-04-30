@@ -52,8 +52,18 @@ export function GameBoard({
                 setCurrentChallenge(response.data);
                 setTurnNumber(prev => prev + 1);
             } else {
-                await axios.post(`/api/game/${roomCode}/advance`);
-                // No seteamos nada aquí, esperamos el evento GameStateChanged vía WebSocket
+                const response = await axios.post(`/api/game/${roomCode}/advance`);
+                // Si la respuesta incluye el gameState, actualizamos directamente por si fallan los WebSockets
+                if (response.data && response.data.gameState) {
+                    const { state, challenge, turnNumber: newTurn, sectors: newSectors } = response.data.gameState;
+                    if (state === 'challenge' || state === 'playing') {
+                        setCurrentChallenge(challenge);
+                        setTurnNumber(newTurn);
+                        if (newSectors) setSectorsState(newSectors);
+                    } else if (state === 'ended') {
+                        onEnd(false);
+                    }
+                }
             }
         } catch (error) {
             console.error('[HUE-CO2] Error al avanzar turno:', error);

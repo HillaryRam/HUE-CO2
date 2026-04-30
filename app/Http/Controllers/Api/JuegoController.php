@@ -93,12 +93,7 @@ class JuegoController extends Controller
             return response()->json(['error' => 'La sala no existe o el PIN es incorrecto'], 404);
         }
 
-        // Verificar si la sala ya está llena
-        if ($juego->max_players && $juego->participantes()->count() >= $juego->max_players) {
-            return response()->json(['error' => 'La sala ya está completa'], 403);
-        }
-
-        // Crear el participante
+        // Crear los datos del participante
         $participanteData = [
             'usuario' => $request->usuario,
         ];
@@ -110,6 +105,39 @@ class JuegoController extends Controller
 
         if (empty($participanteData['usuario'])) {
             return response()->json(['error' => 'Debes proporcionar un nombre de usuario'], 422);
+        }
+
+        // Buscar si el usuario ya está en la sala (para permitir reconexión y no ocupar más espacios)
+        $existingQuery = $juego->participantes();
+        if ($request->user()) {
+            // Si está autenticado, buscamos por user_id o por nombre de usuario
+            $existingQuery->where(function($q) use ($participanteData) {
+                $q->where('participantes.user_id', $participanteData['user_id'])
+                  ->orWhere('participantes.usuario', $participanteData['usuario']);
+            });
+        } else {
+            // Si no está autenticado, buscamos por el nombre de usuario que introdujo
+            $existingQuery->where('participantes.usuario', $participanteData['usuario']);
+        }
+        
+        $existingParticipante = $existingQuery->first();
+
+        if ($existingParticipante) {
+            // Si ya estaba en la sala, simplemente lo devolvemos
+            return response()->json([
+                'message' => 'Te has reconectado a la partida',
+                'participante' => $existingParticipante,
+                'juego'   => $juego->load('participantes'),
+            ]);
+        }
+
+        // Verificar si la sala ya está llena
+        // Contamos participantes distintos para que si alguien tiene varios roles asignados (pivot rows) no cuente como múltiple
+        $uniqueCount = clone $juego->participantes();
+        $count = $uniqueCount->distinct('participantes.participante_id')->count('participantes.participante_id');
+
+        if ($juego->max_players && $count >= $juego->max_players) {
+            return response()->json(['error' => 'La sala ya está completa'], 403);
         }
 
         $participante = Participante::create($participanteData);

@@ -64,9 +64,59 @@ export function useGameChannel(roomCode, sectorId, playerName, participantId = n
             });
 
         return () => {
-            window.Echo.leave(channelName);
+            if (window.Echo) {
+                window.Echo.leave(channelName);
+            }
             setIsConnected(false);
         };
+    }, [roomCode]);
+
+    // ── Polling de respaldo (por si falla WebSockets) ─────────────────────────
+    useEffect(() => {
+        if (!roomCode) return;
+
+        const fetchState = async () => {
+            try {
+                const res = await axios.get(`/api/juego/${roomCode}/estado`);
+                if (res.data) {
+                    setGameState(prev => {
+                        // Solo actualizar si ha cambiado el estado, el reto o el turno
+                        // Esto evita que se borre lo que el usuario está escribiendo si el estado es el mismo
+                        if (!prev || 
+                            prev.state !== res.data.state || 
+                            prev.turnNumber !== res.data.turnNumber ||
+                            (prev.challenge?.id !== res.data.challenge?.id)) {
+                            
+                            // Si cambió a challenge, limpiar los votos anteriores
+                            if (res.data.state === 'challenge' && prev && prev.state !== 'challenge') {
+                                setVotes({});
+                                setProposal(null);
+                            }
+
+                            return {
+                                state: res.data.state,
+                                challenge: res.data.challenge,
+                                turnNumber: res.data.turnNumber,
+                                sectors: res.data.sectors,
+                                temperature: res.data.temperature || 0,
+                                lastTurnCorrect: res.data.lastTurnCorrect || false
+                            };
+                        }
+                        return prev;
+                    });
+                }
+            } catch (error) {
+                console.error('[HUE-CO2] Error polling game state:', error);
+            }
+        };
+
+        // Hacer un fetch inicial inmediatamente
+        fetchState();
+
+        // Luego cada 3 segundos
+        const interval = setInterval(fetchState, 3000);
+
+        return () => clearInterval(interval);
     }, [roomCode]);
 
     // ── Enviar Voto (MobileController → Backend → Reverb → LocalDisplayBoard) ──

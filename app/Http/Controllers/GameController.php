@@ -103,8 +103,49 @@ class GameController extends Controller
         $juego = Juego::where('room_code', $roomCode)->firstOrFail();
         
         $this->gameFlow->advanceTurn($juego);
+        $juego->refresh();
 
-        return response()->json(['status' => 'ok', 'turn' => $juego->current_turn]);
+        // Obtener sectores con nombres de jugadores
+        $sectors = $juego->participantes->map(function ($p) {
+            $rol = \Illuminate\Support\Facades\DB::table('roles')->where('rol_id', $p->pivot->rol_id)->first();
+            return [
+                'id' => $rol ? $rol->slug : 'ciudadania',
+                'tokens' => $p->pivot->eco_fichas,
+                'playerName' => $p->usuario,
+            ];
+        });
+
+        $carta = $juego->current_carta_id ? \App\Models\Carta::find($juego->current_carta_id) : null;
+        $challengeData = null;
+        if ($carta) {
+            $pregunta = $carta->preguntas->first();
+            $challengeData = [
+                'id' => $carta->carta_id,
+                'type' => $pregunta ? $pregunta->tipo_pregunta : 'options',
+                'title' => $pregunta ? $pregunta->texto : $carta->texto,
+                'description' => $pregunta ? '' : $carta->texto,
+                'ring' => $juego->anillo ? $juego->anillo->nombre : 'General',
+                'options' => $pregunta ? $pregunta->opciones->pluck('texto')->toArray() : [],
+                'time' => $carta->tiempo ?? 20,
+                'puntos' => $carta->puntos,
+                'penalizacion' => $carta->penalizacion,
+            ];
+            
+            $activeRol = \Illuminate\Support\Facades\DB::table('roles')->where('rol_id', $juego->current_rol_id)->first();
+            $challengeData['activeSectorId'] = $activeRol ? $activeRol->slug : null;
+        }
+
+        return response()->json([
+            'status' => 'ok', 
+            'turn' => $juego->current_turn,
+            'gameState' => [
+                'state' => $juego->estado === 'playing' ? 'challenge' : $juego->estado,
+                'turnNumber' => $juego->current_turn,
+                'sectors' => $sectors,
+                'challenge' => $challengeData,
+                'temperature' => $juego->temperatura
+            ]
+        ]);
     }
 
     /**

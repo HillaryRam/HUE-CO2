@@ -57,7 +57,11 @@ export default function LocalDisplayBoard({ sectors, challenge, roomCode, turnNu
 
     const handleAdvance = async () => {
         try {
-            await axios.post(`/api/game/${roomCode}/advance`);
+            if (onNextChallenge) {
+                await onNextChallenge();
+            } else {
+                await axios.post(`/api/game/${roomCode}/advance`);
+            }
         } catch (error) {
             console.error('[HUE-CO2] Error al avanzar turno:', error);
         }
