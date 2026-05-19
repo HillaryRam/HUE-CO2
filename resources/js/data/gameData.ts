@@ -36,7 +36,7 @@ export const ROLES: Role[] = [
   },
   {
     id: 'tech',
-    name: 'Gigantes Tech',
+    name: 'EcoTech',
     specialist: 'El Analista',
     ring: 'Datos',
     passiveDesc: 'Puede ver si el próximo turno tendrá un evento climático.',

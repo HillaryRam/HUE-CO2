@@ -19,7 +19,7 @@ return new class extends Migration
         $slugMap = [
             'Industria Textil' => 'textil',
             'Ciencia e I+D'    => 'ciencia',
-            'Gigantes Tech'    => 'tech',
+            'EcoTech'          => 'tech',
             'Sector Primario'  => 'primario',
             'Sector Público'   => 'publico',
             'Ciudadanía'       => 'ciudadania',
