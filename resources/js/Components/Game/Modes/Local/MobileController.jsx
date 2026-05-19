@@ -100,6 +100,28 @@ export default function MobileController({
         participanteId
     );
 
+    const [isActivating, setIsActivating] = useState(false);
+
+    const activateAbility = async (roleId) => {
+        if (isActivating || !participanteId) return;
+        setIsActivating(true);
+        
+        try {
+            const response = await axios.post(`/api/game/${roomCode}/habilidad`, {
+                participante_id: participanteId,
+                slug: roleId
+            });
+            console.log(`[MobileController] Habilidad ${roleId} activada:`, response.data);
+            alert("¡Habilidad activada con éxito!");
+        } catch (error) {
+            console.error(`[MobileController] Error al activar habilidad ${roleId}:`, error);
+            const msg = error.response?.data?.message || "Error al activar la habilidad.";
+            alert(msg);
+        } finally {
+            setIsActivating(false);
+        }
+    };
+
     // Cuando el servidor cambia el estado del juego, actualizar nuestra vista
     React.useEffect(() => {
         if (!serverGameState) return;
@@ -567,17 +589,25 @@ export default function MobileController({
                                                 <div className="text-xs font-medium text-[#78716c] leading-tight">{r.passiveDesc ?? '—'}</div>
                                             </div>
                                         </div>
-                                        <button
-                                            onClick={onActivatePower}
-                                            className={`w-full ${rTheme.btn} text-white p-3 rounded-xl font-black flex items-center justify-between shadow-md active:scale-95 transition-all`}
-                                        >
-                                            <span className="text-left leading-tight text-xs">
-                                                Poder Especial
-                                                <br />
-                                                <span className="text-[8px] uppercase opacity-80 font-bold">Cuesta {r.activeCost ?? 3} Tokens</span>
-                                            </span>
-                                            <Zap className="w-5 h-5 fill-current text-white/40" />
-                                        </button>
+                                        {(() => {
+                                            const isMyTurn = safeRoles.some(role => role.id === currentChallenge?.activeSectorId);
+                                            const canAfford = tokens >= (r.activeCost ?? 3);
+                                            const canUse = canAfford && isMyTurn;
+                                            return (
+                                                <button
+                                                    onClick={() => canUse && activateAbility(r.id)}
+                                                    disabled={isActivating || !canUse}
+                                                    className={`w-full ${canUse ? rTheme.btn : 'bg-stone-300'} text-white p-3 rounded-xl font-black flex items-center justify-between shadow-md active:scale-95 transition-all`}
+                                                >
+                                                    <span className="text-left leading-tight text-xs">
+                                                        {!isMyTurn ? 'Espera tu turno' : (r.activeDesc?.split(':')[0] || 'Poder Especial')}
+                                                        <br />
+                                                        <span className="text-[8px] uppercase opacity-80 font-bold">Cuesta {r.activeCost ?? 3} Tokens</span>
+                                                    </span>
+                                                    <Zap className="w-5 h-5 fill-current text-white/40" />
+                                                </button>
+                                            );
+                                        })()}
                                     </div>
                                 </div>
                             );

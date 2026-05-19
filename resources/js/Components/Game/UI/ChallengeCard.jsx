@@ -100,11 +100,30 @@ export default function ChallengeCard({
     const c = ringConfig.color;
     const challengeType = challenge.type ?? 'options'; // options | open | slider | validate
 
+    const visibleOptions = React.useMemo(() => {
+        if (!challenge.options) return [];
+        if (!challenge.is5050Active || readOnly || !challenge.correct_answer) return challenge.options;
+        
+        const correct = challenge.correct_answer;
+        const incorrect = challenge.options.filter(o => String(o).trim().toLowerCase() !== String(correct).trim().toLowerCase());
+        
+        // Queremos un 50-50 real (1 correcta, 1 incorrecta) o al menos quitar la mitad de las malas.
+        const keepCount = Math.max(1, Math.floor(incorrect.length / 2));
+        // Usamos una semilla basada en el ID para que no cambie al re-renderizar
+        const seed = challenge.id || 1;
+        const keepIncorrect = incorrect.filter((_, i) => (i + seed) % 2 === 0).slice(0, keepCount);
+        
+        return challenge.options.filter(o => 
+            String(o).trim().toLowerCase() === String(correct).trim().toLowerCase() || keepIncorrect.includes(o)
+        );
+    }, [challenge.options, challenge.is5050Active, readOnly, challenge.correct_answer, challenge.id]);
+
     const renderOptionsGrid = () => (
         <div className="flex flex-col h-full mt-auto pb-2">
             <div className={`grid grid-cols-2 ${isCompact ? 'gap-x-2 gap-y-2' : 'gap-x-3 gap-y-4'} w-full flex-grow`}>
-                {challenge.options?.map((opt, idx) => {
-                    const originalStyle = OPTION_STYLES[idx];
+                {visibleOptions.map((opt, idx) => {
+                    const originalIndex = challenge.options?.indexOf(opt) ?? idx;
+                    const originalStyle = OPTION_STYLES[originalIndex % OPTION_STYLES.length];
                     // Mantener los iconos originales (Estrella, Hexágono, etc.)
                     const style = originalStyle;
                     const isSelected = selectedAnswer === opt;

@@ -211,6 +211,8 @@ export default function Dashboard() {
                     {view === 'select_mode' && (
                         <ModeSelectionView 
                             key="select"
+                            hideSolo={!isLocal}
+                            hideClass={!isLocal}
                             onBack={() => navigateTo('host_auth')}
                             onSelectMode={handleSelectMode}
                             isLoading={isCreating}

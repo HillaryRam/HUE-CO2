@@ -52,7 +52,7 @@ export default function OnlinePlayerBoard({
         isConnected, serverGameState, currentChallenge, isMyTurn, hasVoted,
         myAssignedRoles, activePlayerName, lastFeedback, setLastFeedback,
         lastMessage, serverChat, localMessages, setLocalMessages, sendChatMessage,
-        handleVote, handleProposal, resetMando, isActivePlayerInactive
+        handleVote, handleProposal, resetMando, isActivePlayerInactive, useAbility
     } = useOnlineGameState(roomCode, myPlayerName, challenge, sectors, myParticipantId, initialTimeLeft);
 
 
@@ -128,6 +128,7 @@ export default function OnlinePlayerBoard({
                         const serverSector = (serverGameState?.sectors || []).find(ss => ss.id === s.id);
                         return {
                             ...s,
+                            tokens: serverSector?.tokens ?? s.tokens,
                             points: serverSector?.points ?? s.points,
                             ringResults: serverSector?.ringResults ?? [],
                             isInactive: serverSector?.isInactive ?? false
@@ -166,7 +167,7 @@ export default function OnlinePlayerBoard({
 
             {/* FOOTER & CHAT */}
             <footer className="w-full bg-slate-100 border-t border-slate-200 flex items-center h-[140px] px-4 gap-3">
-                <RoleInventory roles={myAssignedRoles} activeSectorId={currentChallenge?.activeSectorId} />
+                <RoleInventory roles={myAssignedRoles} activeSectorId={currentChallenge?.activeSectorId} onUseAbility={useAbility} isMyTurn={isMyTurn} />
                 <GameChat 
                     messages={allMessages} 
                     value={chatInput} 
@@ -203,20 +204,45 @@ function TurnIndicator({ name }) {
     );
 }
 
-function RoleInventory({ roles, activeSectorId }) {
+function RoleInventory({ roles, activeSectorId, onUseAbility, isMyTurn }) {
     return (
         <div className="flex gap-2 overflow-x-auto h-full py-3 scrollbar-hide flex-1">
-            {roles.map(role => (
-                <div key={role.id} className={`flex items-center gap-3 px-4 py-2 rounded-2xl border-2 transition-all min-w-[180px] ${role.id === activeSectorId ? 'bg-white border-[#87AF4C] shadow-lg scale-105 z-10' : 'bg-slate-50 border-slate-200 opacity-60'}`}>
-                    <div className={`w-10 h-10 p-2 rounded-xl bg-white shadow-sm ${figmaColors[role.id]?.iconClass}`}>
-                        {getRoleIcon(role.iconName, role.id)}
+            {roles.map(role => {
+                const canAfford = (role.tokens ?? 12) >= (role.activeCost ?? 99);
+                const canUse = canAfford && isMyTurn;
+                return (
+                    <div key={role.id} className={`flex flex-col gap-2 px-4 py-2 rounded-2xl border-2 transition-all min-w-[220px] ${role.id === activeSectorId ? 'bg-white border-[#87AF4C] shadow-lg scale-105 z-10' : 'bg-slate-50 border-slate-200 opacity-90'}`}>
+                        <div className="flex items-center gap-3 w-full">
+                            <div className={`w-10 h-10 p-2 rounded-xl bg-white shadow-sm flex items-center justify-center ${figmaColors[role.id]?.iconClass}`}>
+                                {getRoleIcon(role.iconName, role.id)}
+                            </div>
+                            <div className="flex flex-col min-w-0 flex-1">
+                                <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">Tu Sector</span>
+                                <span className="text-[11px] font-black uppercase truncate text-slate-700">{role.name}</span>
+                            </div>
+                            {/* EcoTokens Counter Badge */}
+                            <div className="bg-[#1c1917] text-white px-2.5 py-1.5 rounded-xl flex items-center gap-1 shadow-sm shrink-0">
+                                <ZapIcon className="w-3.5 h-3.5 fill-current text-amber-400" />
+                                <span className="font-black text-xs">{role.tokens ?? 12}</span>
+                            </div>
+                        </div>
+                        {/* Botón de Habilidad */}
+                        <button 
+                            onClick={() => canUse && onUseAbility(role.id)}
+                            disabled={!canUse}
+                            title={!isMyTurn ? 'Solo puedes usar habilidades en tu turno' : role.activeDesc}
+                            className={`mt-auto w-full py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-1 transition-all ${
+                                canUse 
+                                ? 'bg-amber-100 text-amber-700 hover:bg-amber-200 hover:scale-[1.02] active:scale-95 shadow-sm' 
+                                : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                            }`}
+                        >
+                            <Sparkles size={10} /> 
+                            {role.activeDesc?.split(':')[0] || 'Habilidad'} ({role.activeCost} ET)
+                        </button>
                     </div>
-                    <div className="flex flex-col min-w-0">
-                        <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">Tu Sector</span>
-                        <span className="text-[11px] font-black uppercase truncate text-slate-700">{role.name}</span>
-                    </div>
-                </div>
-            ))}
+                );
+            })}
         </div>
     );
 }

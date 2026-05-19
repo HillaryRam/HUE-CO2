@@ -464,6 +464,18 @@ class GameFlowService
             // Actualizar temperatura global y contadores
             if ($carta->tipo === 'evento') {
                 $cambio = ($carta->cambio_temp ?? 0);
+                
+                $isHalved = \Illuminate\Support\Facades\Cache::pull("juego_{$juego->juego_id}_event_halved_t{$juego->current_turn}");
+                $isBlocked = \Illuminate\Support\Facades\Cache::pull("juego_{$juego->juego_id}_event_blocked_t{$juego->current_turn}");
+
+                if ($isBlocked) {
+                    $cambio = 0;
+                    \Log::info("[HUE-CO2] Evento bloqueado por Ley de Emergencia.");
+                } elseif ($isHalved) {
+                    $cambio = $cambio / 2;
+                    \Log::info("[HUE-CO2] Impacto de evento reducido a la mitad por Algoritmo de Eficiencia.");
+                }
+
                 $juego->temperatura += $cambio;
                 if ($cambio > 0) $juego->total_calentamiento += $cambio;
                 if ($cambio < 0) $juego->total_reduccion += abs($cambio);
@@ -565,6 +577,7 @@ class GameFlowService
             'puntos' => $carta->puntos,
             'penalizacion' => $carta->penalizacion,
             'activeSectorId' => $activeRol ? $activeRol->slug : null,
+            'is5050Active' => \Illuminate\Support\Facades\Cache::get("juego_{$juego->juego_id}_5050_t{$juego->current_turn}", false),
             'turn' => (($juego->current_turn - 1) % 6) + 1,
             'sliderMin' => $pregunta && $pregunta->rango_min !== null ? $pregunta->rango_min : 0,
             'sliderMax' => $pregunta && $pregunta->rango_max !== null ? $pregunta->rango_max : 100,
