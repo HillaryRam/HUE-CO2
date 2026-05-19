@@ -5,7 +5,7 @@ import {
     Users, Zap, Droplets, Cpu, Shirt, Landmark, FlaskConical,
     AlertTriangle, Send, HeartHandshake, CheckCircle2, Clock,
     ChevronRight, Recycle, ShieldCheck, Star, Hexagon, Heart, Moon,
-    CheckCircle, Minus, X, Award
+    CheckCircle, Minus, X, Award, Thermometer
 } from 'lucide-react';
 
 import { useGameChannel } from '../../../../hooks/useGameChannel';
@@ -86,11 +86,43 @@ export default function MobileController({
     const primaryRole = safeRoles[0];
     const theme = ROLE_CONFIG[primaryRole?.id] ?? ROLE_CONFIG.ciudadania;
 
+    const currentTemp = (serverGameState && serverGameState.temperature !== undefined)
+        ? `${serverGameState.temperature > 0 ? '+' : ''}${Number(serverGameState.temperature).toFixed(1)}°C`
+        : globalTemp;
+
+    const activeTurnNumber = (serverGameState && serverGameState.turnNumber !== undefined)
+        ? serverGameState.turnNumber
+        : 1;
+
+    const isLobby = localGameState === 'lobby';
+
     const [localGameState, setLocalGameState] = useState(gameState);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [sliderValue, setSliderValue] = useState(challenge.sliderDefault ?? 50);
     const [proposalText, setProposalText] = useState('');
     const [currentChallenge, setCurrentChallenge] = useState(challenge);
+
+    const [localTimeLeft, setLocalTimeLeft] = useState(timeLeft);
+
+    // Sincronizar el tiempo restante desde el servidor/host
+    React.useEffect(() => {
+        if (serverGameState && serverGameState.timeLeft !== undefined) {
+            setLocalTimeLeft(serverGameState.timeLeft);
+        }
+    }, [serverGameState?.timeLeft]);
+
+    // Ticking countdown local de 1 segundo
+    React.useEffect(() => {
+        let timer = null;
+        if (localTimeLeft > 0 && localGameState !== 'waiting' && localGameState !== 'ended') {
+            timer = setInterval(() => {
+                setLocalTimeLeft(prev => Math.max(0, prev - 1));
+            }, 1000);
+        }
+        return () => {
+            if (timer) clearInterval(timer);
+        };
+    }, [localTimeLeft, localGameState]);
 
     // ── WebSocket: Conectar al canal de la sala ───────────────────────────────
     const { isConnected, gameState: serverGameState, sendVote, sendProposal, proposal } = useGameChannel(
@@ -287,7 +319,7 @@ export default function MobileController({
                         Mira la pantalla principal para debatir con tus compañeros.
                     </p>
                     <div className="flex items-center justify-center gap-2 text-amber-600 font-bold bg-amber-50 p-3 rounded-2xl border-2 border-amber-200">
-                        <Clock className="w-5 h-5" /> Quedan {formatTime(timeLeft)}
+                        <Clock className="w-5 h-5" /> Quedan {formatTime(localTimeLeft)}
                     </div>
                 </motion.div>
             );
@@ -517,11 +549,12 @@ export default function MobileController({
 
                 {/* ── HEADER Global ── */}
                 <header className="px-5 py-3.5 flex justify-between items-center bg-white border-b-4 border-[#e7e5e4] shrink-0 z-10">
-                    <div className="bg-[#1c1917] text-white px-3 py-1.5 rounded-xl font-black flex items-center gap-1.5 text-sm">
-                        <span className="text-rose-400">{globalTemp}</span>
+                    <div className="bg-[#1c1917] text-white px-3 py-1.5 rounded-xl font-black flex items-center gap-1.5 text-sm shadow-sm">
+                        <Thermometer className="w-4 h-4 text-rose-400 shrink-0" />
+                        <span className="text-rose-400">{currentTemp}</span>
                     </div>
                     <div className="font-black text-[#a8a29e] uppercase tracking-widest text-[10px]">
-                        Turno {currentTurn}
+                        Turno {activeTurnNumber}
                     </div>
                 </header>
 
@@ -531,26 +564,34 @@ export default function MobileController({
                 <div className={`px-5 pt-5 pb-7 ${theme.color} border-b-4 ${theme.border} rounded-b-[2.5rem] shrink-0 transition-colors duration-500`}>
                     <div className="flex justify-between items-start mb-5">
                         {/* Iconos de los Roles */}
-                        <div className="flex -space-x-2">
-                            {safeRoles.map((r, idx) => {
-                                const rIcon = ROLE_ICONS[r.id] ?? <Users />;
-                                const rTheme = ROLE_CONFIG[r.id] ?? ROLE_CONFIG.ciudadania;
-                                return (
-                                    <div key={idx} className={`bg-white p-2.5 rounded-2xl shadow-sm border-2 ${rTheme.border} relative z-[${10 - idx}]`}>
-                                        {React.cloneElement(rIcon, { className: `w-6 h-6 ${rTheme.text}` })}
-                                    </div>
-                                );
-                            })}
-                        </div>
+                        {isLobby ? (
+                            <div className="bg-white p-2.5 rounded-2xl shadow-sm border-2 border-stone-300 animate-pulse">
+                                <Users className="w-6 h-6 text-stone-400" />
+                            </div>
+                        ) : (
+                            <div className="flex -space-x-2">
+                                {safeRoles.map((r, idx) => {
+                                    const rIcon = ROLE_ICONS[r.id] ?? <Users />;
+                                    const rTheme = ROLE_CONFIG[r.id] ?? ROLE_CONFIG.ciudadania;
+                                    return (
+                                        <div key={idx} className={`bg-white p-2.5 rounded-2xl shadow-sm border-2 ${rTheme.border} relative z-[${10 - idx}]`}>
+                                            {React.cloneElement(rIcon, { className: `w-6 h-6 ${rTheme.text}` })}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
                         {/* EcoTokens (Total Sumado) */}
-                        <div className={`bg-[#1c1917] text-white px-4 py-2 rounded-[1.5rem] flex items-center gap-2 shadow-lg rotate-2`}>
-                            <Zap className="w-5 h-5 fill-current text-amber-400" />
-                            <span className="font-black text-xl">{tokens}</span>
-                        </div>
+                        {!isLobby && (
+                            <div className={`bg-[#1c1917] text-white px-4 py-2 rounded-[1.5rem] flex items-center gap-2 shadow-lg rotate-2`}>
+                                <Zap className="w-5 h-5 fill-current text-amber-400" />
+                                <span className="font-black text-xl">{tokens}</span>
+                            </div>
+                        )}
                     </div>
                     <div>
                         <h1 className={`text-xl font-black leading-tight mb-2 ${theme.text}`}>
-                            {safeRoles.map(r => r.name).join(' + ')}
+                            {isLobby ? 'Repartiendo sectores...' : safeRoles.map(r => r.name).join(' + ')}
                         </h1>
                         <div className="flex items-center gap-2 flex-wrap">
                             <span className={`font-bold text-xs opacity-70 ${theme.text}`}>
@@ -567,52 +608,54 @@ export default function MobileController({
                     </AnimatePresence>
 
                     {/* ── TARJETA DE HABILIDADES (Unificada) ── */}
-                    <div className="bg-white border-4 border-[#e7e5e4] rounded-[2.5rem] p-5 space-y-6">
-                        {safeRoles.map((r, idx) => {
-                            const rTheme = ROLE_CONFIG[r.id] ?? ROLE_CONFIG.ciudadania;
-                            const rIcon = ROLE_ICONS[r.id] ?? <Users />;
-                            return (
-                                <div key={idx} className="space-y-4">
-                                    <div className="flex items-center gap-2">
-                                        {React.cloneElement(rIcon, { className: `w-4 h-4 ${rTheme.text}` })}
-                                        <h3 className={`text-[10px] font-black uppercase ${rTheme.text} tracking-widest`}>
-                                            {r.name}
-                                        </h3>
-                                    </div>
-                                    <div className="space-y-3 pl-2 border-l-2 border-[#f5f5f4]">
-                                        <div className="flex items-start gap-3">
-                                            <div className="p-1.5 bg-[#f5f5f4] rounded-lg mt-0.5 shrink-0">
-                                                <ShieldCheck className="w-4 h-4 text-[#a8a29e]" />
-                                            </div>
-                                            <div>
-                                                <div className="text-[9px] font-black uppercase mb-1 text-[#78716c]">Pasiva</div>
-                                                <div className="text-xs font-medium text-[#78716c] leading-tight">{r.passiveDesc ?? '—'}</div>
-                                            </div>
+                    {!isLobby && (
+                        <div className="bg-white border-4 border-[#e7e5e4] rounded-[2.5rem] p-5 space-y-6">
+                            {safeRoles.map((r, idx) => {
+                                const rTheme = ROLE_CONFIG[r.id] ?? ROLE_CONFIG.ciudadania;
+                                const rIcon = ROLE_ICONS[r.id] ?? <Users />;
+                                return (
+                                    <div key={idx} className="space-y-4">
+                                        <div className="flex items-center gap-2">
+                                            {React.cloneElement(rIcon, { className: `w-4 h-4 ${rTheme.text}` })}
+                                            <h3 className={`text-[10px] font-black uppercase ${rTheme.text} tracking-widest`}>
+                                                {r.name}
+                                            </h3>
                                         </div>
-                                        {(() => {
-                                            const isMyTurn = safeRoles.some(role => role.id === currentChallenge?.activeSectorId);
-                                            const canAfford = tokens >= (r.activeCost ?? 3);
-                                            const canUse = canAfford && isMyTurn;
-                                            return (
-                                                <button
-                                                    onClick={() => canUse && activateAbility(r.id)}
-                                                    disabled={isActivating || !canUse}
-                                                    className={`w-full ${canUse ? rTheme.btn : 'bg-stone-300'} text-white p-3 rounded-xl font-black flex items-center justify-between shadow-md active:scale-95 transition-all`}
-                                                >
-                                                    <span className="text-left leading-tight text-xs">
-                                                        {!isMyTurn ? 'Espera tu turno' : (r.activeDesc?.split(':')[0] || 'Poder Especial')}
-                                                        <br />
-                                                        <span className="text-[8px] uppercase opacity-80 font-bold">Cuesta {r.activeCost ?? 3} Tokens</span>
-                                                    </span>
-                                                    <Zap className="w-5 h-5 fill-current text-white/40" />
-                                                </button>
-                                            );
-                                        })()}
+                                        <div className="space-y-3 pl-2 border-l-2 border-[#f5f5f4]">
+                                            <div className="flex items-start gap-3">
+                                                <div className="p-1.5 bg-[#f5f5f4] rounded-lg mt-0.5 shrink-0">
+                                                    <ShieldCheck className="w-4 h-4 text-[#a8a29e]" />
+                                                </div>
+                                                <div>
+                                                    <div className="text-[9px] font-black uppercase mb-1 text-[#78716c]">Pasiva</div>
+                                                    <div className="text-xs font-medium text-[#78716c] leading-tight">{r.passiveDesc ?? '—'}</div>
+                                                </div>
+                                            </div>
+                                            {(() => {
+                                                const isMyTurn = safeRoles.some(role => role.id === currentChallenge?.activeSectorId);
+                                                const canAfford = tokens >= (r.activeCost ?? 3);
+                                                const canUse = canAfford && isMyTurn;
+                                                return (
+                                                    <button
+                                                        onClick={() => canUse && activateAbility(r.id)}
+                                                        disabled={isActivating || !canUse}
+                                                        className={`w-full ${canUse ? rTheme.btn : 'bg-stone-300'} text-white p-3 rounded-xl font-black flex items-center justify-between shadow-md active:scale-95 transition-all`}
+                                                    >
+                                                        <span className="text-left leading-tight text-xs">
+                                                            {!isMyTurn ? 'Espera tu turno' : (r.activeDesc?.split(':')[0] || 'Poder Especial')}
+                                                            <br />
+                                                            <span className="text-[8px] uppercase opacity-80 font-bold">Cuesta {r.activeCost ?? 3} Tokens</span>
+                                                        </span>
+                                                        <Zap className="w-5 h-5 fill-current text-white/40" />
+                                                    </button>
+                                                );
+                                            })()}
+                                        </div>
                                     </div>
-                                </div>
-                            );
-                        })}
-                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
                 </main>
 
                 {/* ── FOOTER: Acciones Rápidas ── */}

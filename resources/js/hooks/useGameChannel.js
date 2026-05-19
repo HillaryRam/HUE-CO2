@@ -154,17 +154,20 @@ export function useGameChannel(roomCode, sectorId, playerName, participanteId = 
                                 totalReduction: res.data.totalReduction || 0,
                                 lastTurnCorrect: res.data.lastTurnCorrect || false,
                                 outcome: res.data.outcome || null,
-                                hostId: res.data.hostId || null
+                                hostId: res.data.hostId || null,
+                                timeLeft: res.data.timeLeft
                             };
                         }
 
-                        // Si no hay cambios críticos, comparar los sectores (EcoFichas, puntos)
+                        // Si no hay cambios críticos, comparar los sectores (EcoFichas, puntos) o el tiempo restante
                         const sectorsChanged = JSON.stringify(prev.sectors) !== JSON.stringify(res.data.sectors);
-                        if (sectorsChanged) {
+                        const timeChanged = prev.timeLeft !== res.data.timeLeft;
+                        if (sectorsChanged || timeChanged) {
                             return {
                                 ...prev,
                                 sectors: res.data.sectors,
-                                hostId: res.data.hostId || null
+                                hostId: res.data.hostId || null,
+                                timeLeft: res.data.timeLeft
                             };
                         }
 
