@@ -81,7 +81,7 @@ class RoleAbilitiesTest extends TestCase
         $juego->refresh();
         $this->assertEquals(0.3, round($juego->temperatura, 1));
         
-        $participacion = DB::table('juego_participante')->where('participante_id', 1)->first();
+        $participacion = DB::table('juego_participante')->where('participante_id', $part1->participante_id)->first();
         $this->assertEquals(7, $participacion->eco_fichas); // Tenía 10, gasta 3
     }
     
