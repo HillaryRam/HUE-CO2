@@ -31,8 +31,9 @@ Route::get('/dashboard', function () {
             'juegos.juego_id as id',
             'juegos.updated_at as date',
             'juegos.temperatura as finalTemp',
-            'roles.nombre as role'
+            \DB::raw('GROUP_CONCAT(DISTINCT roles.nombre ORDER BY roles.rol_id ASC SEPARATOR ", ") as role')
         )
+        ->groupBy('juegos.juego_id', 'juegos.updated_at', 'juegos.temperatura')
         ->orderBy('juegos.updated_at', 'desc')
         ->get();
 
@@ -92,6 +93,7 @@ Route::get('/juego-local', function () {
 Route::middleware(['auth'])->group(function () {
     Route::post('/juego/crear', [App\Http\Controllers\Api\JuegoController::class, 'store'])->name('juego.crear');
     Route::put('/juego/{id}', [App\Http\Controllers\Api\JuegoController::class, 'update'])->name('juego.update');
+    Route::get('/juego/{id}/detalles-historial', [App\Http\Controllers\Api\JuegoController::class, 'historyDetails'])->name('juego.detalles-historial');
 });
 
 // Ruta de prueba Reverb (temporal)

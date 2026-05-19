@@ -1,7 +1,7 @@
 import React from 'react';
 import { History, Calendar, Thermometer, Award, ArrowRight } from 'lucide-react';
 
-export default function MatchHistory({ history = [] }) {
+export default function MatchHistory({ history = [], onViewDetails }) {
     return (
         <div className="w-full max-w-5xl mt-12 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300 fill-mode-both">
             <div className="flex items-center gap-3 mb-6 px-2">
@@ -19,7 +19,7 @@ export default function MatchHistory({ history = [] }) {
                 ) : (
                     history.map((match, index) => (
                         <div
-                            key={match.id}
+                            key={`${match.id}-${index}`}
                             className={`p-6 flex flex-col md:flex-row items-center justify-between gap-6 ${index !== history.length - 1 ? 'border-b-4 border-[#f5f5f4]' : ''
                                 } hover:bg-[#fafaf9] transition-colors group`}
                         >
@@ -62,7 +62,10 @@ export default function MatchHistory({ history = [] }) {
                                     </div>
                                 </div>
 
-                                <button className="w-12 h-12 rounded-xl bg-white border-2 border-[#e7e5e4] hover:border-[#1c1917] hover:bg-[#1c1917] hover:text-white flex items-center justify-center text-[#a8a29e] transition-all shadow-sm active:scale-95">
+                                <button 
+                                    onClick={() => onViewDetails && onViewDetails(match.id)}
+                                    className="w-12 h-12 rounded-xl bg-white border-2 border-[#e7e5e4] hover:border-[#1c1917] hover:bg-[#1c1917] hover:text-white flex items-center justify-center text-[#a8a29e] transition-all shadow-sm active:scale-95 cursor-pointer"
+                                >
                                     <ArrowRight className="w-5 h-5" />
                                 </button>
                             </div>
