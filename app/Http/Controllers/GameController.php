@@ -71,7 +71,9 @@ class GameController extends Controller
             if ($pregunta) {
                 $opcionCorrecta = $pregunta->opciones()->where('correcta', true)->first();
                 if ($opcionCorrecta) {
-                    $isCorrect = ($opcionCorrecta->texto === $validated['answer']);
+                    $valRecibida = trim((string) $validated['answer']);
+                    $valEsperada = trim((string) $opcionCorrecta->texto);
+                    $isCorrect = (strcasecmp($valRecibida, $valEsperada) === 0);
                     $feedbackMsg = $isCorrect 
                         ? "¡Correcto! Has ayudado a tu sector. 🎉" 
                         : "¡Casi! La respuesta correcta era: " . $opcionCorrecta->texto . " ❌";
@@ -238,18 +240,12 @@ class GameController extends Controller
                 'totalHeating' => $juego->total_calentamiento,
                 'totalReduction' => $juego->total_reduccion,
                 'lastTurnCorrect' => \Illuminate\Support\Facades\Cache::get('juego_'.$juego->juego_id.'_last_correct', false),
-                'outcome' => ($juego->estado === 'ended') ? $this->calculateOutcome($juego) : null,
+                'outcome' => ($juego->estado === 'ended') ? $this->gameFlow->calculateOutcome($juego) : null,
                 'hostId' => DB::table('juego_participante')->where('juego_id', $juego->juego_id)->orderBy('juego_jugador_id', 'asc')->value('participante_id')
             ]
         ]);
     }
 
-    private function calculateOutcome(Juego $juego): string
-    {
-        if ($juego->temperatura >= 1.0) return 'defeat';
-        if ($juego->temperatura >= 0.5) return 'neutral';
-        return 'victory';
-    }
 
     /**
      * Obtiene los datos formateados del reto actual para un juego.

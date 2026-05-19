@@ -156,6 +156,15 @@ class JuegoController extends Controller
         $existingParticipante = $existingQuery->first();
 
         if ($existingParticipante) {
+            // Si es un invitado anónimo, verificar si realmente es una reconexión o un secuestro
+            if (!$request->user() && $existingParticipante->pivot && $existingParticipante->pivot->last_seen_at) {
+                $lastSeen = \Carbon\Carbon::parse($existingParticipante->pivot->last_seen_at);
+                // Si el jugador anónimo ha estado activo en los últimos 30 segundos, asumimos que alguien más intenta usurpar el nombre
+                if ($lastSeen->diffInSeconds(now()) < 30) {
+                    return response()->json(['error' => 'Ese nombre de usuario ya está en uso en esta sala y se encuentra activo.'], 403);
+                }
+            }
+
             // Actualizar last_seen_at al reconectarse
             $juego->participantes()->updateExistingPivot($existingParticipante->participante_id, [
                 'last_seen_at' => now()
@@ -166,6 +175,10 @@ class JuegoController extends Controller
                 'participante' => $existingParticipante,
                 'juego'   => $juego->load('participantes'),
             ]);
+        }
+
+        if ($juego->estado !== 'lobby') {
+            return response()->json(['error' => 'La partida ya ha comenzado. Solo se permiten reconexiones.'], 403);
         }
 
         // Verificar si la sala ya está llena ANTES de crear al participante
