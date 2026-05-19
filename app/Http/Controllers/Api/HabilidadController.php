@@ -100,6 +100,7 @@ class HabilidadController extends Controller
                 DB::table('juego_participante')
                     ->where('juego_id', $juego->juego_id)
                     ->where('participante_id', $participacion->participante_id)
+                    ->where('rol_id', $participacion->rol_id)
                     ->decrement('eco_fichas', $costo);
 
                 // Registrar uso en el turno
