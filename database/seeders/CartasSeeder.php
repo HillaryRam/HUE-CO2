@@ -33,81 +33,193 @@ class CartasSeeder extends Seeder
 
         // ─── PREGUNTAS POR ANILLO ──────────────────────────────────────────────
         // Cada anillo tiene 6 preguntas (una por sector/turno)
+        // Mezclamos preguntas tipo 'options' (opciones), 'slider' (estimación) y 'free' (abiertas/consenso)
         $contenido = [
             // ANILLO 1 – AGUA
             [
-                ['texto' => '¿Qué porcentaje aproximado del agua del planeta es agua dulce disponible?',
-                 'opciones' => [['50%', false], ['25%', false], ['10%', false], ['1%', true]]],
-                ['texto' => '¿Cuál de estas prácticas ahorra más agua en el hogar?',
-                 'opciones' => [['Bañarse en vez de ducharse', false], ['Cerrar el grifo al cepillarse', true], ['Regar el jardín de día', false], ['Lavar a máquina a 90°C', false]]],
-                ['texto' => '¿Qué actividad humana consume más agua dulce a nivel global?',
-                 'opciones' => [['Industria', false], ['Uso doméstico', false], ['Agricultura', true], ['Generación eléctrica', false]]],
-                ['texto' => '¿Cuántos litros de agua se necesitan para producir 1 kg de carne de vacuno?',
-                 'opciones' => [['200 L', false], ['1.500 L', false], ['15.000 L', true], ['500 L', false]]],
-                ['texto' => '¿Qué tecnología de riego es más eficiente en el uso de agua?',
-                 'opciones' => [['Aspersión', false], ['Inundación', false], ['Goteo', true], ['Pulverización aérea', false]]],
-                ['texto' => '¿Cuál es la principal causa de contaminación del agua dulce?',
-                 'opciones' => [['Lluvia ácida', false], ['Residuos industriales y agrícolas', true], ['Turismo', false], ['Pesca excesiva', false]]],
+                [
+                    'texto' => '¿Qué porcentaje aproximado del agua del planeta es agua dulce disponible?',
+                    'tipo_pregunta' => 'slider',
+                    'rango_min' => 0,
+                    'rango_max' => 100,
+                    'unidad' => '%',
+                    'opciones' => [['1', true]]
+                ],
+                [
+                    'texto' => '¿Cuál de estas prácticas ahorra más agua en el hogar?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['Bañarse en vez de ducharse', false], ['Cerrar el grifo al cepillarse', true], ['Regar el jardín de día', false], ['Lavar a máquina a 90°C', false]]
+                ],
+                [
+                    'texto' => '¿Qué actividad humana consume más agua dulce a nivel global?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['Industria', false], ['Uso doméstico', false], ['Agricultura', true], ['Generación eléctrica', false]]
+                ],
+                [
+                    'texto' => '¿Cuántos litros de agua se necesitan para producir 1 kg de carne de vacuno?',
+                    'tipo_pregunta' => 'slider',
+                    'rango_min' => 1000,
+                    'rango_max' => 20000,
+                    'unidad' => ' L',
+                    'opciones' => [['15000', true]]
+                ],
+                [
+                    'texto' => '¿Qué tecnología de riego es más eficiente en el uso de agua?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['Aspersión', false], ['Inundación', false], ['Goteo', true], ['Pulverización aérea', false]]
+                ],
+                [
+                    'texto' => '¿Cuál es la principal causa de contaminación del agua dulce?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['Lluvia ácida', false], ['Residuos industriales y agrícolas', true], ['Turismo', false], ['Pesca excesiva', false]]
+                ],
             ],
             // ANILLO 2 – ENERGÍA
             [
-                ['texto' => '¿Cuál de estas fuentes produce menos CO₂ en su ciclo de vida?',
-                 'opciones' => [['Carbón', false], ['Gas natural', false], ['Nuclear', false], ['Solar fotovoltaica', true]]],
-                ['texto' => '¿Qué país genera más electricidad a partir de energía eólica en proporción?',
-                 'opciones' => [['China', false], ['Alemania', false], ['Dinamarca', true], ['EE.UU.', false]]],
-                ['texto' => '¿Cuánto CO₂ emite una central de carbón por kWh producido (aprox.)?',
-                 'opciones' => [['50 g', false], ['200 g', false], ['820 g', true], ['1.500 g', false]]],
-                ['texto' => '¿Qué porcentaje de la energía mundial proviene de renovables (2023)?',
-                 'opciones' => [['5%', false], ['15%', false], ['30%', true], ['60%', false]]],
-                ['texto' => '¿Cuál es la principal ventaja de la energía mareomotriz?',
-                 'opciones' => [['Es barata', false], ['Es predecible y constante', true], ['No necesita infraestructura', false], ['Funciona en cualquier lugar', false]]],
-                ['texto' => '¿Qué significa "eficiencia energética"?',
-                 'opciones' => [['Usar más energía', false], ['Producir la misma tarea con menos energía', true], ['Cambiar de proveedor', false], ['Pagar menos luz', false]]],
+                [
+                    'texto' => '¿Cuál de estas fuentes produce menos CO₂ en su ciclo de vida?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['Carbón', false], ['Gas natural', false], ['Nuclear', false], ['Solar fotovoltaica', true]]
+                ],
+                [
+                    'texto' => '¿Qué país genera más electricidad a partir de energía eólica en proporción?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['China', false], ['Alemania', false], ['Dinamarca', true], ['EE.UU.', false]]
+                ],
+                [
+                    'texto' => '¿Cuánto CO₂ emite una central de carbón por kWh producido (aprox.)?',
+                    'tipo_pregunta' => 'slider',
+                    'rango_min' => 100,
+                    'rango_max' => 1500,
+                    'unidad' => ' g',
+                    'opciones' => [['820', true]]
+                ],
+                [
+                    'texto' => '¿Qué porcentaje de la energía mundial proviene de renovables (2023)?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['5%', false], ['15%', false], ['30%', true], ['60%', false]]
+                ],
+                [
+                    'texto' => '¿Cuál es la principal ventaja de la energía mareomotriz?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['Es barata', false], ['Es predecible y constante', true], ['No necesita infraestructura', false], ['Funciona en cualquier lugar', false]]
+                ],
+                [
+                    'texto' => 'Explica qué significa "eficiencia energética" y pon un ejemplo práctico de tu vida cotidiana.',
+                    'tipo_pregunta' => 'free',
+                    'opciones' => []
+                ],
             ],
             // ANILLO 3 – PLÁSTICO
             [
-                ['texto' => '¿Cuál de estos plásticos es más fácil de reciclar habitualmente?',
-                 'opciones' => [['PVC', false], ['LDPE', false], ['Poliestireno', false], ['PET', true]]],
-                ['texto' => '¿Cuánto tiempo tarda en degradarse una bolsa de plástico convencional?',
-                 'opciones' => [['1 año', false], ['10 años', false], ['150-400 años', true], ['10.000 años', false]]],
-                ['texto' => '¿Qué son los microplásticos?',
-                 'opciones' => [['Plásticos blandos', false], ['Partículas menores de 5 mm', true], ['Plásticos biodegradables', false], ['Envases pequeños', false]]],
-                ['texto' => '¿Cuántos millones de toneladas de plástico acaban en el océano cada año?',
-                 'opciones' => [['1 Mt', false], ['8 Mt', true], ['50 Mt', false], ['200 Mt', false]]],
-                ['texto' => '¿Qué símbolo de reciclaje indica que el plástico es PET?',
-                 'opciones' => [['3', false], ['5', false], ['1', true], ['7', false]]],
-                ['texto' => '¿Cuál es el principal reto para reciclar plástico negro?',
-                 'opciones' => [['Es muy caro', false], ['Los sensores ópticos no lo detectan', true], ['No se puede fundir', false], ['Es tóxico', false]]],
+                [
+                    'texto' => '¿Cuál de estos plásticos es más fácil de reciclar habitualmente?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['PVC', false], ['LDPE', false], ['Poliestireno', false], ['PET', true]]
+                ],
+                [
+                    'texto' => '¿Cuánto tiempo tarda en degradarse una bolsa de plástico convencional?',
+                    'tipo_pregunta' => 'slider',
+                    'rango_min' => 50,
+                    'rango_max' => 500,
+                    'unidad' => ' años',
+                    'opciones' => [['150', true]]
+                ],
+                [
+                    'texto' => '¿Qué son los microplásticos? Explica de dónde provienen y cuál es su impacto ecológico.',
+                    'tipo_pregunta' => 'free',
+                    'opciones' => []
+                ],
+                [
+                    'texto' => '¿Cuántos millones de toneladas de plástico acaban en el océano cada año?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['1 Mt', false], ['8 Mt', true], ['50 Mt', false], ['200 Mt', false]]
+                ],
+                [
+                    'texto' => '¿Qué símbolo de reciclaje indica que el plástico es PET?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['3', false], ['5', false], ['1', true], ['7', false]]
+                ],
+                [
+                    'texto' => '¿Cuál es el principal reto para reciclar plástico negro?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['Es muy caro', false], ['Los sensores ópticos no lo detectan', true], ['No se puede fundir', false], ['Es tóxico', false]]
+                ],
             ],
             // ANILLO 4 – PANTALLAS
             [
-                ['texto' => '¿Por qué los centros de datos consumen tanta energía?',
-                 'opciones' => [['Están lejos de las ciudades', false], ['Sus monitores son grandes', false], ['Refrigeración y operación de servidores', true], ['Tienen muchos trabajadores', false]]],
-                ['texto' => '¿Qué es la "obsolescencia programada"?',
-                 'opciones' => [['Un tipo de software', false], ['Diseñar productos para que fallen pronto', true], ['Un sistema de reciclaje', false], ['Una norma de seguridad', false]]],
-                ['texto' => '¿Cuál es la huella de carbono aproximada de fabricar un smartphone?',
-                 'opciones' => [['5 kg CO₂', false], ['30 kg CO₂', false], ['70 kg CO₂', true], ['200 kg CO₂', false]]],
-                ['texto' => '¿Qué mineral crítico se usa en baterías de litio y genera conflictos mineros?',
-                 'opciones' => [['Hierro', false], ['Cobre', false], ['Cobalto', true], ['Plata', false]]],
-                ['texto' => '¿Cuántos residuos electrónicos (e-waste) se generan al año a nivel global?',
-                 'opciones' => [['10 Mt', false], ['53 Mt', true], ['200 Mt', false], ['5 Mt', false]]],
-                ['texto' => '¿Qué acción alarga más la vida de un ordenador?',
-                 'opciones' => [['Apagarlo siempre', false], ['Ampliarlo con más RAM o SSD', true], ['Actualizarlo de sistema operativo', false], ['Limpiar la pantalla', false]]],
+                [
+                    'texto' => '¿Por qué los centros de datos consumen tanta energía?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['Están lejos de las ciudades', false], ['Sus monitores son grandes', false], ['Refrigeración y operación de servidores', true], ['Tienen muchos trabajadores', false]]
+                ],
+                [
+                    'texto' => '¿Qué es la "obsolescencia programada"?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['Un tipo de software', false], ['Diseñar productos para que fallen pronto', true], ['Un sistema de reciclaje', false], ['Una norma de seguridad', false]]
+                ],
+                [
+                    'texto' => '¿Cuál es la huella de carbono aproximada de fabricar un smartphone?',
+                    'tipo_pregunta' => 'slider',
+                    'rango_min' => 10,
+                    'rango_max' => 150,
+                    'unidad' => ' kg CO₂',
+                    'opciones' => [['70', true]]
+                ],
+                [
+                    'texto' => '¿Qué mineral crítico se usa en baterías de litio y genera conflictos mineros?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['Hierro', false], ['Cobre', false], ['Cobalto', true], ['Plata', false]]
+                ],
+                [
+                    'texto' => '¿Cuántos residuos electrónicos (e-waste) se generan al año a nivel global?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['10 Mt', false], ['53 Mt', true], ['200 Mt', false], ['5 Mt', false]]
+                ],
+                [
+                    'texto' => 'Explica detalladamente qué acciones cotidianas realizas para alargar la vida útil de tus ordenadores o dispositivos.',
+                    'tipo_pregunta' => 'free',
+                    'opciones' => []
+                ],
             ],
             // ANILLO 5 – ROPA
             [
-                ['texto' => '¿Por qué la moda rápida ("fast fashion") es tan contaminante?',
-                 'opciones' => [['Produce poca ropa', false], ['Usa energía solar', false], ['Genera residuos y consume recursos masivamente', true], ['Emplea mucha mano de obra local', false]]],
-                ['texto' => '¿Cuántos litros de agua se necesitan para fabricar un par de vaqueros?',
-                 'opciones' => [['100 L', false], ['1.000 L', false], ['7.500 L', true], ['50.000 L', false]]],
-                ['texto' => '¿Cuál es la fibra natural con menor huella hídrica?',
-                 'opciones' => [['Algodón convencional', false], ['Lana', false], ['Lino', true], ['Seda', false]]],
-                ['texto' => '¿Qué porcentaje de las emisiones globales de CO₂ proviene de la industria textil?',
-                 'opciones' => [['1%', false], ['10%', true], ['25%', false], ['40%', false]]],
-                ['texto' => '¿Qué significa "upcycling" en moda sostenible?',
-                 'opciones' => [['Comprar ropa cara', false], ['Transformar ropa usada en algo de mayor valor', true], ['Reciclar hilos', false], ['Donar ropa', false]]],
-                ['texto' => '¿Cuál es el país que más ropa exporta al mundo?',
-                 'opciones' => [['Bangladesh', false], ['India', false], ['China', true], ['Vietnam', false]]],
+                [
+                    'texto' => '¿Por qué la moda rápida ("fast fashion") es tan contaminante?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['Produce poca ropa', false], ['Usa energía solar', false], ['Genera residuos y consume recursos masivamente', true], ['Emplea mucha mano de obra local', false]]
+                ],
+                [
+                    'texto' => '¿Cuántos litros de agua se necesitan para fabricar un par de vaqueros?',
+                    'tipo_pregunta' => 'slider',
+                    'rango_min' => 1000,
+                    'rango_max' => 10000,
+                    'unidad' => ' L',
+                    'opciones' => [['7500', true]]
+                ],
+                [
+                    'texto' => '¿Cuál es la fibra natural con menor huella hídrica?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['Algodón convencional', false], ['Lana', false], ['Lino', true], ['Seda', false]]
+                ],
+                [
+                    'texto' => '¿Qué porcentaje de las emisiones globales de CO₂ proviene de la industria textil?',
+                    'tipo_pregunta' => 'slider',
+                    'rango_min' => 1,
+                    'rango_max' => 50,
+                    'unidad' => '%',
+                    'opciones' => [['10', true]]
+                ],
+                [
+                    'texto' => '¿Qué significa "upcycling" en moda sostenible?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['Comprar ropa cara', false], ['Transformar ropa usada en algo de mayor valor', true], ['Reciclar hilos', false], ['Donar ropa', false]]
+                ],
+                [
+                    'texto' => '¿Cuál es el país que más ropa exporta al mundo?',
+                    'tipo_pregunta' => 'options',
+                    'opciones' => [['Bangladesh', false], ['India', false], ['China', true], ['Vietnam', false]]
+                ],
             ],
         ];
 
@@ -126,22 +238,32 @@ class CartasSeeder extends Seeder
                     'updated_at'  => now(),
                 ]);
 
+                $tipoPregunta = $p['tipo_pregunta'] ?? 'options';
+                $rangoMin     = $p['rango_min'] ?? null;
+                $rangoMax     = $p['rango_max'] ?? null;
+                $unidad       = $p['unidad'] ?? null;
+
                 $preguntaId = DB::table('preguntas')->insertGetId([
                     'carta_id'     => $cartaId,
                     'texto'        => $p['texto'],
-                    'tipo_pregunta'=> 'options',
+                    'tipo_pregunta'=> $tipoPregunta,
+                    'rango_min'    => $rangoMin,
+                    'rango_max'    => $rangoMax,
+                    'unidad'       => $unidad,
                     'created_at'   => now(),
                     'updated_at'   => now(),
                 ]);
 
-                foreach ($p['opciones'] as [$texto, $correcta]) {
-                    DB::table('opciones_respuesta')->insert([
-                        'pregunta_id' => $preguntaId,
-                        'texto'       => $texto,
-                        'correcta'    => $correcta,
-                        'created_at'  => now(),
-                        'updated_at'  => now(),
-                    ]);
+                if (isset($p['opciones'])) {
+                    foreach ($p['opciones'] as [$texto, $correcta]) {
+                        DB::table('opciones_respuesta')->insert([
+                            'pregunta_id' => $preguntaId,
+                            'texto'       => $texto,
+                            'correcta'    => $correcta,
+                            'created_at'  => now(),
+                            'updated_at'  => now(),
+                        ]);
+                    }
                 }
             }
         }

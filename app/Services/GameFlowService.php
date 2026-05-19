@@ -403,7 +403,9 @@ class GameFlowService
                 } elseif ($pregunta->tipo_pregunta === 'slider') {
                     // Lógica para Slider: comprobar si el valor está cerca de la respuesta correcta
                     $valorElegido = (float) $voto->resultado;
-                    $valorCorrecto = (float) ($pregunta->respuesta_correcta ?? 50);
+                    $opcionCorrecta = $pregunta->opciones->where('correcta', 1)->first()
+                                   ?? $pregunta->opciones->where('correcta', true)->first();
+                    $valorCorrecto = $opcionCorrecta ? (float) $opcionCorrecta->texto : 50;
                     
                     // Margen de error del 10%
                     $margen = 5; 
@@ -567,6 +569,7 @@ class GameFlowService
             'sliderMin' => $pregunta && $pregunta->rango_min !== null ? $pregunta->rango_min : 0,
             'sliderMax' => $pregunta && $pregunta->rango_max !== null ? $pregunta->rango_max : 100,
             'unit' => ($pregunta && $pregunta->rango_max !== null && $pregunta->rango_max !== 100) ? '' : '%',
+            'correct_answer' => $pregunta ? ($pregunta->opciones->where('correcta', true)->first()->texto ?? null) : null,
         ];
     }
 

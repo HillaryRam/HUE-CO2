@@ -289,6 +289,7 @@ class GameController extends Controller
             'sliderMin' => $pregunta && $pregunta->rango_min !== null ? $pregunta->rango_min : 0,
             'sliderMax' => $pregunta && $pregunta->rango_max !== null ? $pregunta->rango_max : 100,
             'unit' => ($pregunta && $pregunta->rango_max !== null && $pregunta->rango_max !== 100) ? '' : '%',
+            'correct_answer' => $pregunta ? ($pregunta->opciones->where('correcta', true)->first()->texto ?? null) : null,
         ];
 
         

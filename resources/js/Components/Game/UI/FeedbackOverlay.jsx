@@ -46,7 +46,8 @@ export default function FeedbackOverlay({ isCorrect, message, onNext }) {
 
     const getTheme = () => {
         if (isCorrect === 'partial') return partialColor;
-        return isCorrect ? successColor : errorColor;
+        if (isCorrect === 'correct' || isCorrect === true) return successColor;
+        return errorColor;
     };
 
     const theme = getTheme();
