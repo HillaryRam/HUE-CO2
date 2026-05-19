@@ -110,7 +110,7 @@ class HabilidadController extends Controller
                 $mensajes = [
                     'textil' => '¡[Industria Textil] activó Cerrar el Ciclo! Reto reciclado.',
                     'ciencia' => '¡[Ciencia e I+D] activó Salto Tecnológico! Reto auto-completado.',
-                    'tech' => '¡[Gigantes Tech] activó Algoritmo de Eficiencia! Impacto de evento reducido a la mitad.',
+                    'tech' => '¡[EcoTech] activó Algoritmo de Eficiencia! Impacto de evento reducido a la mitad.',
                     'primario' => '¡[Sector Primario] activó Restauración de Ecosistemas! Temperatura global -0.2°C.',
                     'publico' => '¡[Sector Público] activó Ley de Emergencia! Impacto de evento bloqueado por completo.',
                     'ciudadania' => '¡[Ciudadanía] activó Presión Social! Eliminado el 50% de las opciones incorrectas del reto actual.',

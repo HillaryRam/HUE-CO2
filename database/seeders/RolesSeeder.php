@@ -16,7 +16,7 @@ class RolesSeeder extends Seeder
         DB::table('roles')->insert([
             ['nombre' => 'Industria Textil', 'slug' => 'textil',     'habilidades' => 'Pasiva: Reduce coste ET en Ropa. Activa: Cerrar el Ciclo (Descarta y saca reto nuevo).'],
             ['nombre' => 'Ciencia e I+D',    'slug' => 'ciencia',    'habilidades' => 'Pasiva: Cartas sin bloqueo. Activa: Salto Tecnológico (Auto-acierto).'],
-            ['nombre' => 'Gigantes Tech',    'slug' => 'tech',       'habilidades' => 'Pasiva: Ve eventos futuros. Activa: Algoritmo de Eficiencia (Mitiga 50% de evento).'],
+            ['nombre' => 'EcoTech',          'slug' => 'tech',       'habilidades' => 'Pasiva: Ve eventos futuros. Activa: Algoritmo de Eficiencia (Mitiga 50% de evento).'],
             ['nombre' => 'Sector Primario',  'slug' => 'primario',   'habilidades' => 'Pasiva: Escudo automático. Activa: Restauración de Ecosistemas (Baja temp global).'],
             ['nombre' => 'Sector Público',   'slug' => 'publico',    'habilidades' => 'Pasiva: Impuestos verdes (+1 ET). Activa: Ley de Emergencia (Bloquea evento).'],
             ['nombre' => 'Ciudadanía',       'slug' => 'ciudadania', 'habilidades' => 'Pasiva: +2 ET extra por turno. Activa: Presión Social (Elimina 50% de errores).'],
