@@ -399,7 +399,7 @@ class GameController extends Controller
             'totalReduction' => $juego->total_reduccion,
             'turnNumber'  => $juego->current_turn,
             'lastTurnCorrect' => \Illuminate\Support\Facades\Cache::get('juego_'.$juego->juego_id.'_last_correct', false),
-            'outcome'     => ($juego->estado === 'ended') ? $this->calculateOutcome($juego) : null,
+            'outcome'     => ($juego->estado === 'ended') ? $this->gameFlow->calculateOutcome($juego) : null,
             'hostId'      => $hostId
         ]);
     }

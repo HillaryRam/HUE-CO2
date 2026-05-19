@@ -10,7 +10,7 @@ import { useGameChannel } from '../../../../hooks/useGameChannel';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ROLES } from '../../../../data/gameData';
-import { Sparkles, Info } from 'lucide-react';
+import { Sparkles, Info, Shirt, FlaskConical, Database, Sprout, Landmark, Users } from 'lucide-react';
 import FeedbackOverlay from '../../UI/FeedbackOverlay';
 
 export default function LocalDisplayBoard({ 
@@ -25,7 +25,7 @@ export default function LocalDisplayBoard({
 }) {
     // 1. Hooks de estado y contexto
     const { timeLeft, setTimeLeft, intensity, setIntensity } = useGame();
-    const { votes, proposal, isConnected, gameState: remoteState, sendVote } = useGameChannel(roomCode, 'host', myPlayerName || 'Host', myParticipantId);
+    const { votes, proposal, isConnected, gameState: remoteState, sendVote, chatMessages } = useGameChannel(roomCode, 'host', myPlayerName || 'Host', myParticipantId);
     const [activeChallenge, setActiveChallenge] = useState(challenge);
     const advancingRef = useRef(false);
     const dismissedChallengeRef = useRef(null); // ID del reto que ya hemos cerrado
@@ -85,6 +85,53 @@ export default function LocalDisplayBoard({
         setFreePhase(null);
         setLocalFeedback(null);
     }, [activeChallenge?.id, activeChallenge?.title]);
+
+    const [processedMessages, setProcessedMessages] = useState(new Set());
+    const [activeAbilityAlert, setActiveAbilityAlert] = useState(null);
+
+    useEffect(() => {
+        if (!chatMessages || chatMessages.length === 0) return;
+        
+        const latestSystemMsg = [...chatMessages]
+            .reverse()
+            .find(m => m.type === 'system' && !processedMessages.has(m.id));
+
+        if (latestSystemMsg) {
+            setProcessedMessages(prev => {
+                const next = new Set(prev);
+                next.add(latestSystemMsg.id);
+                return next;
+            });
+
+            const match = latestSystemMsg.text.match(/¡\[(.*?)\] activó (.*?)[!.]/);
+            if (match) {
+                const sectorName = match[1];
+                const abilityName = match[2];
+                
+                const sectorIdMap = {
+                    'Industria Textil': 'textil',
+                    'Ciencia e I+D': 'ciencia',
+                    'Gigantes Tech': 'tech',
+                    'Sector Primario': 'primario',
+                    'Sector Público': 'publico',
+                    'Ciudadanía': 'ciudadania'
+                };
+                
+                const sectorId = sectorIdMap[sectorName] || 'ciencia';
+                
+                setActiveAbilityAlert({
+                    sectorId,
+                    sectorName,
+                    abilityName,
+                    fullText: latestSystemMsg.text
+                });
+                
+                setTimeout(() => {
+                    setActiveAbilityAlert(null);
+                }, 4500);
+            }
+        }
+    }, [chatMessages, processedMessages]);
 
     // Efecto 1: Reaccionar inmediatamente a los votos entrantes (PlayerVoted)
     // Esto hace que el feedback sea "instantáneo" como en el modo online, sin esperar al GameStateChanged final.
@@ -432,6 +479,73 @@ export default function LocalDisplayBoard({
                         }}
 
                     />
+                )}
+            </AnimatePresence>
+
+            {/* OVERLAY DE NOTIFICACIÓN DE HABILIDAD ACTIVADA */}
+            <AnimatePresence>
+                {activeAbilityAlert && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[999] flex items-center justify-center bg-black/60 backdrop-blur-md p-6"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.8, y: 50, opacity: 0 }}
+                            animate={{ scale: 1, y: 0, opacity: 1, transition: { type: "spring", stiffness: 300, damping: 25 } }}
+                            exit={{ scale: 0.8, y: -50, opacity: 0 }}
+                            className="bg-white/90 backdrop-blur-xl border-4 border-amber-400 rounded-[3rem] p-10 max-w-lg w-full shadow-2xl text-center relative overflow-hidden"
+                            style={{
+                                boxShadow: '0 25px 50px -12px rgba(251, 191, 36, 0.4)'
+                            }}
+                        >
+                            <div className="absolute -inset-10 bg-gradient-to-tr from-amber-200/20 via-transparent to-yellow-200/20 rounded-[4rem] pointer-events-none blur-xl" />
+                            
+                            <motion.div
+                                animate={{ 
+                                    scale: [1, 1.1, 1],
+                                    rotate: [0, 5, -5, 0]
+                                }}
+                                transition={{ 
+                                    repeat: Infinity,
+                                    duration: 3,
+                                    ease: "easeInOut"
+                                }}
+                                className={`w-24 h-24 rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-lg border-2 bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200 text-amber-500`}
+                            >
+                                {(() => {
+                                    const iconSize = 48;
+                                    switch (activeAbilityAlert.sectorId) {
+                                        case 'textil': return <Shirt size={iconSize} className="text-indigo-500" />;
+                                        case 'ciencia': return <FlaskConical size={iconSize} className="text-blue-500" />;
+                                        case 'tech': return <Database size={iconSize} className="text-violet-500" />;
+                                        case 'primario': return <Sprout size={iconSize} className="text-emerald-500" />;
+                                        case 'publico': return <Landmark size={iconSize} className="text-rose-500" />;
+                                        case 'ciudadania': return <Users size={iconSize} className="text-fuchsia-500" />;
+                                        default: return <Zap size={iconSize} className="text-amber-500" />;
+                                    }
+                                })()}
+                            </motion.div>
+
+                            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-amber-600 bg-amber-100/60 px-4 py-1.5 rounded-full border border-amber-200/50 inline-block mb-4 shadow-sm">
+                                ✨ PODER ACTIVO DETECTADO ✨
+                            </span>
+                            
+                            <h2 className="text-3xl font-black text-stone-900 mb-2 leading-tight">
+                                {activeAbilityAlert.sectorName}
+                            </h2>
+                            
+                            <h3 className="text-lg font-black text-amber-500 mb-4 flex items-center justify-center gap-2">
+                                <Sparkles className="w-5 h-5 fill-current" />
+                                {activeAbilityAlert.abilityName}
+                            </h3>
+                            
+                            <p className="text-stone-600 font-semibold text-sm leading-relaxed max-w-sm mx-auto bg-stone-50 border border-stone-100 rounded-2xl p-4">
+                                {activeAbilityAlert.fullText.split('! ')[1] || activeAbilityAlert.fullText}
+                            </p>
+                        </motion.div>
+                    </motion.div>
                 )}
             </AnimatePresence>
         </div>
