@@ -9,6 +9,10 @@ class RolesSeeder extends Seeder
 {
     public function run(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('roles')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         DB::table('roles')->insert([
             ['nombre' => 'Industria Textil', 'slug' => 'textil',     'habilidades' => 'Reduce el impacto de cartas de Ropa. Puede reciclar materiales.'],
             ['nombre' => 'Ciencia e I+D',    'slug' => 'ciencia',    'habilidades' => 'Puede neutralizar una carta negativa por turno. Bonus en cartas de Datos.'],
