@@ -19,7 +19,52 @@ Route::get('/jugar', function () {
 
 // Dashboard (Ahora protegido por Auth de Breeze)
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    $user = auth()->user();
+
+    $history = \DB::table('juegos')
+        ->join('juego_participante', 'juegos.juego_id', '=', 'juego_participante.juego_id')
+        ->join('participantes', 'juego_participante.participante_id', '=', 'participantes.participante_id')
+        ->leftJoin('roles', 'juego_participante.rol_id', '=', 'roles.rol_id')
+        ->where('participantes.user_id', $user->id)
+        ->where('juegos.estado', 'ended')
+        ->select(
+            'juegos.juego_id as id',
+            'juegos.updated_at as date',
+            'juegos.temperatura as finalTemp',
+            'roles.nombre as role'
+        )
+        ->orderBy('juegos.updated_at', 'desc')
+        ->get();
+
+    $formattedHistory = $history->map(function ($row) {
+        $date = \Carbon\Carbon::parse($row->date);
+        $months = [
+            1 => 'Ene', 2 => 'Feb', 3 => 'Mar', 4 => 'Abr', 5 => 'May', 6 => 'Jun',
+            7 => 'Jul', 8 => 'Ago', 9 => 'Sep', 10 => 'Oct', 11 => 'Nov', 12 => 'Dic'
+        ];
+        $monthStr = $months[$date->month] ?? '';
+        $dateStr = $date->day . ' ' . $monthStr . ' ' . $date->year;
+
+        $temp = (float) $row->finalTemp;
+        $outcome = 'neutral';
+        if ($temp >= 0.99) {
+            $outcome = 'defeat';
+        } elseif ($temp <= 0.0) {
+            $outcome = 'victory';
+        }
+
+        return [
+            'id' => (string) $row->id,
+            'date' => $dateStr,
+            'outcome' => $outcome,
+            'finalTemp' => $temp,
+            'role' => $row->role ?? 'Coordinador',
+        ];
+    });
+
+    return Inertia::render('Dashboard', [
+        'history' => $formattedHistory
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Perfil de usuario (Estándar de Breeze)

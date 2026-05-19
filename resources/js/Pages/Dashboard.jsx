@@ -12,7 +12,7 @@ import { LobbyView } from '../Components/GuestPortal/LobbyView';
 import axios from 'axios';
 
 export default function Dashboard() {
-    const { auth } = usePage().props;
+    const { auth, history } = usePage().props;
     const [view, setView] = useState('main'); // main, host_auth, select_mode, lobby
     const [mode, setMode] = useState(null);
     const [nickname, setNickname] = useState(auth.user?.username || auth.user?.name || '');
@@ -216,7 +216,7 @@ export default function Dashboard() {
                 </AnimatePresence>
 
                 {/* Historial de Partidas - Solo se muestra en el menú principal */}
-                {view === 'main' && <MatchHistory />}
+                {view === 'main' && <MatchHistory history={history} />}
 
                 {/* Footer */}
                 <div className="mt-16 flex items-center justify-center gap-4 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
