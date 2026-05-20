@@ -86,6 +86,21 @@ export default function MobileController({
     const primaryRole = safeRoles[0];
     const theme = ROLE_CONFIG[primaryRole?.id] ?? ROLE_CONFIG.ciudadania;
 
+    const [localGameState, setLocalGameState] = useState(gameState);
+    const [selectedAnswer, setSelectedAnswer] = useState(null);
+    const [sliderValue, setSliderValue] = useState(challenge.sliderDefault ?? 50);
+    const [proposalText, setProposalText] = useState('');
+    const [currentChallenge, setCurrentChallenge] = useState(challenge);
+    const [localTimeLeft, setLocalTimeLeft] = useState(timeLeft);
+
+    // ── WebSocket: Conectar al canal de la sala ───────────────────────────────
+    const { isConnected, gameState: serverGameState, sendVote, sendProposal, proposal } = useGameChannel(
+        roomCode,
+        primaryRole?.id, // ID por defecto
+        playerName,
+        participanteId
+    );
+
     const currentTemp = (serverGameState && serverGameState.temperature !== undefined)
         ? `${serverGameState.temperature > 0 ? '+' : ''}${Number(serverGameState.temperature).toFixed(1)}°C`
         : globalTemp;
@@ -95,14 +110,6 @@ export default function MobileController({
         : 1;
 
     const isLobby = localGameState === 'lobby';
-
-    const [localGameState, setLocalGameState] = useState(gameState);
-    const [selectedAnswer, setSelectedAnswer] = useState(null);
-    const [sliderValue, setSliderValue] = useState(challenge.sliderDefault ?? 50);
-    const [proposalText, setProposalText] = useState('');
-    const [currentChallenge, setCurrentChallenge] = useState(challenge);
-
-    const [localTimeLeft, setLocalTimeLeft] = useState(timeLeft);
 
     // Sincronizar el tiempo restante desde el servidor/host
     React.useEffect(() => {
@@ -123,14 +130,6 @@ export default function MobileController({
             if (timer) clearInterval(timer);
         };
     }, [localTimeLeft, localGameState]);
-
-    // ── WebSocket: Conectar al canal de la sala ───────────────────────────────
-    const { isConnected, gameState: serverGameState, sendVote, sendProposal, proposal } = useGameChannel(
-        roomCode,
-        primaryRole?.id, // ID por defecto
-        playerName,
-        participanteId
-    );
 
     const [isActivating, setIsActivating] = useState(false);
 
@@ -273,7 +272,14 @@ export default function MobileController({
                             <AlertTriangle className="w-10 h-10 text-amber-600 animate-pulse" />
                         </div>
                         <h2 className="text-xl font-black text-amber-800 mb-2 uppercase tracking-widest">¡Es tu turno!</h2>
-                        <h3 className="text-lg font-bold text-amber-700 mb-4">{safeChallenge.title ?? 'Pregunta abierta'}</h3>
+                        {safeChallenge.description && safeChallenge.description !== safeChallenge.title ? (
+                            <>
+                                <h3 className="text-md font-black text-amber-900 mb-1 leading-snug">{safeChallenge.description}</h3>
+                                <p className="text-[11px] font-semibold text-amber-700 mb-4 leading-relaxed">{safeChallenge.title}</p>
+                            </>
+                        ) : (
+                            <h3 className="text-lg font-bold text-amber-700 mb-4">{safeChallenge.title ?? 'Pregunta abierta'}</h3>
+                        )}
                         <p className="text-amber-600 font-medium">
                             Responde <strong>en voz alta</strong>. Tus compañeros validarán tu respuesta.
                         </p>
@@ -397,9 +403,20 @@ export default function MobileController({
                         Desafío · Anillo del {safeChallenge.ring ?? 'Agua'}
                     </span>
                 </div>
-                <h2 className="text-lg font-black mb-1 text-[#1c1917] leading-tight">
-                    {safeChallenge.title ?? 'Reto sin nombre'}
-                </h2>
+                {safeChallenge.description && safeChallenge.description !== safeChallenge.title ? (
+                    <>
+                        <h2 className="text-[15px] font-black mb-1 text-[#1c1917] leading-snug">
+                            {safeChallenge.description}
+                        </h2>
+                        <p className="text-[11px] text-[#78716c] font-semibold mb-3 leading-relaxed">
+                            {safeChallenge.title}
+                        </p>
+                    </>
+                ) : (
+                    <h2 className="text-lg font-black mb-1 text-[#1c1917] leading-tight">
+                        {safeChallenge.title ?? 'Reto sin nombre'}
+                    </h2>
+                )}
 
                 {/* ── Tipo OPCIONES ── */}
                 {challengeType === 'options' && (

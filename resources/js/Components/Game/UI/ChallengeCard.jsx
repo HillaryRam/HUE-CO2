@@ -357,14 +357,20 @@ export default function ChallengeCard({
                     </div>
 
                     {/* Título y Descripción */}
-                    <div className={`flex flex-col gap-2 ${challengeType === 'slider' ? (isCompact ? 'mb-4' : 'mb-8') : (isCompact ? 'mb-2' : 'mb-4')}`}>
-                        <h2 className={`${isCompact ? 'text-[18px]' : 'text-[22px]'} ${isEvent ? 'text-rose-700' : 'text-slate-900'} font-black tracking-tight leading-none`}>
-                            {challenge.title ?? 'Título del Desafío'}
-                        </h2>
-                        {challenge.description && challenge.description !== challenge.title && (
-                            <p className={`text-slate-500 font-medium leading-relaxed ${isCompact ? (challengeType === 'validate' || challengeType === 'options' ? 'text-[10.5px]' : 'text-[12px]') : (challengeType === 'validate' || challengeType === 'options' ? 'text-[12px]' : 'text-sm')}`}>
-                                {challenge.description}
-                            </p>
+                    <div className={`flex flex-col gap-2.5 ${challengeType === 'slider' ? (isCompact ? 'mb-4' : 'mb-8') : (isCompact ? 'mb-2' : 'mb-4')}`}>
+                        {challenge.description && challenge.description !== challenge.title ? (
+                            <>
+                                <h2 className={`${isCompact ? 'text-[15px]' : 'text-[18px]'} ${isEvent ? 'text-rose-700' : 'text-slate-900'} font-black tracking-tight leading-snug`}>
+                                    {challenge.description}
+                                </h2>
+                                <p className={`${isCompact ? 'text-[11.5px]' : 'text-[13.5px]'} ${isEvent ? 'text-rose-600 font-semibold' : 'text-slate-500 font-semibold'} tracking-tight leading-relaxed`}>
+                                    {challenge.title}
+                                </p>
+                            </>
+                        ) : (
+                            <h2 className={`${isCompact ? 'text-[16px]' : 'text-[19px]'} ${isEvent ? 'text-rose-700' : 'text-slate-900'} font-black tracking-tight leading-snug`}>
+                                {challenge.title ?? 'Título del Desafío'}
+                            </h2>
                         )}
                     </div>
 
