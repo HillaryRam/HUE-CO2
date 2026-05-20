@@ -134,7 +134,14 @@ export default function OnlinePlayerBoard({
                         onTimeout={() => handleVote(null)} 
                     />
 
-                    <button onClick={() => window.location.reload()} className="p-3 rounded-2xl bg-slate-100 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all">
+                    <button 
+                        onClick={() => {
+                            if (window.confirm("¿Seguro que deseas salir de la partida? Perderás todo el progreso actual.")) {
+                                window.location.href = '/dashboard';
+                            }
+                        }} 
+                        className="p-3 rounded-2xl bg-slate-100 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all"
+                    >
                         <LogOut size={20} />
                     </button>
                 </div>

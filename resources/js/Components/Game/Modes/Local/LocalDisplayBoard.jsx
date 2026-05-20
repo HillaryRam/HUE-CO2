@@ -265,6 +265,12 @@ export default function LocalDisplayBoard({
         // Sin setTimeout: el host avanza manualmente pulsando el botón en el FeedbackOverlay
     };
 
+    const handleExit = () => {
+        if (window.confirm("¿Seguro que deseas salir de la partida? Perderás todo el progreso actual.")) {
+            window.location.href = '/dashboard';
+        }
+    };
+
     // Fase visual actual (Número de anillo del 1 al 5)
     const visualPhase = propVisualPhase || remoteState?.challenge?.visual_phase || 1;
 
@@ -308,7 +314,10 @@ export default function LocalDisplayBoard({
                             isActive={activeChallenge?.type !== 'waiting'} 
                             onTimeout={handleAdvance} 
                         />
-                        <button className="bg-white p-3 rounded-xl border border-slate-100 text-slate-400 hover:text-rose-500 transition-colors shadow-sm">
+                         <button 
+                            onClick={handleExit}
+                            className="bg-white p-3 rounded-xl border border-slate-100 text-slate-400 hover:text-rose-500 transition-colors shadow-sm"
+                        >
                             <LogOut className="w-5 h-5" />
                         </button>
                     </div>
