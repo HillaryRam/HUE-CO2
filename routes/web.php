@@ -35,7 +35,7 @@ Route::get('/dashboard', function () {
         )
         ->groupBy('juegos.juego_id', 'juegos.updated_at', 'juegos.temperatura')
         ->orderBy('juegos.updated_at', 'desc')
-        ->limit(10)
+        ->limit(5)
         ->get();
 
     $formattedHistory = $history->map(function ($row) {
