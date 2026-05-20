@@ -88,7 +88,8 @@ class CartasSeeder extends Seeder
                     'opciones' => [['Lluvia ácida natural', false], ['Residuos industriales y escorrentía agrícola', true], ['Turismo en ríos y lagos', false], ['Actividades de pesca excesiva', false]]
                 ],
                 [
-                    'texto' => '¿Cuántos litros de agua ahorra al mes quien se ducha 5 minutos en vez de 15?',
+                    'texto' => "La ducha musical\n\nTe duchas escuchando música. Pones una canción de 5 minutos y cuando acaba, sales. Tu hermano se ducha 15 minutos cada día. La ducha gasta unos 10 litros por minuto.",
+                    'texto_pregunta' => '¿Cuántos litros de agua ahorra al mes quien se ducha 5 minutos en vez de 15?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['1000 litros', false],
@@ -98,7 +99,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Cuántos litros de agua se necesitan aproximadamente para fabricar un par de vaqueros de algodón?',
+                    'texto' => "El precio de agua de tus vaqueros\n\nEstás en una tienda y ves unos vaqueros nuevos muy baratos. El cartel dice \"OFERTA: 15 €\". Tu amigo te dice: \"¡Están tirados! Cómpralos.\" Tú recuerdas que has leído algo sobre el agua que gasta fabricar ropa.",
+                    'texto_pregunta' => '¿Cuántos litros de agua se necesitan aproximadamente para fabricar un par de vaqueros de algodón?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['50-100 litros', false],
@@ -108,7 +110,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Cuántos litros ahorra al año quien cierra el grifo al cepillarse los dientes (2 veces/día)?',
+                    'texto' => "El grifo que nunca duerme\n\nTe lavas los dientes con el grifo abierto durante 2 minutos, dos veces al día. Tu vecina lo cierra mientras se cepilla. El grifo típico suelta unos 6 litros por minuto. Al año suponen 8.760 L",
+                    'texto_pregunta' => '¿Cuántos litros ahorra al año quien cierra el grifo al cepillarse los dientes (2 veces/día)?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['4.380 litros', true],
@@ -118,7 +121,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Cuántos litros de agua se necesitan para producir 1 litro de agua embotellada (incluyendo la fabricación del plástico)?',
+                    'texto' => "El agua embotellada vs. el grifo\n\nEn casa de tu amigo solo beben agua embotellada \"porque está más rica\". En tu casa bebéis agua del grifo filtrada con un jarro. Alguien del grupo dice que el agua embotellada es más sostenible \"porque viene en botellas pequeñas\".",
+                    'texto_pregunta' => '¿Cuántos litros de agua se necesitan para producir 1 litro de agua embotellada (incluyendo la fabricación del plástico)?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['1 litro (lo mismo)', false],
@@ -128,7 +132,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Por qué el streaming o el uso de internet consume agua indirectamente?',
+                    'texto' => "Streaming y agua\n\nEstás viendo una serie en streaming durante 3 horas seguidas. Un amigo te dice que eso también gasta agua, no solo electricidad. Te quedas sorprendido.",
+                    'texto_pregunta' => '¿Por qué el streaming o el uso de internet consume agua indirectamente?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Porque los cables submarinos necesitan estar mojados', false],
@@ -138,7 +143,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Qué combinación de hábitos matutinos tiene la menor huella ecológica?',
+                    'texto' => "El día más sostenible de tu vida\n\nImagina que tienes que diseñar el día más sostenible posible desde que te levantas hasta que te acuestas. Ducha, ropa, comida, móvil, estudio…",
+                    'texto_pregunta' => '¿Qué combinación de hábitos matutinos tiene la menor huella ecológica?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Ducha de 15 min, ropa nueva de algodón, café en cápsula, móvil en carga toda la noche', false],
@@ -191,7 +197,7 @@ class CartasSeeder extends Seeder
                 ],
                 [
                     'texto' => 'CRISIS: Apagón General (Sobrecarga de Red)',
-                    'texto_pregunta' => 'Una ola de calor masiva dispara el uso de aire acondicionado y sobrecarga la red de distribución eléctrica nacional. ¿Qué ocurre con un dispositivo que se mantiene en modo standby (espera) durante esta crisis?',
+                    'texto_pregunta' => "En tu salón hay 6 aparatos en modo standby: televisor, consola, router, cargador de móvil, microondas y altavoz. Tu padre dice que \"en standby no gastan\". Una ola de calor masiva dispara el uso de aire acondicionado y sobrecarga la red de distribución eléctrica nacional.\n\n¿Qué ocurre realmente cuando un aparato está en modo standby durante esta crisis?",
                     'tipo_pregunta' => 'options',
                     'tipo_carta' => 'evento',
                     'cambio_temp' => 0.4,
@@ -204,7 +210,7 @@ class CartasSeeder extends Seeder
                 ],
                 [
                     'texto' => 'CRISIS: Degradación Acelerada de Dispositivos',
-                    'texto_pregunta' => 'Las altas temperaturas veraniegas degradan las celdas de litio de millones de teléfonos, acortando su vida útil. ¿Qué consecuencias negativas tiene dejar el móvil cargando toda la noche?',
+                    'texto_pregunta' => "Dejas el móvil cargando toda la noche, aunque se llena al 100 % en 2 horas. Tu amiga lo desenchufa cuando llega al máximo. Las altas temperaturas veraniegas degradan las celdas de litio de millones de teléfonos, acortando su vida útil.\n\n¿Qué consecuencias tiene cargar el móvil más horas de las necesarias?",
                     'tipo_pregunta' => 'options',
                     'tipo_carta' => 'evento',
                     'cambio_temp' => 0.4,
@@ -217,7 +223,7 @@ class CartasSeeder extends Seeder
                 ],
                 [
                     'texto' => 'CRISIS: Ciclo Térmico Excesivo (Lavados Calientes)',
-                    'texto_pregunta' => 'El uso ineficiente de calentadores de agua domésticos satura la huella de carbono de los hogares. ¿Cuánta energía se ahorra aproximadamente lavando la ropa a 30°C en vez de a 60°C?',
+                    'texto_pregunta' => "Tu madre lava la ropa siempre a 60 °C \"para que quede limpia de verdad\". Tú lees que lavar a 30 °C ahorra mucha energía y que la mayoría de detergentes modernos funcionan bien en frío. El uso ineficiente de calentadores de agua domésticos satura la huella de carbono de los hogares.\n\n¿Cuánta energía se ahorra aproximadamente lavando la ropa a 30°C en vez de a 60°C?",
                     'tipo_pregunta' => 'options',
                     'tipo_carta' => 'evento',
                     'cambio_temp' => 0.4,
@@ -229,7 +235,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => 'Sales de tu habitación y dejas la luz encendida. Son las 3 de la tarde y entra mucha luz natural. Tu compañero de piso dice que "una bombilla LED no gasta casi nada". ¿Qué afirmación es correcta sobre las bombillas LED encendidas innecesariamente?',
+                    'texto' => "La luz que no necesitas\n\nSales de tu habitación y dejas la luz encendida. Son las 3 de la tarde y entra mucha luz natural. Tu compañero de piso dice que \"una bombilla LED no gasta casi nada\".",
+                    'texto_pregunta' => '¿Qué afirmación es correcta sobre las bombillas LED encendidas innecesariamente?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Las LEDs no consumen nada si son de bajo consumo', false],
@@ -239,7 +246,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Qué alternativa reduce más la huella energética al secar la ropa?',
+                    'texto' => "La secadora que devora energía\n\nEn invierno, tu familia usa la secadora cada vez que lava la ropa porque \"el tendedero en casa moja el ambiente\". Usáis la secadora 4 veces por semana.",
+                    'texto_pregunta' => '¿Qué alternativa reduce más la huella energética al secar la ropa?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Usar la secadora en modo rápido a baja temperatura', false],
@@ -249,8 +257,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => 'Decides comprar una prenda de fast fashion online, pagarla con el móvil, que te la envíen a casa en 24 horas y lavarla cuando llegue. Sin saberlo, has activado una cadena de impactos. 
-                                ¿Cuántas categorías de recursos se han visto afectadas en este proceso?',
+                    'texto' => "La cadena invisible\n\nDecides comprar una prenda de fast fashion online, pagarla con el móvil, que te la envíen a casa en 24 horas y lavarla cuando llegue. Sin saberlo, has activado una cadena de impactos.",
+                    'texto_pregunta' => '¿Cuántas categorías de recursos se han visto afectadas en este proceso?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Solo ropa y transporte', false],
@@ -311,7 +319,8 @@ class CartasSeeder extends Seeder
                     'opciones' => [['Su fundición resulta demasiado costosa', false], ['Los sensores ópticos de infrarrojos no lo detectan', true], ['Es incapaz de derretirse de nuevo', false], ['Es altamente tóxico por sí mismo', false]]
                 ],
                 [
-                    'texto' => '¿Cuál es la mejor decisión en este momento?',
+                    'texto' => "La botella que viaja sola\n\nQuedas con tus amigos en el parque. Tienes sed y el único chiringuito cercano solo vende agua en botellas de plástico de un solo uso. Tu compañero dice: \"Total, es solo una botella.\"",
+                    'texto_pregunta' => '¿Cuál es la mejor decisión en este momento?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Comprar la botella, total ya estás allí', false],
@@ -321,7 +330,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Qué afirmación es correcta?',
+                    'texto' => "El plástico tiene sed\n\nEn clase de ciencias ves que fabricar 1 kg de plástico virgen consume aproximadamente 2 litros de agua solo en el proceso de enfriamiento. Tu profesora os pregunta: \"¿Qué conexión hay entre el plástico y el agua?\"",
+                    'texto_pregunta' => '¿Qué afirmación es correcta?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['El plástico no tiene ninguna relación con el consumo de agua', false],
@@ -331,7 +341,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Qué debes hacer con el envase del yogur antes de reciclarlo?',
+                    'texto' => "¿Reciclar o no reciclar? Esa es la cuestión\n\nAcabas de comer un yogur. El envase tiene restos de yogur. Tu hermano dice que tirarlo al amarillo así está bien. Tu madre dice que hay que lavarlo antes.",
+                    'texto_pregunta' => '¿Qué debes hacer con el envase del yogur antes de reciclarlo?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Tirarlo directamente al contenedor amarillo sin limpiarlo', false],
@@ -341,7 +352,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Qué porcentaje aproximado de la ropa mundial está fabricada con fibras sintéticas (plástico)?',
+                    'texto' => "La ropa que bebe plástico\n\nLees en una revista que muchas prendas de ropa deportiva están hechas de poliéster, que en realidad es plástico. Tu amiga dice: \"Pensaba que la ropa no tenía nada que ver con el plástico.\"",
+                    'texto_pregunta' => '¿Qué porcentaje aproximado de la ropa mundial está fabricada con fibras sintéticas (plástico)?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Menos del 10 %', false],
@@ -351,7 +363,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Qué decisión tiene menor huella ecológica?',
+                    'texto' => "El plástico también es digital\n\nTu móvil se ha roto. La pantalla está agrietada pero funciona bien. La tienda de reparación te dice que puede arreglarlo por 60 €. Un modelo nuevo cuesta 300 €. Tu primo te dice: \"Cómprate uno nuevo, total los móviles llevan plástico de todos modos.\"",
+                    'texto_pregunta' => '¿Qué decisión tiene menor huella ecológica?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Comprar un móvil nuevo de última generación', false],
@@ -361,7 +374,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Cuál de estos cambios tiene el mayor impacto acumulado en el largo plazo si lo mantiene un adolescente durante toda su vida?',
+                    'texto' => "Tu huella, tu poder\n\nLlegas al final del juego. Has aprendido que plástico, agua, energía, pantallas y ropa están conectados. Ahora tienes que elegir UN solo cambio de hábito que adoptarías a partir de hoy.",
+                    'texto_pregunta' => '¿Cuál de estos cambios tiene el mayor impacto acumulado en el largo plazo si lo mantiene un adolescente durante toda su vida?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Apagar la luz al salir de una habitación', false],
@@ -417,7 +431,7 @@ class CartasSeeder extends Seeder
                 ],
                 [
                     'texto' => 'CRISIS: Servidores Hirviendo (Ola de Calor Digital)',
-                    'texto_pregunta' => 'Los grandes centros de servidores globales operan a temperaturas límite por el uso ininterrumpido del streaming y la nube. ¿Por qué el almacenamiento permanente de emails inactivos daña la atmósfera?',
+                    'texto_pregunta' => "Tienes la bandeja de entrada del correo con 4.000 emails sin leer, muchos con adjuntos. Tu amiga tiene su bandeja siempre ordenada y borra lo que no necesita. Le dices que \"los emails no contaminan\". Los grandes centros de servidores globales operan a temperaturas límite por el uso ininterrumpido del streaming y la nube.\n\n¿Por qué los emails almacenados en la nube tienen una huella ecológica?",
                     'tipo_pregunta' => 'options',
                     'tipo_carta' => 'evento',
                     'cambio_temp' => 0.4,
@@ -430,7 +444,7 @@ class CartasSeeder extends Seeder
                 ],
                 [
                     'texto' => 'CRISIS: Colapso de Redes por Spam y Tráfico Inútil',
-                    'texto_pregunta' => 'La masiva transmisión de datos sin valor genera una demanda energética y térmica que pone en riesgo de colapso a las infraestructuras de internet. ¿Cuánta energía gasta emitir contenido en alta definición (4K) frente a baja resolución (SD)?',
+                    'texto_pregunta' => "Estás viendo una serie en tu móvil mientras vas en el autobús. La plataforma te pregunta si quieres ver en calidad 4K, HD o SD. Eliges 4K \"porque queda mejor\". La masiva transmisión de datos sin valor genera una demanda energética y térmica que pone en riesgo de colapso a las infraestructuras de internet.\n\n¿Cuánta más energía consume transmitir vídeo en 4K respecto a SD (baja resolución)?",
                     'tipo_pregunta' => 'options',
                     'tipo_carta' => 'evento',
                     'cambio_temp' => 0.4,
@@ -442,7 +456,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Cuál de estas opciones tiene la menor huella ecológica?',
+                    'texto' => "El móvil de segunda mano\n\nNecesitas un móvil nuevo. Un amigo te ofrece su antiguo iPhone en perfecto estado por 150 €. En la tienda hay uno nuevo de gama media por 300 €. Tus padres dicen que \"lo nuevo es más fiable\".",
+                    'texto_pregunta' => '¿Cuál de estas opciones tiene la menor huella ecológica?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Comprar el móvil nuevo de gama media', false],
@@ -452,7 +467,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Qué ocurre cuando guardas datos en la nube?',
+                    'texto' => "El centro de datos que nadie ve\n\nSubes 50 fotos a Instagram en un día. Tu primo te dice que \"las fotos en la nube no pesan nada\". Tú has leído algo sobre centros de datos y no estás de acuerdo.",
+                    'texto_pregunta' => '¿Qué ocurre cuando guardas datos en la nube?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Los datos flotan en el aire y no consumen recursos físicos', false],
@@ -462,7 +478,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Qué efecto tienen las plataformas digitales y las redes sociales en el consumo de moda?',
+                    'texto' => "La moda que viaja por pantalla\n\nVes en TikTok un vídeo de un influencer con una camiseta nueva. La buscas online y la encuentras en una web de fast fashion por 4 €. La compras por impulso junto con otras 3 prendas.",
+                    'texto_pregunta' => '¿Qué efecto tienen las plataformas digitales y las redes sociales en el consumo de moda?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Ninguno, la gente compra lo mismo que antes de internet', false],
@@ -472,7 +489,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Cuál de las siguientes afirmaciones describe mejor el impacto ambiental de un uso intensivo de pantallas?',
+                    'texto' => "El bucle digital-material\n\nPasas 6 horas al día en pantallas (móvil, tablet, portátil). Un amigo te dice que \"lo digital no contamina como lo físico\". Pero tú has aprendido que hay conexiones ocultas.",
+                    'texto_pregunta' => '¿Cuál de las siguientes afirmaciones describe mejor el impacto ambiental de un uso intensivo de pantallas?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['El uso digital es completamente neutro en carbono', false],
@@ -528,7 +546,7 @@ class CartasSeeder extends Seeder
                 ],
                 [
                     'texto' => 'CRISIS: La Montaña Textil del Desierto de Atacama',
-                    'texto_pregunta' => 'Millones de prendas sintéticas baratas e inútiles se acumulan en montañas gigantescas a cielo abierto en desiertos sudamericanos, liberando plásticos al suelo. ¿Qué acción mitiga este desperdicio?',
+                    'texto_pregunta' => "Tienes 60 prendas en el armario pero sientes que \"no tienes nada que ponerte\". Cada temporada compras entre 5 y 10 prendas nuevas y donas o tiras las viejas. Tu abuela dice que ella tenía 10 prendas y \"se las arreglaba perfectamente\". Millones de prendas sintéticas baratas e inútiles se acumulan en montañas gigantescas a cielo abierto en desiertos sudamericanos, liberando plásticos al suelo.\n\n¿Qué estrategia reduce más la huella ecológica de tu armario ante esta crisis?",
                     'tipo_pregunta' => 'options',
                     'tipo_carta' => 'evento',
                     'cambio_temp' => 0.4,
@@ -540,7 +558,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Con qué frecuencia recomienda Levi\'s (la marca de vaqueros) lavar los jeans?',
+                    'texto' => "Lavar menos, vivir mejor\n\nLavas los vaqueros después de cada uso \"por higiene\". Tu amigo los lava cada 3-4 usos si no están visiblemente sucios.",
+                    'texto_pregunta' => "¿Con qué frecuencia recomienda Levi's (la marca de vaqueros) lavar los jeans?",
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Después de cada uso', false],
@@ -551,7 +570,7 @@ class CartasSeeder extends Seeder
                 ],
                 [
                     'texto' => 'CRISIS: Microfibras Sintéticas en Agua Potable',
-                    'texto_pregunta' => 'Cada lavado de prendas acrílicas y sintéticas vierte billones de partículas plásticas a las cañerías que burlan los filtros y terminan en nuestra comida. ¿Qué daño directo provoca lavar fibras de poliéster?',
+                    'texto_pregunta' => "Lavas un polar sintético que compraste en una tienda de fast fashion. Tu madre dice que los polares son ecológicos \"porque se fabrican con plástico reciclado\". Cada lavado de prendas acrílicas y sintéticas vierte billones de partículas plásticas a las cañerías que burlan los filtros y terminan en nuestra comida.\n\n¿Qué daño directo provoca lavar fibras de poliéster?",
                     'tipo_pregunta' => 'options',
                     'tipo_carta' => 'evento',
                     'cambio_temp' => 0.4,
@@ -563,7 +582,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Cuál de estas opciones tiene menor impacto ambiental global?',
+                    'texto' => "Intercambio vs. algoritmo\n\nUna plataforma de intercambio de ropa online te propone intercambiar 3 prendas que ya no usas por otras 3 de otro usuario. Tu amiga prefiere pedir ropa nueva con entrega al día siguiente porque \"es más cómodo\".",
+                    'texto_pregunta' => '¿Cuál de estas opciones tiene menor impacto ambiental global?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Pedir ropa nueva con entrega express en 24 horas', false],
@@ -573,7 +593,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Por qué una camiseta de 3 € puede ser más cara de lo que parece?',
+                    'texto' => "El precio real de la camiseta de 3 €\n\nEncuentras una camiseta de algodón por 3 € en una cadena de fast fashion. Te parece un chollo. Pero un compañero del juego dice: \"Si cuesta 3 €, algo no cuadra.\"",
+                    'texto_pregunta' => '¿Por qué una camiseta de 3 € puede ser más cara de lo que parece?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Automáticamente se desintegra y contamina', false],
@@ -584,7 +605,7 @@ class CartasSeeder extends Seeder
                 ],
                 [
                     'texto' => 'CRISIS: Tintes Venenosos en el Río Citarum',
-                    'texto_pregunta' => 'Gigantescas fábricas textiles vierten metales pesados y tintes ácidos sin depurar a ríos, envenenando el agua potable del grupo. ¿Cuál de estas prioridades reduce al máximo el impacto ecológico de la moda?',
+                    'texto_pregunta' => "Tienes una camiseta favorita que tiene un agujero pequeño en la manga. Puedes tirarla, donarla, venderla online o remendarla tú mismo. Gigantescas fábricas textiles vierten metales pesados y tintes ácidos sin depurar a ríos, envenenando el agua potable del grupo.\n\n¿Cómo ordenarías estas opciones de mayor a menor impacto ambiental positivo ante esta crisis?",
                     'tipo_pregunta' => 'options',
                     'tipo_carta' => 'evento',
                     'cambio_temp' => 0.4,

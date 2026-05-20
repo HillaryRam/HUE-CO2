@@ -604,7 +604,9 @@ class GameFlowService
             'id' => $carta->carta_id,
             'type' => $propuestaActiva ? 'validate' : $tipoBase,
             'title' => ($carta->tipo === 'evento') ? $carta->texto : ($pregunta ? $pregunta->texto : $carta->texto),
-            'description' => ($carta->tipo === 'evento') ? ($pregunta ? $pregunta->texto : '') : ($pregunta ? '' : $carta->texto),
+            'description' => ($carta->tipo === 'evento') 
+                ? ($pregunta ? $pregunta->texto : '') 
+                : ($pregunta && $carta->texto !== $pregunta->texto ? $carta->texto : ''),
             'ring' => $juego->anillo ? $juego->anillo->nombre : 'General',
             'anillo_id' => $juego->anillo_id,
             'options' => $opciones,
