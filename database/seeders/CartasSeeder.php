@@ -88,8 +88,8 @@ class CartasSeeder extends Seeder
                     'opciones' => [['Lluvia ácida natural', false], ['Residuos industriales y escorrentía agrícola', true], ['Turismo en ríos y lagos', false], ['Actividades de pesca excesiva', false]]
                 ],
                 [
-                    'texto' => "La ducha musical\n\nTe duchas escuchando música. Pones una canción de 5 minutos y cuando acaba, sales. Tu hermano se ducha 15 minutos cada día. La ducha gasta unos 10 litros por minuto.",
-                    'texto_pregunta' => '¿Cuántos litros de agua ahorra al mes quien se ducha 5 minutos en vez de 15?',
+                    'texto' => "¿Cuántos litros de agua ahorra al mes quien se ducha 5 minutos en vez de 15?",
+                    'texto_pregunta' => 'Pones una canción de 5 minutos y cuando acaba, sales. Tu hermano se ducha 15 minutos cada día. La ducha gasta unos 10 litros por minuto.',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['1000 litros', false],
@@ -99,8 +99,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "El precio de agua de tus vaqueros\n\nEstás en una tienda y ves unos vaqueros nuevos muy baratos. El cartel dice \"OFERTA: 15 €\". Tu amigo te dice: \"¡Están tirados! Cómpralos.\" Tú recuerdas que has leído algo sobre el agua que gasta fabricar ropa.",
-                    'texto_pregunta' => '¿Cuántos litros de agua se necesitan aproximadamente para fabricar un par de vaqueros de algodón?',
+                    'texto' => "¿Cuántos litros de agua se necesitan aproximadamente para fabricar un par de vaqueros de algodón?",
+                    'texto_pregunta' => 'Estás en una tienda y ves unos vaqueros nuevos muy baratos. El cartel dice \"OFERTA: 15 €\". Tu amigo te dice: \"¡Están tirados! Cómpralos.\" Tú recuerdas que has leído algo sobre el agua que gasta fabricar ropa.',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['50-100 litros', false],
@@ -110,8 +110,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "El grifo que nunca duerme\n\nTe lavas los dientes con el grifo abierto durante 2 minutos, dos veces al día. Tu vecina lo cierra mientras se cepilla. El grifo típico suelta unos 6 litros por minuto. Al año suponen 8.760 L",
-                    'texto_pregunta' => '¿Cuántos litros ahorra al año quien cierra el grifo al cepillarse los dientes (2 veces/día)?',
+                    'texto' => "¿Cuántos litros ahorra al año quien cierra el grifo al cepillarse los dientes (2 veces/día)?",
+                    'texto_pregunta' => 'Te lavas los dientes con el grifo abierto durante 2 minutos, dos veces al día. Tu vecina lo cierra mientras se cepilla. El grifo típico suelta unos 6 litros por minuto. Al año suponen 8.760 L',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['4.380 litros', true],
@@ -121,8 +121,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "El agua embotellada vs. el grifo\n\nEn casa de tu amigo solo beben agua embotellada \"porque está más rica\". En tu casa bebéis agua del grifo filtrada con un jarro. Alguien del grupo dice que el agua embotellada es más sostenible \"porque viene en botellas pequeñas\".",
-                    'texto_pregunta' => '¿Cuántos litros de agua se necesitan para producir 1 litro de agua embotellada (incluyendo la fabricación del plástico)?',
+                    'texto' => "¿Cuántos litros de agua se necesitan para producir 1 litro de agua embotellada (incluyendo la fabricación del plástico)?",
+                    'texto_pregunta' => 'En casa de tu amigo solo beben agua embotellada "porque está más rica". En tu casa bebéis agua del grifo filtrada con un jarro. Alguien del grupo dice que el agua embotellada es más sostenible "porque viene en botellas pequeñas".',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['1 litro (lo mismo)', false],
@@ -132,8 +132,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "Streaming y agua\n\nEstás viendo una serie en streaming durante 3 horas seguidas. Un amigo te dice que eso también gasta agua, no solo electricidad. Te quedas sorprendido.",
-                    'texto_pregunta' => '¿Por qué el streaming o el uso de internet consume agua indirectamente?',
+                    'texto' => "¿Por qué el streaming o el uso de internet consume agua indirectamente?",
+                    'texto_pregunta' => 'Estás viendo una serie en streaming durante 3 horas seguidas. Un amigo te dice que eso también gasta agua, no solo electricidad.',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Porque los cables submarinos necesitan estar mojados', false],
@@ -143,8 +143,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "El día más sostenible de tu vida\n\nImagina que tienes que diseñar el día más sostenible posible desde que te levantas hasta que te acuestas. Ducha, ropa, comida, móvil, estudio…",
-                    'texto_pregunta' => '¿Qué combinación de hábitos matutinos tiene la menor huella ecológica?',
+                    'texto' => "¿Qué combinación de hábitos matutinos tiene la menor huella ecológica?",
+                    'texto_pregunta' => 'Imagina que tienes que diseñar el día más sostenible posible desde que te levantas hasta que te acuestas. Ducha, ropa, comida, móvil, estudio…',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Ducha de 15 min, ropa nueva de algodón, café en cápsula, móvil en carga toda la noche', false],
@@ -235,8 +235,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "La luz que no necesitas\n\nSales de tu habitación y dejas la luz encendida. Son las 3 de la tarde y entra mucha luz natural. Tu compañero de piso dice que \"una bombilla LED no gasta casi nada\".",
-                    'texto_pregunta' => '¿Qué afirmación es correcta sobre las bombillas LED encendidas innecesariamente?',
+                    'texto' => "¿Qué afirmación es correcta sobre las bombillas LED encendidas innecesariamente?",
+                    'texto_pregunta' => 'Sales de tu habitación y dejas la luz encendida. Son las 3 de la tarde y entra mucha luz natural. Tu compañero de piso dice que "una bombilla LED no gasta casi nada".',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Las LEDs no consumen nada si son de bajo consumo', false],
@@ -246,8 +246,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "La secadora que devora energía\n\nEn invierno, tu familia usa la secadora cada vez que lava la ropa porque \"el tendedero en casa moja el ambiente\". Usáis la secadora 4 veces por semana.",
-                    'texto_pregunta' => '¿Qué alternativa reduce más la huella energética al secar la ropa?',
+                    'texto' => "¿Qué alternativa reduce más la huella energética al secar la ropa?",
+                    'texto_pregunta' => 'En invierno, tu familia usa la secadora cada vez que lava la ropa porque "el tendedero en casa moja el ambiente". Usáis la secadora 4 veces por semana.',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Usar la secadora en modo rápido a baja temperatura', false],
@@ -257,8 +257,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "La cadena invisible\n\nDecides comprar una prenda de fast fashion online, pagarla con el móvil, que te la envíen a casa en 24 horas y lavarla cuando llegue. Sin saberlo, has activado una cadena de impactos.",
-                    'texto_pregunta' => '¿Cuántas categorías de recursos se han visto afectadas en este proceso?',
+                    'texto' => "¿Cuántas categorías de recursos se han visto afectadas en este proceso?",
+                    'texto_pregunta' => 'Decides comprar una prenda de fast fashion online, pagarla con el móvil, que te la envíen a casa en 24 horas y lavarla cuando llegue. Sin saberlo, has activado una cadena de impactos.',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Solo ropa y transporte', false],
@@ -319,8 +319,8 @@ class CartasSeeder extends Seeder
                     'opciones' => [['Su fundición resulta demasiado costosa', false], ['Los sensores ópticos de infrarrojos no lo detectan', true], ['Es incapaz de derretirse de nuevo', false], ['Es altamente tóxico por sí mismo', false]]
                 ],
                 [
-                    'texto' => "La botella que viaja sola\n\nQuedas con tus amigos en el parque. Tienes sed y el único chiringuito cercano solo vende agua en botellas de plástico de un solo uso. Tu compañero dice: \"Total, es solo una botella.\"",
-                    'texto_pregunta' => '¿Cuál es la mejor decisión en este momento?',
+                    'texto' => "¿Cuál es la mejor decisión en este momento?",
+                    'texto_pregunta' => 'Quedas con tus amigos en el parque. Tienes sed y el único chiringuito cercano solo vende agua en botellas de plástico de un solo uso. Tu compañero dice: "Total, es solo una botella."',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Comprar la botella, total ya estás allí', false],
@@ -330,8 +330,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "El plástico tiene sed\n\nEn clase de ciencias ves que fabricar 1 kg de plástico virgen consume aproximadamente 2 litros de agua solo en el proceso de enfriamiento. Tu profesora os pregunta: \"¿Qué conexión hay entre el plástico y el agua?\"",
-                    'texto_pregunta' => '¿Qué afirmación es correcta?',
+                    'texto' => "¿Qué afirmación es correcta?",
+                    'texto_pregunta' => "En clase de ciencias ves que fabricar 1 kg de plástico virgen consume aproximadamente 2 litros de agua solo en el proceso de enfriamiento. Tu profesora os pregunta: ¿Qué conexión hay entre el plástico y el agua?",
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['El plástico no tiene ninguna relación con el consumo de agua', false],
@@ -341,8 +341,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "¿Reciclar o no reciclar? Esa es la cuestión\n\nAcabas de comer un yogur. El envase tiene restos de yogur. Tu hermano dice que tirarlo al amarillo así está bien. Tu madre dice que hay que lavarlo antes.",
-                    'texto_pregunta' => '¿Qué debes hacer con el envase del yogur antes de reciclarlo?',
+                    'texto' => "¿Qué debes hacer con el envase del yogur antes de reciclarlo?",
+                    'texto_pregunta' => 'Acabas de comer un yogur. El envase tiene restos de yogur. Tu hermano dice que tirarlo al amarillo así está bien. Tu madre dice que hay que lavarlo antes.',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Tirarlo directamente al contenedor amarillo sin limpiarlo', false],
@@ -352,8 +352,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "La ropa que bebe plástico\n\nLees en una revista que muchas prendas de ropa deportiva están hechas de poliéster, que en realidad es plástico. Tu amiga dice: \"Pensaba que la ropa no tenía nada que ver con el plástico.\"",
-                    'texto_pregunta' => '¿Qué porcentaje aproximado de la ropa mundial está fabricada con fibras sintéticas (plástico)?',
+                    'texto' => "¿Qué porcentaje aproximado de la ropa mundial está fabricada con fibras sintéticas (plástico)?",
+                    'texto_pregunta' => 'Lees en una revista que muchas prendas de ropa deportiva están hechas de poliéster, que en realidad es plástico. Tu amiga dice: "Pensaba que la ropa no tenía nada que ver con el plástico."',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Menos del 10 %', false],
@@ -363,8 +363,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "El plástico también es digital\n\nTu móvil se ha roto. La pantalla está agrietada pero funciona bien. La tienda de reparación te dice que puede arreglarlo por 60 €. Un modelo nuevo cuesta 300 €. Tu primo te dice: \"Cómprate uno nuevo, total los móviles llevan plástico de todos modos.\"",
-                    'texto_pregunta' => '¿Qué decisión tiene menor huella ecológica?',
+                    'texto' => "¿Qué decisión tiene menor huella ecológica?",
+                    'texto_pregunta' => "Tu móvil se ha roto. La pantalla está agrietada pero funciona bien. La tienda de reparación te dice que puede arreglarlo por 60 €. Un modelo nuevo cuesta 300 €. Tu primo te dice: \"Cómprate uno nuevo, total los móviles llevan plástico de todos modos.\"",
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Comprar un móvil nuevo de última generación', false],
@@ -374,8 +374,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "Tu huella, tu poder\n\nLlegas al final del juego. Has aprendido que plástico, agua, energía, pantallas y ropa están conectados. Ahora tienes que elegir UN solo cambio de hábito que adoptarías a partir de hoy.",
-                    'texto_pregunta' => '¿Cuál de estos cambios tiene el mayor impacto acumulado en el largo plazo si lo mantiene un adolescente durante toda su vida?',
+                    'texto' => "¿Cuál de estos cambios tiene el mayor impacto acumulado en el largo plazo si lo mantiene un adolescente durante toda su vida?",
+                    'texto_pregunta' => 'Llegas al final del juego. Has aprendido que plástico, agua, energía, pantallas y ropa están conectados. Ahora tienes que elegir UN solo cambio de hábito que adoptarías a partir de hoy.',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Apagar la luz al salir de una habitación', false],
@@ -456,8 +456,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "El móvil de segunda mano\n\nNecesitas un móvil nuevo. Un amigo te ofrece su antiguo iPhone en perfecto estado por 150 €. En la tienda hay uno nuevo de gama media por 300 €. Tus padres dicen que \"lo nuevo es más fiable\".",
-                    'texto_pregunta' => '¿Cuál de estas opciones tiene la menor huella ecológica?',
+                    'texto' => "¿Cuál de estas opciones tiene la menor huella ecológica?",
+                    'texto_pregunta' => "Necesitas un móvil nuevo. Un amigo te ofrece su antiguo iPhone en perfecto estado por 150 €. En la tienda hay uno nuevo de gama media por 300 €. Tus padres dicen que 'lo nuevo es más fiable'.",
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Comprar el móvil nuevo de gama media', false],
@@ -467,8 +467,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "El centro de datos que nadie ve\n\nSubes 50 fotos a Instagram en un día. Tu primo te dice que \"las fotos en la nube no pesan nada\". Tú has leído algo sobre centros de datos y no estás de acuerdo.",
-                    'texto_pregunta' => '¿Qué ocurre cuando guardas datos en la nube?',
+                    'texto' => "¿Qué ocurre cuando guardas datos en la nube?",
+                    'texto_pregunta' => "Subes 50 fotos a Instagram en un día. Tu primo te dice que 'las fotos en la nube no pesan nada'. Tú has leído algo sobre centros de datos y no estás de acuerdo.",
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Los datos flotan en el aire y no consumen recursos físicos', false],
@@ -478,8 +478,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "La moda que viaja por pantalla\n\nVes en TikTok un vídeo de un influencer con una camiseta nueva. La buscas online y la encuentras en una web de fast fashion por 4 €. La compras por impulso junto con otras 3 prendas.",
-                    'texto_pregunta' => '¿Qué efecto tienen las plataformas digitales y las redes sociales en el consumo de moda?',
+                    'texto' => "¿Qué efecto tienen las plataformas digitales y las redes sociales en el consumo de moda?",
+                    'texto_pregunta' => "Ves en TikTok un vídeo de un influencer con una camiseta nueva. La buscas online y la encuentras en una web de fast fashion por 4 €. La compras por impulso junto con otras 3 prendas.",
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Ninguno, la gente compra lo mismo que antes de internet', false],
@@ -489,8 +489,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "El bucle digital-material\n\nPasas 6 horas al día en pantallas (móvil, tablet, portátil). Un amigo te dice que \"lo digital no contamina como lo físico\". Pero tú has aprendido que hay conexiones ocultas.",
-                    'texto_pregunta' => '¿Cuál de las siguientes afirmaciones describe mejor el impacto ambiental de un uso intensivo de pantallas?',
+                    'texto' => "¿Cuál de las siguientes afirmaciones describe mejor el impacto ambiental de un uso intensivo de pantallas?",
+                    'texto_pregunta' => "Pasas 6 horas al día en pantallas (móvil, tablet, portátil). Un amigo te dice que 'lo digital no contamina como lo físico'. Pero tú has aprendido que hay conexiones ocultas.",
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['El uso digital es completamente neutro en carbono', false],
@@ -558,8 +558,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "Lavar menos, vivir mejor\n\nLavas los vaqueros después de cada uso \"por higiene\". Tu amigo los lava cada 3-4 usos si no están visiblemente sucios.",
-                    'texto_pregunta' => "¿Con qué frecuencia recomienda Levi's (la marca de vaqueros) lavar los jeans?",
+                    'texto' => "¿Con qué frecuencia recomiendan lavar los pantalones vaqueros tipo 'jeans'?",
+                    'texto_pregunta' => "Lavas los vaqueros después de cada uso \"por higiene\". Tu amigo los lava cada 3-4 usos si no están visiblemente sucios.",
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Después de cada uso', false],
@@ -582,8 +582,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "Intercambio vs. algoritmo\n\nUna plataforma de intercambio de ropa online te propone intercambiar 3 prendas que ya no usas por otras 3 de otro usuario. Tu amiga prefiere pedir ropa nueva con entrega al día siguiente porque \"es más cómodo\".",
-                    'texto_pregunta' => '¿Cuál de estas opciones tiene menor impacto ambiental global?',
+                    'texto' => "¿Cuál de estas opciones tiene menor impacto ambiental global?",
+                    'texto_pregunta' => "Una plataforma de intercambio de ropa online te propone intercambiar 3 prendas que ya no usas por otras 3 de otro usuario. Tu amiga prefiere pedir ropa nueva con entrega al día siguiente porque 'es más cómodo'.",
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Pedir ropa nueva con entrega express en 24 horas', false],
@@ -593,8 +593,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => "El precio real de la camiseta de 3 €\n\nEncuentras una camiseta de algodón por 3 € en una cadena de fast fashion. Te parece un chollo. Pero un compañero del juego dice: \"Si cuesta 3 €, algo no cuadra.\"",
-                    'texto_pregunta' => '¿Por qué una camiseta de 3 € puede ser más cara de lo que parece?',
+                    'texto' => "¿Por qué una camiseta de 3 € puede ser más cara de lo que parece?",
+                    'texto_pregunta' => "Encuentras una camiseta de algodón por 3 € en una cadena de fast fashion. Te parece un chollo. Pero un compañero del juego dice: 'Si cuesta 3 €, algo no cuadra.'",
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Automáticamente se desintegra y contamina', false],
