@@ -21,7 +21,8 @@ export default function LocalDisplayBoard({
     onNextChallenge,
     myParticipantId,
     myPlayerName,
-    visualPhase: propVisualPhase
+    visualPhase: propVisualPhase,
+    gameMode = 'shared'
 }) {
     // 1. Hooks de estado y contexto
     const { timeLeft, setTimeLeft, intensity, setIntensity } = useGame();
@@ -32,7 +33,7 @@ export default function LocalDisplayBoard({
 
 
     // 2. Variables derivadas (Calculadas en cada render)
-    const isLocalGame = roomCode && roomCode.startsWith('LOCAL_');
+    const isLocalGame = (roomCode && roomCode.startsWith('LOCAL_')) || gameMode === 'solo';
     const currentGameState = remoteState?.state || 'waiting'; // Por defecto esperar hasta tener estado real
     
     const displaySectors = sectors.map((s) => ({
@@ -226,17 +227,40 @@ export default function LocalDisplayBoard({
             // Fase 2: el grupo ha votado (answer = 'valid' | 'partial' | 'invalid')
             // Mostramos el feedback y esperamos a que el host pulse "Siguiente Pregunta"
             const isCorrect = (answer === 'valid');
+
+            // Si es modo solo, enviar la validación/voto al backend para que registre los puntos
+            if (gameMode === 'solo') {
+                try {
+                    await sendVote(answer, 'validate', activeSectorId);
+                } catch (err) {
+                    console.error('[HUE-CO2] Error al validar respuesta en modo solo:', err);
+                }
+            }
+
             setLocalFeedback(isCorrect ? 'correct' : 'incorrect');
             setFreePhase(null);
             return; // El avance lo gestiona el botón del FeedbackOverlay
         }
 
-        // Preguntas de opciones: mostrar feedback y esperar al botón del host
+        // Preguntas de opciones o slider: mostrar feedback y esperar al botón del host
         let isCorrect = true;
         if (activeChallenge.type === 'options' && activeChallenge.options) {
             const correctOption = activeChallenge.correct_answer || activeChallenge.options[0];
             isCorrect = (answer === correctOption);
+        } else if (activeChallenge.type === 'slider') {
+            const diff = Math.abs(Number(answer) - Number(activeChallenge.correct_answer || 50));
+            isCorrect = (diff <= 5);
         }
+
+        // Si es modo solo, enviar el voto de opción/slider al backend para que registre los puntos
+        if (gameMode === 'solo') {
+            try {
+                await sendVote(answer, activeChallenge.type ?? 'options', activeSectorId);
+            } catch (err) {
+                console.error('[HUE-CO2] Error al enviar voto en modo solo:', err);
+            }
+        }
+
         setLocalFeedback(isCorrect ? 'correct' : 'incorrect');
         // Sin setTimeout: el host avanza manualmente pulsando el botón en el FeedbackOverlay
     };

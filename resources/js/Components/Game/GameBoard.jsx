@@ -204,6 +204,7 @@ export function GameBoard({
                     visualPhase={visualPhase}
                     myParticipantId={myParticipantId}
                     myPlayerName={myPlayerName}
+                    gameMode={gameMode}
                 />
             );
         } else {

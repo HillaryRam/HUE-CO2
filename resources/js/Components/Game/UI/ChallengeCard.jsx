@@ -60,7 +60,7 @@ export default function ChallengeCard({
 
     if (!challenge || Object.keys(challenge).length === 0) {
         return (
-            <div className={`${isCompact ? 'w-[310px] min-w-[280px] max-w-full h-[68vh] min-h-[500px]' : 'w-[380px] min-w-[360px] max-w-full h-[78vh] min-h-[640px]'} bg-white rounded-[2rem] border-4 border-dashed border-slate-200 flex flex-col items-center justify-center p-8 text-center shrink-0`}>
+            <div className={`${isCompact ? 'w-[310px] min-w-[280px] max-w-full h-[68vh] min-h-[500px]' : 'w-[380px] min-w-[360px] max-w-full h-[70vh] min-h-[560px] max-h-[660px]'} bg-white rounded-[2rem] border-4 border-dashed border-slate-200 flex flex-col items-center justify-center p-8 text-center shrink-0`}>
                 <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6">
                     <Clock className="w-10 h-10 text-slate-300" />
                 </div>
@@ -333,7 +333,7 @@ export default function ChallengeCard({
         <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className={`${isCompact ? 'w-[310px] min-w-[280px] max-w-full h-[68vh] min-h-[500px]' : 'w-[380px] min-w-[360px] max-w-full h-[78vh] min-h-[640px]'} relative shrink-0 ${isEvent ? 'animate-pulse' : ''}`}
+            className={`${isCompact ? 'w-[310px] min-w-[280px] max-w-full h-[68vh] min-h-[500px]' : 'w-[380px] min-w-[360px] max-w-full h-[70vh] min-h-[560px] max-h-[660px]'} relative shrink-0 ${isEvent ? 'animate-pulse' : ''}`}
         >
             {/* Sombra 3D */}
             <div className={`absolute inset-0 top-[10px] ${c.base} rounded-[2rem] ${isEvent ? 'shadow-[0_0_30px_rgba(225,29,72,0.6)]' : ''}`} />
