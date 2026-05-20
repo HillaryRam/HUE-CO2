@@ -99,12 +99,33 @@ export default function OnlinePlayerBoard({
 
 
             {/* HEADER */}
-            <header className="flex items-center justify-between px-8 py-4 bg-white border-b border-slate-200 z-50">
+            <header className="relative flex items-center justify-between px-8 py-4 bg-white border-b border-slate-200 z-50">
                 <div className="flex items-center gap-4">
                     <div className="bg-[#87AF4C]/10 text-[#87AF4C] px-4 py-2 rounded-2xl flex items-center gap-2 border border-[#87AF4C]/20">
                         <div className="w-2 h-2 rounded-full bg-[#87AF4C] animate-pulse" />
                         <span className="text-xs font-black uppercase tracking-widest">Sala: {roomCode}</span>
                     </div>
+                </div>
+
+                {/* Turno de Jugador en el centro */}
+                <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none">
+                    <motion.div 
+                        initial={{ opacity: 0, y: -10 }} 
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-[#1c1917] text-white shadow-md border border-stone-850"
+                    >
+                        <div className={`w-2 h-2 rounded-full ${isMyTurn ? 'bg-amber-400 animate-ping' : 'bg-[#87AF4C]'}`} />
+                        <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest flex items-center gap-2">
+                            {isMyTurn ? (
+                                <span className="text-amber-400">🚨 ¡Es tu turno de responder!</span>
+                            ) : (
+                                <>
+                                    <span className="text-stone-400">Turno de:</span>
+                                    <span className="text-[#87AF4C]">{activePlayerName || '---'}</span>
+                                </>
+                            )}
+                        </span>
+                    </motion.div>
                 </div>
 
                 <div className="flex items-center gap-6">
@@ -159,9 +180,7 @@ export default function OnlinePlayerBoard({
                             return !isMyTurn;
                         })()}
                     />
-                    {!isMyTurn && currentChallenge?.type !== 'free' && currentChallenge?.type !== 'open' && (
-                        <TurnIndicator name={activePlayerName} />
-                    )}
+                    {/* El indicador de turno ha sido movido al Header para liberar espacio visual */}
                 </div>
             </main>
 
@@ -194,15 +213,7 @@ function LobbyWaitingScreen({ roomCode }) {
     );
 }
 
-function TurnIndicator({ name }) {
-    return (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="absolute -bottom-6 left-0 right-0 text-center">
-            <span className="bg-[#1c1917] text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl flex items-center justify-center gap-2 mx-auto w-max">
-                <Users size={12} className="text-[#87AF4C]" /> Turno de: {name}
-            </span>
-        </motion.div>
-    );
-}
+// TurnIndicator eliminado (ahora integrado en el GameHeader centralizado)
 
 function RoleInventory({ roles, activeSectorId, onUseAbility, isMyTurn }) {
     return (

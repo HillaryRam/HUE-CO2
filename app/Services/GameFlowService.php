@@ -476,6 +476,12 @@ class GameFlowService
                     \Log::info("[HUE-CO2] Impacto de evento reducido a la mitad por Algoritmo de Eficiencia.");
                 }
 
+                // NUEVA LÓGICA DE CRISIS CON PREGUNTA: Si hay pregunta y se responde CORRECTAMENTE, se anula el cambio térmico
+                if ($pregunta && $esCorrecto) {
+                    $cambio = 0;
+                    \Log::info("[HUE-CO2] Desafío de Crisis Climática resuelto correctamente. Cambio de temperatura anulado (0°C).");
+                }
+
                 $juego->temperatura += $cambio;
                 if ($cambio > 0) $juego->total_calentamiento += $cambio;
                 if ($cambio < 0) $juego->total_reduccion += abs($cambio);
@@ -521,7 +527,37 @@ class GameFlowService
             ->pluck('carta_id')
             ->toArray();
 
-        // Elegir una carta del anillo que no se haya jugado y que sea de tipo 'pregunta'
+        // Obtener el anillo actual y su orden
+        $anilloActual = DB::table('anillos')->where('anillo_id', $anilloId)->first();
+        $ordenActual = $anilloActual ? $anilloActual->orden : 1;
+
+        $esEvento = false;
+        // A partir del Anillo 3 (Plástico), hay un 25% de probabilidad de lanzar una Crisis Climática
+        if ($ordenActual >= 3) {
+            $esEvento = (rand(1, 100) <= 25);
+        }
+
+        if ($esEvento) {
+            // Obtener los IDs de todos los anillos desbloqueados hasta el actual
+            $anilloIdsDesbloqueados = DB::table('anillos')
+                ->where('orden', '<=', $ordenActual)
+                ->pluck('anillo_id')
+                ->toArray();
+
+            // Buscar una carta de tipo 'evento' de los anillos desbloqueados que no haya sido jugada
+            $carta = Carta::whereIn('anillo_id', $anilloIdsDesbloqueados)
+                ->where('tipo', 'evento')
+                ->whereNotIn('carta_id', $cartasJugadas)
+                ->inRandomOrder()
+                ->first();
+
+            if ($carta) {
+                \Log::info("[HUE-CO2] ¡Lanzando Crisis Climática Extrema! Carta ID: {$carta->carta_id} | Título: {$carta->texto}");
+                return $carta;
+            }
+        }
+
+        // Si no toca evento o no quedan eventos de los anillos actuales, seleccionamos una pregunta normal del anillo actual
         $carta = Carta::where('anillo_id', $anilloId)
             ->where('tipo', 'pregunta')
             ->whereHas('preguntas')
@@ -529,7 +565,7 @@ class GameFlowService
             ->inRandomOrder()
             ->first();
 
-        // Si por alguna razón nos quedamos sin cartas, repetimos de las que hay en el anillo (solo preguntas)
+        // Si nos quedamos sin cartas no jugadas, repetimos de las del anillo actual
         if (!$carta) {
             $carta = Carta::where('anillo_id', $anilloId)
                 ->where('tipo', 'pregunta')
@@ -567,8 +603,8 @@ class GameFlowService
         return [
             'id' => $carta->carta_id,
             'type' => $propuestaActiva ? 'validate' : $tipoBase,
-            'title' => $pregunta ? $pregunta->texto : $carta->texto,
-            'description' => $pregunta ? '' : $carta->texto,
+            'title' => ($carta->tipo === 'evento') ? $carta->texto : ($pregunta ? $pregunta->texto : $carta->texto),
+            'description' => ($carta->tipo === 'evento') ? ($pregunta ? $pregunta->texto : '') : ($pregunta ? '' : $carta->texto),
             'ring' => $juego->anillo ? $juego->anillo->nombre : 'General',
             'anillo_id' => $juego->anillo_id,
             'options' => $opciones,
@@ -583,6 +619,8 @@ class GameFlowService
             'sliderMax' => $pregunta && $pregunta->rango_max !== null ? $pregunta->rango_max : 100,
             'unit' => ($pregunta && $pregunta->rango_max !== null && $pregunta->rango_max !== 100) ? '' : '%',
             'correct_answer' => $pregunta ? ($pregunta->opciones->where('correcta', true)->first()->texto ?? null) : null,
+            'isEvent' => ($carta->tipo === 'evento'),
+            'cambioTemp' => $carta->cambio_temp ?? 0,
         ];
     }
 

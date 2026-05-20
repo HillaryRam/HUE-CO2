@@ -77,6 +77,13 @@ export default function ChallengeCard({
     const ringId = challenge?.anillo_id || challenge?.anilloId;
 
     const getRingConfig = () => {
+        if (challenge?.isEvent) {
+            return { 
+                color: COLOR_MAP.rose, 
+                icon: <Zap className="animate-pulse text-yellow-400 fill-yellow-400" size={20} strokeWidth={2.5} />, 
+                label: '🚨 CRISIS CLIMÁTICA 🚨' 
+            };
+        }
         if (ringName.includes('agua') || ringId == 1) {
             return { color: COLOR_MAP.blue, icon: <Droplet size={20} strokeWidth={2.5} />, label: 'ANILLO DEL AGUA' };
         }
@@ -131,17 +138,17 @@ export default function ChallengeCard({
                         <div 
                             key={idx}
                             onClick={() => !readOnly && setSelectedAnswer(opt)}
-                            className={`relative flex flex-col min-h-[110px] w-full group transition-transform ${readOnly ? '' : 'cursor-pointer active:scale-95'}`}
+                            className={`relative flex flex-col h-auto min-h-[90px] md:min-h-[100px] w-full group transition-transform ${readOnly ? '' : 'cursor-pointer active:scale-95'}`}
                         >
                             <div className={`absolute inset-0 top-1.5 rounded-xl ${style.dark} ${isSelected ? 'ring-4 ring-indigo-200' : ''}`} />
-                            <div className={`relative flex flex-col h-[calc(100%-6px)] z-10 w-full drop-shadow-sm ${isSelected ? '-translate-y-1' : ''} transition-all`}>
+                            <div className={`relative flex flex-col min-h-[84px] md:min-h-[94px] h-full z-10 w-full drop-shadow-sm ${isSelected ? '-translate-y-1' : ''} transition-all`}>
                                 <div className={`${isCompact ? 'h-[35px]' : 'h-[45px]'} w-full ${style.light} rounded-t-xl border-b border-[0.83px] ${style.borderDark} flex items-center justify-center`}>
                                     <div className="w-8 h-8 bg-white/30 rounded-full flex items-center justify-center flex-shrink-0 shadow-inner">
                                         {style.icon}
                                     </div>
                                 </div>
-                                <div className="flex-1 bg-stone-100 rounded-b-xl border-x border-b border-gray-300 px-2 py-1.5 flex items-center justify-center group-hover:bg-white transition-colors">
-                                    <span className="text-stone-500 text-[9px] md:text-[10px] font-semibold text-center leading-snug line-clamp-3">
+                                <div className="flex-1 bg-stone-100 rounded-b-xl border-x border-b border-gray-300 px-1.5 py-2 flex items-center justify-center group-hover:bg-white transition-colors">
+                                    <span className="text-stone-600 text-[8.5px] sm:text-[9.5px] md:text-[10px] font-bold text-center leading-normal">
                                         {opt}
                                     </span>
                                 </div>
@@ -166,23 +173,23 @@ export default function ChallengeCard({
         <div className="flex flex-col flex-1 h-full pb-2">
             {!readOnly ? (
                 <div className="flex-1 flex flex-col justify-center items-center gap-4">
-                    <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 text-center text-amber-800 shadow-inner w-full">
-                        <span className="text-3xl mb-2 block">🎤</span>
-                        <h4 className="font-black uppercase tracking-widest text-sm mb-1">Tu turno de hablar</h4>
-                        <p className="font-medium text-[11px] leading-tight">
-                            {isOnline 
-                                ? "Responde en voz alta y escribe un resumen para que el grupo pueda votarte." 
-                                : "Responde a la pregunta en voz alta frente al grupo."}
-                        </p>
-                    </div>
+                    {!isOnline && (
+                        <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 text-center text-amber-800 shadow-inner w-full">
+                            <span className="text-3xl mb-2 block">🎤</span>
+                            <h4 className="font-black uppercase tracking-widest text-sm mb-1">Tu turno de hablar</h4>
+                            <p className="font-medium text-[11px] leading-tight">
+                                Responde a la pregunta en voz alta frente al grupo.
+                            </p>
+                        </div>
+                    )}
 
                     {isOnline && (
                         <textarea
                             value={proposalText}
                             onChange={(e) => setProposalText(e.target.value)}
                             placeholder="Escribe aquí el resumen de tu respuesta..."
-                            rows={3}
-                            className="w-full rounded-xl border-2 border-slate-200 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:border-amber-400 resize-none bg-white shadow-sm"
+                            rows={4}
+                            className="w-full rounded-xl border-2 border-slate-200 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:border-amber-400 resize-none bg-white shadow-sm flex-1 min-h-[120px]"
                         />
                     )}
 
@@ -320,18 +327,20 @@ export default function ChallengeCard({
     };
 
 
+    const isEvent = !!challenge?.isEvent;
+
     return (
         <motion.div 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className={`${isCompact ? 'w-[20vw] h-[55vh]' : 'w-[24vw] lg:w-[22vw] h-[65vh]'} relative shrink-0`}
+            className={`${isCompact ? 'w-[20vw] h-[55vh]' : 'w-[24vw] lg:w-[22vw] h-[65vh]'} relative shrink-0 ${isEvent ? 'animate-pulse' : ''}`}
         >
             {/* Sombra 3D */}
-            <div className={`absolute inset-0 top-[10px] ${c.base} rounded-[2rem]`} />
+            <div className={`absolute inset-0 top-[10px] ${c.base} rounded-[2rem] ${isEvent ? 'shadow-[0_0_30px_rgba(225,29,72,0.6)]' : ''}`} />
 
             {/* Tarjeta Principal */}
-            <div className={`absolute inset-0 h-[calc(100%-10px)] bg-white rounded-[2rem] outline outline-[2.5px] outline-offset-[-2.5px] ${c.outline} flex flex-col p-6 overflow-hidden`}>
-                <div className={`absolute bg-gradient-to-b ${c.gradient} inset-0 pointer-events-none rounded-[2rem] z-0`} />
+            <div className={`absolute inset-0 h-[calc(100%-10px)] bg-white rounded-[2rem] outline outline-[3px] outline-offset-[-3px] ${isEvent ? 'outline-rose-600 shadow-[inset_0_0_20px_rgba(225,29,72,0.15)]' : c.outline} flex flex-col p-4 sm:p-5 md:p-6 overflow-hidden`}>
+                <div className={`absolute bg-gradient-to-b ${isEvent ? 'from-rose-500/10 to-red-600/5' : c.gradient} inset-0 pointer-events-none rounded-[2rem] z-0`} />
 
                 <div className="relative z-10 flex flex-col h-full">
                     {/* Header */}
@@ -349,7 +358,7 @@ export default function ChallengeCard({
 
                     {/* Título y Descripción */}
                     <div className={`flex flex-col gap-2 ${challengeType === 'slider' ? (isCompact ? 'mb-4' : 'mb-8') : (isCompact ? 'mb-2' : 'mb-4')}`}>
-                        <h2 className={`${isCompact ? 'text-[18px]' : 'text-[22px]'} text-slate-900 font-black tracking-tight leading-none`}>
+                        <h2 className={`${isCompact ? 'text-[18px]' : 'text-[22px]'} ${isEvent ? 'text-rose-700' : 'text-slate-900'} font-black tracking-tight leading-none`}>
                             {challenge.title ?? 'Título del Desafío'}
                         </h2>
                         {challenge.description && challenge.description !== challenge.title && (
@@ -360,7 +369,7 @@ export default function ChallengeCard({
                     </div>
 
                     {/* Contenido Dinámico */}
-                    <div className="flex-1 flex flex-col min-h-0">
+                    <div className="flex-1 flex flex-col min-h-0 overflow-y-auto pr-1 select-none scrollbar-thin">
                         {(RENDERERS[challengeType] ?? RENDERERS.options)()}
                     </div>
                 </div>

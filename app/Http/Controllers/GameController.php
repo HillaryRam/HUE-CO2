@@ -277,8 +277,8 @@ class GameController extends Controller
         $challengeData = [
             'id' => $carta->carta_id,
             'type' => $propuestaActiva ? 'validate' : $tipoBase,
-            'title' => $pregunta ? $pregunta->texto : $carta->texto,
-            'description' => $pregunta ? '' : $carta->texto,
+            'title' => ($carta->tipo === 'evento') ? $carta->texto : ($pregunta ? $pregunta->texto : $carta->texto),
+            'description' => ($carta->tipo === 'evento') ? ($pregunta ? $pregunta->texto : '') : ($pregunta ? '' : $carta->texto),
             'ring' => $juego->anillo ? $juego->anillo->nombre : 'General',
             'anillo_id' => $juego->anillo_id,
             'options' => $opciones,
@@ -290,6 +290,8 @@ class GameController extends Controller
             'sliderMax' => $pregunta && $pregunta->rango_max !== null ? $pregunta->rango_max : 100,
             'unit' => ($pregunta && $pregunta->rango_max !== null && $pregunta->rango_max !== 100) ? '' : '%',
             'correct_answer' => $pregunta ? ($pregunta->opciones->where('correcta', true)->first()->texto ?? null) : null,
+            'isEvent' => ($carta->tipo === 'evento'),
+            'cambioTemp' => $carta->cambio_temp ?? 0,
         ];
 
         

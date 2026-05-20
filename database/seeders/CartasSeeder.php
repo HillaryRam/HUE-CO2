@@ -18,11 +18,11 @@ class CartasSeeder extends Seeder
 
         // ─── ANILLOS ───────────────────────────────────────────────────────────
         $anillosData = [
-            ['nombre' => 'Agua',      'orden' => 1],
-            ['nombre' => 'Energía',   'orden' => 2],
-            ['nombre' => 'Plástico',  'orden' => 3],
+            ['nombre' => 'Agua', 'orden' => 1],
+            ['nombre' => 'Energía', 'orden' => 2],
+            ['nombre' => 'Plástico', 'orden' => 3],
             ['nombre' => 'Pantallas', 'orden' => 4],
-            ['nombre' => 'Ropa',      'orden' => 5],
+            ['nombre' => 'Ropa', 'orden' => 5],
         ];
         foreach ($anillosData as $a) {
             DB::table('anillos')->insert(array_merge($a, ['created_at' => now(), 'updated_at' => now()]));
@@ -32,32 +32,43 @@ class CartasSeeder extends Seeder
         $anilloIds = DB::table('anillos')->orderBy('orden')->pluck('anillo_id')->toArray();
 
         // ─── PREGUNTAS POR ANILLO ──────────────────────────────────────────────
-        // Cada anillo tiene 12 preguntas (antes 6)
+        // Cada anillo tiene 12 preguntas de las cuales 5 son Crisis Climáticas Extremas
         $contenido = [
             // ANILLO 1 – AGUA
             [
-                // Originales
                 [
-                    'texto' => '¿Qué porcentaje aproximado del agua del planeta es agua dulce disponible?',
+                    'texto' => 'CRISIS: Megasequía Histórica (Acuíferos al Límite)',
+                    'texto_pregunta' => 'Una sequía persistente reduce las reservas subterráneas a mínimos críticos. Para valorar la gravedad, ¿qué porcentaje aproximado de toda el agua de la Tierra es agua dulce disponible para el consumo humano?',
                     'tipo_pregunta' => 'slider',
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
                     'rango_min' => 0,
                     'rango_max' => 100,
                     'unidad' => '%',
                     'opciones' => [['1', true]]
                 ],
                 [
-                    'texto' => '¿Cuál de estas prácticas ahorra más agua en el hogar?',
+                    'texto' => 'CRISIS: Alerta por Estrés Hídrico Urbano',
+                    'texto_pregunta' => 'Las grandes metrópolis declaran el "Día Cero" y se preparan para cortar el suministro de agua corriente por falta de reservas. ¿Cuál de estas prácticas en el hogar tiene el mayor impacto directo para ahorrar agua dulce?',
                     'tipo_pregunta' => 'options',
-                    'opciones' => [['Bañarse en vez de ducharse', false], ['Cerrar el grifo al cepillarse', true], ['Regar el jardín de día', false], ['Lavar a máquina a 90°C', false]]
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
+                    'opciones' => [['Bañarse en vez de ducharse', false], ['Cerrar el grifo al cepillarse los dientes', true], ['Regar el jardín a pleno mediodía', false], ['Lavar la ropa a máquina a 90°C', false]]
                 ],
                 [
-                    'texto' => '¿Qué actividad humana consume más agua dulce a nivel global?',
+                    'texto' => 'CRISIS: Colapso Alimentario por Sequía Agrícola',
+                    'texto_pregunta' => 'La falta prolongada de lluvias destruye campos enteros de cultivo, amenazando la soberanía alimentaria del país. ¿Qué actividad humana es la responsable de consumir la mayor proporción de agua dulce a nivel global?',
                     'tipo_pregunta' => 'options',
-                    'opciones' => [['Industria', false], ['Uso doméstico', false], ['Agricultura', true], ['Generación eléctrica', false]]
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
+                    'opciones' => [['Industria pesada', false], ['Uso doméstico e higiene', false], ['Agricultura y riego', true], ['Generación y refrigeración eléctrica', false]]
                 ],
                 [
-                    'texto' => '¿Cuántos litros de agua se necesitan para producir 1 kg de carne de vacuno?',
+                    'texto' => 'CRISIS: Desierto en Zonas de Pastoreo',
+                    'texto_pregunta' => 'La ganadería intensiva seca ríos completos para mantener la producción cárnica, acelerando la desertificación del suelo. ¿Cuántos litros de agua dulce se necesitan aproximadamente para producir tan solo 1 kg de carne de vacuno?',
                     'tipo_pregunta' => 'slider',
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
                     'rango_min' => 1000,
                     'rango_max' => 20000,
                     'unidad' => ' L',
@@ -69,11 +80,13 @@ class CartasSeeder extends Seeder
                     'opciones' => [['Aspersión', false], ['Inundación', false], ['Goteo', true], ['Pulverización aérea', false]]
                 ],
                 [
-                    'texto' => '¿Cuál es la principal causa de contaminación del agua dulce?',
+                    'texto' => 'CRISIS: Contaminación Crítica de Cuencas Fluviales',
+                    'texto_pregunta' => 'Vertidos industriales y agrícolas incontrolados contaminan el principal río de la región, dejándolo inservible. ¿Cuál es la principal fuente de contaminación química que destruye el agua dulce global?',
                     'tipo_pregunta' => 'options',
-                    'opciones' => [['Lluvia ácida', false], ['Residuos industriales y agrícolas', true], ['Turismo', false], ['Pesca excesiva', false]]
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
+                    'opciones' => [['Lluvia ácida natural', false], ['Residuos industriales y escorrentía agrícola', true], ['Turismo en ríos y lagos', false], ['Actividades de pesca excesiva', false]]
                 ],
-                // Nuevas (Bloque 2 + Bloque 6)
                 [
                     'texto' => '¿Cuántos litros de agua ahorra al mes quien se ducha 5 minutos en vez de 15?',
                     'tipo_pregunta' => 'options',
@@ -137,11 +150,13 @@ class CartasSeeder extends Seeder
             ],
             // ANILLO 2 – ENERGÍA
             [
-                // Originales
                 [
-                    'texto' => '¿Cuál de estas fuentes produce menos CO₂ en su ciclo de vida?',
+                    'texto' => 'CRISIS: Tormentas Extremas por Calentamiento Atmosférico',
+                    'texto_pregunta' => 'El exceso de CO₂ en la atmósfera calienta los océanos, desatando huracanes y ciclones de fuerza destructiva histórica en las costas. ¿Cuál de estas fuentes produce la menor cantidad de CO₂ equivalente en todo su ciclo de vida?',
                     'tipo_pregunta' => 'options',
-                    'opciones' => [['Carbón', false], ['Gas natural', false], ['Nuclear', false], ['Solar fotovoltaica', true]]
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
+                    'opciones' => [['Carbón convencional', false], ['Gas natural de ciclo combinado', false], ['Energía nuclear', false], ['Energía solar fotovoltaica', true]]
                 ],
                 [
                     'texto' => '¿Qué país genera más electricidad a partir de energía eólica en proporción?',
@@ -149,8 +164,11 @@ class CartasSeeder extends Seeder
                     'opciones' => [['China', false], ['Alemania', false], ['Dinamarca', true], ['EE.UU.', false]]
                 ],
                 [
-                    'texto' => '¿Cuánto CO₂ emite una central de carbón por kWh producido (aprox.)?',
+                    'texto' => 'CRISIS: Sopa de Carbón (Emergencia Atmosférica)',
+                    'texto_pregunta' => 'El desabastecimiento obliga a activar centrales de carbón obsoletas que cubren la ciudad con una espesa niebla altamente tóxica. ¿Cuánto CO₂ emite una central térmica de carbón por cada kWh de electricidad producido?',
                     'tipo_pregunta' => 'slider',
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
                     'rango_min' => 100,
                     'rango_max' => 1500,
                     'unidad' => ' g',
@@ -171,39 +189,47 @@ class CartasSeeder extends Seeder
                     'tipo_pregunta' => 'free',
                     'opciones' => []
                 ],
-                // Nuevas (Bloque 3 + Bloque 6)
                 [
-                    'texto' => '¿Qué ocurre cuando un aparato está en modo standby?',
+                    'texto' => 'CRISIS: Apagón General (Sobrecarga de Red)',
+                    'texto_pregunta' => 'Una ola de calor masiva dispara el uso de aire acondicionado y sobrecarga la red de distribución eléctrica nacional. ¿Qué ocurre con un dispositivo que se mantiene en modo standby (espera) durante esta crisis?',
                     'tipo_pregunta' => 'options',
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
                     'opciones' => [
-                        ['No consume nada de electricidad', false],
-                        ['Consume una pequeña cantidad de energía de forma continua, sumando un gasto significativo al año', true],
-                        ['Se recarga para cuando lo enciendas', false],
-                        ['Solo consume si está conectado a wifi', false]
+                        ['No consume nada de electricidad si no se enciende la pantalla', false],
+                        ['Consume una pequeña cantidad de energía de forma continua, sumando un gasto y una carga significativos al año', true],
+                        ['Se recarga internamente para cuando decidas encenderlo', false],
+                        ['Solo consume energía si se conecta a una red wifi', false]
                     ]
                 ],
                 [
-                    'texto' => '¿Qué consecuencias tiene cargar el móvil más horas de las necesarias?',
+                    'texto' => 'CRISIS: Degradación Acelerada de Dispositivos',
+                    'texto_pregunta' => 'Las altas temperaturas veraniegas degradan las celdas de litio de millones de teléfonos, acortando su vida útil. ¿Qué consecuencias negativas tiene dejar el móvil cargando toda la noche?',
                     'tipo_pregunta' => 'options',
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
                     'opciones' => [
-                        ['Ninguna, los cargadores modernos cortan solos la corriente', false],
-                        ['Gasta energía innecesaria y degrada la batería más rápido, lo que acorta la vida del dispositivo', true],
-                        ['Hace que el móvil funcione más rápido', false],
-                        ['Solo es un problema si el cargador es antiguo', false]
+                        ['Ninguna, los cargadores modernos desconectan totalmente el flujo', false],
+                        ['Gasta energía en forma de calor y degrada la batería de forma prematura', true],
+                        ['Optimiza el rendimiento del procesador de última generación', false],
+                        ['Solo afecta de manera negativa si el cable no es oficial de la marca', false]
                     ]
                 ],
                 [
-                    'texto' => '¿Cuánta energía se ahorra aproximadamente lavando a 30 °C en vez de a 60 °C?',
+                    'texto' => 'CRISIS: Ciclo Térmico Excesivo (Lavados Calientes)',
+                    'texto_pregunta' => 'El uso ineficiente de calentadores de agua domésticos satura la huella de carbono de los hogares. ¿Cuánta energía se ahorra aproximadamente lavando la ropa a 30°C en vez de a 60°C?',
                     'tipo_pregunta' => 'options',
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
                     'opciones' => [
-                        ['Un 5 %', false],
-                        ['Un 20 %', false],
-                        ['Hasta un 60 %', true],
-                        ['No hay diferencia real', false]
+                        ['Aproximadamente un 5 %', false],
+                        ['Un 20 % de ahorro total', false],
+                        ['Hasta un 60 % de energía de calentamiento', true],
+                        ['No hay ninguna diferencia real en el consumo del electrodoméstico', false]
                     ]
                 ],
                 [
-                    'texto' => '¿Qué afirmación es correcta sobre las bombillas LED encendidas innecesariamente?',
+                    'texto' => 'Sales de tu habitación y dejas la luz encendida. Son las 3 de la tarde y entra mucha luz natural. Tu compañero de piso dice que "una bombilla LED no gasta casi nada". ¿Qué afirmación es correcta sobre las bombillas LED encendidas innecesariamente?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Las LEDs no consumen nada si son de bajo consumo', false],
@@ -223,7 +249,8 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Cuántas categorías de recursos se han visto afectadas en este proceso?',
+                    'texto' => 'Decides comprar una prenda de fast fashion online, pagarla con el móvil, que te la envíen a casa en 24 horas y lavarla cuando llegue. Sin saberlo, has activado una cadena de impactos. 
+                                ¿Cuántas categorías de recursos se han visto afectadas en este proceso?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
                         ['Solo ropa y transporte', false],
@@ -235,15 +262,20 @@ class CartasSeeder extends Seeder
             ],
             // ANILLO 3 – PLÁSTICO
             [
-                // Originales
                 [
-                    'texto' => '¿Cuál de estos plásticos es más fácil de reciclar habitualmente?',
+                    'texto' => 'CRISIS: Incendio en Vertedero de Plásticos',
+                    'texto_pregunta' => 'Un vertedero ilegal de plásticos industriales arde en llamas, liberando nubes de gases sumamente tóxicos y CO₂. ¿Cuál de estos plásticos habituales es, por su composición química, el más fácil y seguro de reciclar?',
                     'tipo_pregunta' => 'options',
-                    'opciones' => [['PVC', false], ['LDPE', false], ['Poliestireno', false], ['PET', true]]
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
+                    'opciones' => [['Policloruro de vinilo (PVC)', false], ['Polietileno de baja densidad (LDPE)', false], ['Poliestireno (PS)', false], ['Tereftalato de polietileno (PET)', true]]
                 ],
                 [
-                    'texto' => '¿Cuánto tiempo tarda en degradarse una bolsa de plástico convencional?',
+                    'texto' => 'CRISIS: Siglos de Basura (Degradación Infinita)',
+                    'texto_pregunta' => 'La acumulación desmedida de plásticos sintéticos obstruye cursos fluviales e invade campos agrícolas. ¿Cuánto tiempo estimado tarda en degradarse por completo una bolsa de plástico convencional en la naturaleza?',
                     'tipo_pregunta' => 'slider',
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
                     'rango_min' => 50,
                     'rango_max' => 500,
                     'unidad' => ' años',
@@ -255,21 +287,29 @@ class CartasSeeder extends Seeder
                     'opciones' => []
                 ],
                 [
-                    'texto' => '¿Cuántos millones de toneladas de plástico acaban en el océano cada año?',
+                    'texto' => 'CRISIS: Colapso de Ecosistemas por Microplásticos',
+                    'texto_pregunta' => 'Los océanos se asfixian con la marea plástica, diezmando la fauna y filtrándose en la fauna marina. ¿Cuántos millones de toneladas de plásticos terminan flotando en el mar cada año?',
                     'tipo_pregunta' => 'options',
-                    'opciones' => [['1 Mt', false], ['8 Mt', true], ['50 Mt', false], ['200 Mt', false]]
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
+                    'opciones' => [['1 millón de toneladas', false], ['8 millones de toneladas', true], ['50 millones de toneladas', false], ['200 millones de toneladas', false]]
                 ],
                 [
-                    'texto' => '¿Qué símbolo de reciclaje indica que el plástico es PET?',
+                    'texto' => 'CRISIS: Marea de Aditivos Químicos en Envases',
+                    'texto_pregunta' => 'Envases no regulados filtran aditivos sintéticos al medio ambiente acuático. ¿Qué número o código de símbolo de reciclaje universal indica que un plástico es de tipo PET?',
                     'tipo_pregunta' => 'options',
-                    'opciones' => [['3', false], ['5', false], ['1', true], ['7', false]]
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
+                    'opciones' => [['Código de reciclaje 3', false], ['Código de reciclaje 5', false], ['Código de reciclaje 1', true], ['Código de reciclaje 7', false]]
                 ],
                 [
-                    'texto' => '¿Cuál es el principal reto para reciclar plástico negro?',
+                    'texto' => 'CRISIS: Colapso del Sistema de Clasificación Óptica',
+                    'texto_pregunta' => 'Los sensores ópticos de las plantas de reciclaje fallan en su tarea, obligando a enterrar toneladas de materiales utilizables. ¿Cuál es el principal reto técnico para reciclar el plástico de color negro?',
                     'tipo_pregunta' => 'options',
-                    'opciones' => [['Es muy caro', false], ['Los sensores ópticos no lo detectan', true], ['No se puede fundir', false], ['Es tóxico', false]]
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
+                    'opciones' => [['Su fundición resulta demasiado costosa', false], ['Los sensores ópticos de infrarrojos no lo detectan', true], ['Es incapaz de derretirse de nuevo', false], ['Es altamente tóxico por sí mismo', false]]
                 ],
-                // Nuevas (Bloque 1 + Bloque 6)
                 [
                     'texto' => '¿Cuál es la mejor decisión en este momento?',
                     'tipo_pregunta' => 'options',
@@ -333,16 +373,21 @@ class CartasSeeder extends Seeder
             ],
             // ANILLO 4 – PANTALLAS
             [
-                // Originales
                 [
-                    'texto' => '¿Por qué los centros de datos consumen tanta energía?',
+                    'texto' => 'CRISIS: Sequía en Centros de Datos Urbanos',
+                    'texto_pregunta' => 'Los macrocomplejos de servidores evaporan a diario millones de litros de agua dulce urbana para su refrigeración, dejando secos los hogares locales. ¿Por qué el funcionamiento de internet consume tanta energía y recursos físicos de climatización?',
                     'tipo_pregunta' => 'options',
-                    'opciones' => [['Están lejos de las ciudades', false], ['Sus monitores son grandes', false], ['Refrigeración y operación de servidores', true], ['Tienen muchos trabajadores', false]]
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
+                    'opciones' => [['Los centros de datos se ubican lejos de los núcleos urbanos', false], ['Sus pantallas administrativas son gigantescas', false], ['Operación ininterrumpida de servidores y sistemas de refrigeración', true], ['Requieren una plantilla de mantenimiento enorme', false]]
                 ],
                 [
-                    'texto' => '¿Qué es la "obsolescencia programada"?',
+                    'texto' => 'CRISIS: Basura Tecnológica en el Tercer Mundo',
+                    'texto_pregunta' => 'Millones de toneladas de pantallas y componentes electrónicos obsoletos y altamente tóxicos saturan vertederos de países del tercer mundo. ¿Qué se entiende por "obsolescencia programada"?',
                     'tipo_pregunta' => 'options',
-                    'opciones' => [['Un tipo de software', false], ['Diseñar productos para que fallen pronto', true], ['Un sistema de reciclaje', false], ['Una norma de seguridad', false]]
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
+                    'opciones' => [['Un software especial para optimizar el rendimiento', false], ['El diseño de productos planificado deliberadamente para fallar pronto', true], ['Un marco legislativo para fomentar el reciclaje electrónico', false], ['Un estándar técnico internacional de seguridad industrial', false]]
                 ],
                 [
                     'texto' => '¿Cuál es la huella de carbono aproximada de fabricar un smartphone?',
@@ -353,9 +398,12 @@ class CartasSeeder extends Seeder
                     'opciones' => [['70', true]]
                 ],
                 [
-                    'texto' => '¿Qué mineral crítico se usa en baterías de litio y genera conflictos mineros?',
+                    'texto' => 'CRISIS: Extracción de Minerales de Sangre',
+                    'texto_pregunta' => 'La minería ilegal en zonas en conflicto explota a trabajadores e inhabilita ecosistemas selváticos enteros para alimentar nuestra demanda electrónica. ¿Qué mineral crítico es vital para las baterías y genera estas guerras mineras?',
                     'tipo_pregunta' => 'options',
-                    'opciones' => [['Hierro', false], ['Cobre', false], ['Cobalto', true], ['Plata', false]]
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
+                    'opciones' => [['Mineral de hierro convencional', false], ['Cobre electrolítico', false], ['Cobalto y coltán', true], ['Plata purificada', false]]
                 ],
                 [
                     'texto' => '¿Cuántos residuos electrónicos (e-waste) se generan al año a nivel global?',
@@ -367,25 +415,30 @@ class CartasSeeder extends Seeder
                     'tipo_pregunta' => 'free',
                     'opciones' => []
                 ],
-                // Nuevas (Bloque 4 + Bloque 6)
                 [
-                    'texto' => '¿Por qué los emails almacenados en la nube tienen una huella ecológica?',
+                    'texto' => 'CRISIS: Servidores Hirviendo (Ola de Calor Digital)',
+                    'texto_pregunta' => 'Los grandes centros de servidores globales operan a temperaturas límite por el uso ininterrumpido del streaming y la nube. ¿Por qué el almacenamiento permanente de emails inactivos daña la atmósfera?',
                     'tipo_pregunta' => 'options',
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
                     'opciones' => [
-                        ['Porque los ordenadores vibran y calientan el suelo', false],
-                        ['Porque los servidores que los almacenan consumen electricidad y agua de refrigeración de forma continua', true],
-                        ['Los emails no consumen recursos una vez enviados', false],
-                        ['Solo si el email tiene adjunto de más de 10 MB', false]
+                        ['Provoca vibraciones de alta frecuencia en la infraestructura terrestre', false],
+                        ['Obliga a mantener activos servidores físicos que consumen refrigeración y energía 24/7', true],
+                        ['Los correos electrónicos se autodegradan liberando calor químico', false],
+                        ['Solo ocurre si el email posee un archivo de más de 10 MB adjunto', false]
                     ]
                 ],
                 [
-                    'texto' => '¿Cuánta más energía consume transmitir vídeo en 4K respecto a SD (baja resolución)?',
+                    'texto' => 'CRISIS: Colapso de Redes por Spam y Tráfico Inútil',
+                    'texto_pregunta' => 'La masiva transmisión de datos sin valor genera una demanda energética y térmica que pone en riesgo de colapso a las infraestructuras de internet. ¿Cuánta energía gasta emitir contenido en alta definición (4K) frente a baja resolución (SD)?',
                     'tipo_pregunta' => 'options',
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
                     'opciones' => [
-                        ['Lo mismo, la resolución no afecta al consumo energético', false],
-                        ['Un 10 % más', false],
-                        ['Hasta 4 veces más datos transmitidos, lo que implica mayor consumo energético en servidores y red', true],
-                        ['El 4K solo consume más en televisores, no en móviles', false]
+                        ['Gasta lo mismo, la resolución no afecta en absoluto a los servidores', false],
+                        ['Un 10 % extra en el peor de los casos', false],
+                        ['Multiplica hasta por 4 los datos enviados, elevando exponencialmente el calor y energía en la red', true],
+                        ['Solo afecta al consumo de los receptores finales, no a la red global', false]
                     ]
                 ],
                 [
@@ -431,15 +484,17 @@ class CartasSeeder extends Seeder
             ],
             // ANILLO 5 – ROPA
             [
-                // Originales
                 [
                     'texto' => '¿Por qué la moda rápida ("fast fashion") es tan contaminante?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [['Produce poca ropa', false], ['Usa energía solar', false], ['Genera residuos y consume recursos masivamente', true], ['Emplea mucha mano de obra local', false]]
                 ],
                 [
-                    'texto' => '¿Cuántos litros de agua se necesitan para fabricar un par de vaqueros?',
+                    'texto' => 'CRISIS: Sequía de Vaqueros en Cuencas de Algodón',
+                    'texto_pregunta' => 'El cultivo intensivo de algodón de baja calidad seca lagos e inunda regiones en una salinidad yerma. ¿Cuántos litros de agua potable se consumen en la cadena para confeccionar tan solo un par de pantalones vaqueros?',
                     'tipo_pregunta' => 'slider',
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
                     'rango_min' => 1000,
                     'rango_max' => 10000,
                     'unidad' => ' L',
@@ -464,19 +519,24 @@ class CartasSeeder extends Seeder
                     'opciones' => [['Comprar ropa cara', false], ['Transformar ropa usada en algo de mayor valor', true], ['Reciclar hilos', false], ['Donar ropa', false]]
                 ],
                 [
-                    'texto' => '¿Cuál es el país que más ropa exporta al mundo?',
+                    'texto' => 'CRISIS: La Huella Gigante del E-commerce Textil',
+                    'texto_pregunta' => 'Millones de camiones y aviones distribuyen devoluciones gratuitas de ropa express, colapsando el tráfico y disparando emisiones globales. ¿Qué país exporta actualmente la mayor parte del flujo de moda rápida mundial?',
                     'tipo_pregunta' => 'options',
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
                     'opciones' => [['Bangladesh', false], ['India', false], ['China', true], ['Vietnam', false]]
                 ],
-                // Nuevas (Bloque 5 + Bloque 6)
                 [
-                    'texto' => '¿Qué estrategia reduce más la huella ecológica de tu armario?',
+                    'texto' => 'CRISIS: La Montaña Textil del Desierto de Atacama',
+                    'texto_pregunta' => 'Millones de prendas sintéticas baratas e inútiles se acumulan en montañas gigantescas a cielo abierto en desiertos sudamericanos, liberando plásticos al suelo. ¿Qué acción mitiga este desperdicio?',
                     'tipo_pregunta' => 'options',
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
                     'opciones' => [
-                        ['Comprar ropa nueva pero solo en rebajas', false],
-                        ['Donar toda la ropa vieja a una ONG antes de comprar nueva', false],
-                        ['Comprar menos, elegir prendas versátiles y de mayor durabilidad, y reparar lo que se estropea', true],
-                        ['Lavar menos la ropa para que dure más sin cambiarla', false]
+                        ['Adquirir moda express únicamente en periodos de rebajas oficiales', false],
+                        ['Donar la totalidad de tu ropa antigua para limpiar tu armario', false],
+                        ['Comprar menos ropa, elegir mayor durabilidad y remendar los pequeños desperfectos', true],
+                        ['Disminuir la cantidad de lavados semanales de tu calzado y ropa', false]
                     ]
                 ],
                 [
@@ -490,13 +550,16 @@ class CartasSeeder extends Seeder
                     ]
                 ],
                 [
-                    'texto' => '¿Qué problema ambiental generan las prendas de fibra sintética al lavarse?',
+                    'texto' => 'CRISIS: Microfibras Sintéticas en Agua Potable',
+                    'texto_pregunta' => 'Cada lavado de prendas acrílicas y sintéticas vierte billones de partículas plásticas a las cañerías que burlan los filtros y terminan en nuestra comida. ¿Qué daño directo provoca lavar fibras de poliéster?',
                     'tipo_pregunta' => 'options',
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
                     'opciones' => [
-                        ['Desprenden electricidad estática que contamina el aire', false],
-                        ['Liberan miles de microfibras plásticas que pasan por los filtros de depuradoras y llegan a los océanos', true],
-                        ['Tiñen el agua de colores artificiales', false],
-                        ['Solo contaminan si se lavan a más de 40 °C', false]
+                        ['Generan electricidad estática en el agua de salida', false],
+                        ['Liberan millones de microfibras de plástico que llegan a ríos y mares por su diminuto diámetro', true],
+                        ['Aumentan drásticamente los depósitos de cal del electrodoméstico', false],
+                        ['Solo resultan contaminantes en ciclos de temperaturas superiores a 40 °C', false]
                     ]
                 ],
                 [
@@ -513,20 +576,23 @@ class CartasSeeder extends Seeder
                     'texto' => '¿Por qué una camiseta de 3 € puede ser más cara de lo que parece?',
                     'tipo_pregunta' => 'options',
                     'opciones' => [
-                        ['Porque seguramente sea de mala calidad y dure muy poco, generando más compras y más residuos', false],
+                        ['Automáticamente se desintegra y contamina', false],
                         ['Porque el algodón siempre es muy caro de producir', false],
                         ['Porque incluye impuestos ocultos', false],
                         ['La respuesta A y además implica condiciones laborales precarias y alto consumo de agua y energía en su producción', true]
                     ]
                 ],
                 [
-                    'texto' => 'Ordenad estas opciones de mayor a menor impacto ambiental positivo:',
+                    'texto' => 'CRISIS: Tintes Venenosos en el Río Citarum',
+                    'texto_pregunta' => 'Gigantescas fábricas textiles vierten metales pesados y tintes ácidos sin depurar a ríos, envenenando el agua potable del grupo. ¿Cuál de estas prioridades reduce al máximo el impacto ecológico de la moda?',
                     'tipo_pregunta' => 'options',
+                    'tipo_carta' => 'evento',
+                    'cambio_temp' => 0.4,
                     'opciones' => [
-                        ['Tirar > Donar > Vender > Remendar', false],
-                        ['Remendar > Vender > Donar > Tirar (siendo remendar lo mejor y tirar lo peor)', true],
-                        ['Donar > Remendar > Vender > Tirar', false],
-                        ['Vender > Tirar > Donar > Remendar', false]
+                        ['Tirar la ropa en mal estado > Donarla > Venderla > Remendarla', false],
+                        ['Remendar las prendas > Venderlas > Donarlas > Tirarlas (orden de mejor a peor)', true],
+                        ['Donar la ropa vieja > Remendarla > Venderla > Tirarla al contenedor', false],
+                        ['Vender lo usable > Tirar lo dañado > Donar lo sobrante > Remendar al final', false]
                     ]
                 ],
             ],
@@ -536,39 +602,46 @@ class CartasSeeder extends Seeder
             $anilloId = $anilloIds[$anilloIndex];
 
             foreach ($preguntas as $p) {
+                $tipoCarta = $p['tipo_carta'] ?? 'pregunta';
+                $tiempo = $p['tiempo'] ?? ($tipoCarta === 'evento' ? 60 : 30);
+                $puntos = $p['puntos'] ?? ($tipoCarta === 'evento' ? 3 : 2);
+                $penalizacion = $p['penalizacion'] ?? ($tipoCarta === 'evento' ? 2 : 1);
+                $cambioTemp = $p['cambio_temp'] ?? null;
+
                 $cartaId = DB::table('cartas')->insertGetId([
-                    'anillo_id'   => $anilloId,
-                    'tipo'        => 'pregunta',
-                    'texto'       => $p['texto'],
-                    'tiempo'      => 30,
-                    'puntos'      => 2,
-                    'penalizacion'=> 1,
-                    'created_at'  => now(),
-                    'updated_at'  => now(),
+                    'anillo_id' => $anilloId,
+                    'tipo' => $tipoCarta,
+                    'texto' => $p['texto'],
+                    'tiempo' => $tiempo,
+                    'puntos' => $puntos,
+                    'penalizacion' => $penalizacion,
+                    'cambio_temp' => $cambioTemp,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
 
                 $tipoPregunta = $p['tipo_pregunta'] ?? 'options';
-                $rangoMin     = $p['rango_min'] ?? null;
-                $rangoMax     = $p['rango_max'] ?? null;
+                $rangoMin = $p['rango_min'] ?? null;
+                $rangoMax = $p['rango_max'] ?? null;
 
                 $preguntaId = DB::table('preguntas')->insertGetId([
-                    'carta_id'     => $cartaId,
-                    'texto'        => $p['texto'],
-                    'tipo_pregunta'=> $tipoPregunta,
-                    'rango_min'    => $rangoMin,
-                    'rango_max'    => $rangoMax,
-                    'created_at'   => now(),
-                    'updated_at'   => now(),
+                    'carta_id' => $cartaId,
+                    'texto' => $p['texto_pregunta'] ?? $p['texto'],
+                    'tipo_pregunta' => $tipoPregunta,
+                    'rango_min' => $rangoMin,
+                    'rango_max' => $rangoMax,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
 
                 if (isset($p['opciones'])) {
                     foreach ($p['opciones'] as [$texto, $correcta]) {
                         DB::table('opciones_respuesta')->insert([
                             'pregunta_id' => $preguntaId,
-                            'texto'       => $texto,
-                            'correcta'    => $correcta,
-                            'created_at'  => now(),
-                            'updated_at'  => now(),
+                            'texto' => $texto,
+                            'correcta' => $correcta,
+                            'created_at' => now(),
+                            'updated_at' => now(),
                         ]);
                     }
                 }
