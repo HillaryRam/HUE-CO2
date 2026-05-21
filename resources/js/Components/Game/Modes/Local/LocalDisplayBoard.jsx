@@ -26,7 +26,7 @@ export default function LocalDisplayBoard({
     gameMode = 'shared'
 }) {
     // 1. Hooks de estado y contexto
-    const { timeLeft, setTimeLeft, intensity, setIntensity } = useGame();
+    const { timeLeft, setTimeLeft, intensity, setIntensity, isPaused, setIsPaused } = useGame();
     const { votes, proposal, isConnected, gameState: remoteState, sendVote, chatMessages } = useGameChannel(roomCode, 'host', myPlayerName || 'Host', myParticipantId);
     const [activeChallenge, setActiveChallenge] = useState(challenge);
     const advancingRef = useRef(false);
@@ -87,6 +87,18 @@ export default function LocalDisplayBoard({
         setFreePhase(null);
         setLocalFeedback(null);
     }, [activeChallenge?.id, activeChallenge?.title]);
+
+    // Pausar/Resumir el reloj de fondo según si el overlay de feedback está activo
+    useEffect(() => {
+        if (setIsPaused) {
+            setIsPaused(localFeedback !== null);
+        }
+        return () => {
+            if (setIsPaused) {
+                setIsPaused(false);
+            }
+        };
+    }, [localFeedback, setIsPaused]);
 
     const [processedMessages, setProcessedMessages] = useState(new Set());
     const [activeAbilityAlert, setActiveAbilityAlert] = useState(null);
