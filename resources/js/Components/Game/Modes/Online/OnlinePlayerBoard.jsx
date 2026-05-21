@@ -10,6 +10,7 @@ import GameClock from '../../UI/GameClock';
 import { ROLES } from '../../../../data/gameData';
 import { Sparkles, Info, Zap as ZapIcon } from 'lucide-react';
 import FeedbackOverlay from '../../UI/FeedbackOverlay';
+import { usePage } from '@inertiajs/react';
 
 const figmaColors = {
     'ciencia':    { bg: 'bg-[#DEB8FF]', border: 'border-[#9640FF]', iconClass: 'text-[#9640FF]' },
@@ -44,6 +45,7 @@ export default function OnlinePlayerBoard({
     initialTimeLeft = 30,
     isHost = false
 }) {
+    const { props } = usePage();
     const { intensity, setIntensity, timeLeft } = useGame();
     const [chatInput, setChatInput] = useState('');
 
@@ -137,7 +139,11 @@ export default function OnlinePlayerBoard({
                     <button 
                         onClick={() => {
                             if (window.confirm("¿Seguro que deseas salir de la partida? Perderás todo el progreso actual.")) {
-                                window.location.href = '/dashboard';
+                                if (props.auth?.user) {
+                                    window.location.href = '/dashboard';
+                                } else {
+                                    window.location.href = '/jugar';
+                                }
                             }
                         }} 
                         className="p-3 rounded-2xl bg-slate-100 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all"

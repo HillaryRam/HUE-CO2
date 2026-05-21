@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ROLES } from '../../../../data/gameData';
 import { Sparkles, Info, Shirt, FlaskConical, Database, Sprout, Landmark, Users } from 'lucide-react';
 import FeedbackOverlay from '../../UI/FeedbackOverlay';
+import { usePage } from '@inertiajs/react';
 
 export default function LocalDisplayBoard({ 
     sectors, 
@@ -265,9 +266,14 @@ export default function LocalDisplayBoard({
         // Sin setTimeout: el host avanza manualmente pulsando el botón en el FeedbackOverlay
     };
 
+    const { props } = usePage();
     const handleExit = () => {
         if (window.confirm("¿Seguro que deseas salir de la partida? Perderás todo el progreso actual.")) {
-            window.location.href = '/dashboard';
+            if (props.auth?.user) {
+                window.location.href = '/dashboard';
+            } else {
+                window.location.href = '/jugar';
+            }
         }
     };
 
