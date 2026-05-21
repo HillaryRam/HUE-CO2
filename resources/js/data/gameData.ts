@@ -55,8 +55,8 @@ export const ROLES: Role[] = [
     iconName: 'Sprout'
   },
   {
-    id: 'publico',
-    name: 'Sector Público',
+    id: 'legislativo',
+    name: 'Sector Legislativo',
     specialist: 'El Regulador',
     ring: 'Energía',
     passiveDesc: 'Impuestos verdes: +1 Eco-Token extra al completar un reto.',

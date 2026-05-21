@@ -127,7 +127,7 @@ export default function LocalDisplayBoard({
                     'Ciencia e I+D': 'ciencia',
                     'Gigantes Tech': 'tech',
                     'Sector Primario': 'primario',
-                    'Sector Público': 'publico',
+                    'Sector Legislativo': 'legislativo',
                     'Ciudadanía': 'ciudadania'
                 };
                 
@@ -575,7 +575,7 @@ export default function LocalDisplayBoard({
                                         case 'ciencia': return <FlaskConical size={iconSize} className="text-blue-500" />;
                                         case 'tech': return <Database size={iconSize} className="text-violet-500" />;
                                         case 'primario': return <Sprout size={iconSize} className="text-emerald-500" />;
-                                        case 'publico': return <Landmark size={iconSize} className="text-rose-500" />;
+                                        case 'legislativo': return <Landmark size={iconSize} className="text-rose-500" />;
                                         case 'ciudadania': return <Users size={iconSize} className="text-fuchsia-500" />;
                                         default: return <Zap size={iconSize} className="text-amber-500" />;
                                     }

@@ -17,7 +17,7 @@ const ROLE_CONFIG = {
     ciencia:    { color: 'bg-cyan-100',    border: 'border-cyan-400',    text: 'text-cyan-900',    btn: 'bg-cyan-500',    shadow: 'shadow-cyan-200'    },
     tech:       { color: 'bg-indigo-100',  border: 'border-indigo-400',  text: 'text-indigo-900',  btn: 'bg-indigo-500',  shadow: 'shadow-indigo-200'  },
     primario:   { color: 'bg-emerald-100', border: 'border-emerald-400', text: 'text-emerald-900', btn: 'bg-emerald-500', shadow: 'shadow-emerald-200' },
-    publico:    { color: 'bg-rose-100',    border: 'border-rose-400',    text: 'text-rose-900',    btn: 'bg-rose-500',    shadow: 'shadow-rose-200'    },
+    legislativo: { color: 'bg-rose-100',    border: 'border-rose-400',    text: 'text-rose-900',    btn: 'bg-rose-500',    shadow: 'shadow-rose-200'    },
     ciudadania: { color: 'bg-violet-100',  border: 'border-violet-400',  text: 'text-violet-900',  btn: 'bg-violet-500',  shadow: 'shadow-violet-200'  },
 };
 
@@ -26,7 +26,7 @@ const ROLE_ICONS = {
     ciencia:    <FlaskConical />,
     tech:       <Cpu />,
     primario:   <Droplets />,
-    publico:    <Landmark />,
+    legislativo: <Landmark />,
     ciudadania: <Users />,
 };
 

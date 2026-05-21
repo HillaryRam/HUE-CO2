@@ -21,7 +21,7 @@ return new class extends Migration
             'Ciencia e I+D'    => 'ciencia',
             'EcoTech'          => 'tech',
             'Sector Primario'  => 'primario',
-            'Sector Público'   => 'publico',
+            'Sector Legislativo'   => 'legislativo',
             'Ciudadanía'       => 'ciudadania',
         ];
         foreach ($slugMap as $nombre => $slug) {

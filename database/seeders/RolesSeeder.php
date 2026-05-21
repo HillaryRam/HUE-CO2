@@ -18,7 +18,7 @@ class RolesSeeder extends Seeder
             ['nombre' => 'Ciencia e I+D',    'slug' => 'ciencia',    'habilidades' => 'Pasiva: Cartas sin bloqueo. Activa: Salto Tecnológico (Auto-acierto).'],
             ['nombre' => 'EcoTech',          'slug' => 'tech',       'habilidades' => 'Pasiva: Ve eventos futuros. Activa: Algoritmo de Eficiencia (Mitiga 50% de evento).'],
             ['nombre' => 'Sector Primario',  'slug' => 'primario',   'habilidades' => 'Pasiva: Escudo automático. Activa: Restauración de Ecosistemas (Baja temp global).'],
-            ['nombre' => 'Sector Público',   'slug' => 'publico',    'habilidades' => 'Pasiva: Impuestos verdes (+1 ET). Activa: Ley de Emergencia (Bloquea evento).'],
+            ['nombre' => 'Sector Legislativo',   'slug' => 'legislativo',    'habilidades' => 'Pasiva: Impuestos verdes (+1 ET). Activa: Ley de Emergencia (Bloquea evento).'],
             ['nombre' => 'Ciudadanía',       'slug' => 'ciudadania', 'habilidades' => 'Pasiva: +2 ET extra por turno. Activa: Presión Social (Elimina 50% de errores).'],
         ]);
     }

@@ -15,7 +15,7 @@ import { usePage } from '@inertiajs/react';
 const figmaColors = {
     'ciencia':    { bg: 'bg-[#DEB8FF]', border: 'border-[#9640FF]', iconClass: 'text-[#9640FF]' },
     'primario':   { bg: 'bg-[#E2F1C3]', border: 'border-[#658437]', iconClass: 'text-[#658437]' },
-    'publico':    { bg: 'bg-[#FFC2C2]', border: 'border-[#D00000]', iconClass: 'text-[#D00000]' },
+    'legislativo': { bg: 'bg-[#FFC2C2]', border: 'border-[#D00000]', iconClass: 'text-[#D00000]' },
     'tech':       { bg: 'bg-[#D6D5FF]', border: 'border-[#4340FF]', iconClass: 'text-[#4340FF]' },
     'textil':     { bg: 'bg-[#FFE4C4]', border: 'border-[#FFA340]', iconClass: 'text-[#FFA340]' },
     'ciudadania': { bg: 'bg-[#FFC9F2]', border: 'border-[#FF3ADB]', iconClass: 'text-[#FF3ADB]' },
@@ -25,7 +25,7 @@ const getRoleIcon = (iconName, id) => {
     const icons = {
         tech: <Cpu className="w-full h-full" strokeWidth={2.5} />,
         primario: <Tractor className="w-full h-full" strokeWidth={2.5} />,
-        publico: <Landmark className="w-full h-full" strokeWidth={2.5} />,
+        legislativo: <Landmark className="w-full h-full" strokeWidth={2.5} />,
         Shirt: <Shirt className="w-full h-full" strokeWidth={2.5} />,
         FlaskConical: <FlaskConical className="w-full h-full" strokeWidth={2.5} />,
         Users: <Users className="w-full h-full" strokeWidth={2.5} />,

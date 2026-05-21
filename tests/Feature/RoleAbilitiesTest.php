@@ -94,9 +94,9 @@ class RoleAbilitiesTest extends TestCase
         $this->assertEquals(7, $participacion->eco_fichas); // Tenía 10, gasta 3
     }
     
-    public function test_publico_bloquea_evento()
+    public function test_legislativo_bloquea_evento()
     {
-        $publicoRol = DB::table('roles')->where('slug', 'publico')->first();
+        $legislativoRol = DB::table('roles')->where('slug', 'legislativo')->first();
 
         $juego = Juego::create([
             'room_code' => 'TEST001',
@@ -107,7 +107,7 @@ class RoleAbilitiesTest extends TestCase
             'anillo_id' => Anillo::first()->anillo_id,
             'current_carta_id' => Carta::where('tipo', 'evento')->first()->carta_id
         ]);
-        $juego->current_rol_id = $publicoRol->rol_id;
+        $juego->current_rol_id = $legislativoRol->rol_id;
         $juego->save();
         
         $part2 = \App\Models\Participante::create(['usuario' => 'p2']);
@@ -115,14 +115,14 @@ class RoleAbilitiesTest extends TestCase
         DB::table('juego_participante')->insert([
             'juego_id' => $juego->juego_id,
             'participante_id' => $part2->participante_id,
-            'rol_id' => $publicoRol->rol_id,
+            'rol_id' => $legislativoRol->rol_id,
             'eco_fichas' => 10,
             'puntuacion' => 0
         ]);
 
         $response = $this->postJson("/api/game/TEST001/habilidad", [
             'participante_id' => $part2->participante_id,
-            'slug' => 'publico'
+            'slug' => 'legislativo'
         ]);
 
         $response->assertStatus(200);

@@ -74,7 +74,7 @@ class HabilidadController extends Controller
                 'ciencia' => 5,
                 'tech' => 2,
                 'primario' => 3,
-                'publico' => 4,
+                'legislativo' => 4,
                 'ciudadania' => 2,
             ];
 
@@ -91,7 +91,7 @@ class HabilidadController extends Controller
             }
 
             // Restricciones de Mitigación: Tech y Público necesitan que el turno actual SEA o VAYA A SER un evento
-            if (in_array($request->slug, ['tech', 'publico']) && $cartaActual && $cartaActual->tipo !== 'evento') {
+            if (in_array($request->slug, ['tech', 'legislativo']) && $cartaActual && $cartaActual->tipo !== 'evento') {
                 return response()->json(['success' => false, 'message' => 'Solo puedes usar esta habilidad para mitigar Eventos Climáticos.'], 400);
             }
 
@@ -112,7 +112,7 @@ class HabilidadController extends Controller
                     'ciencia' => '¡[Ciencia e I+D] activó Salto Tecnológico! Reto auto-completado.',
                     'tech' => '¡[EcoTech] activó Algoritmo de Eficiencia! Impacto de evento reducido a la mitad.',
                     'primario' => '¡[Sector Primario] activó Restauración de Ecosistemas! Temperatura global -0.2°C.',
-                    'publico' => '¡[Sector Público] activó Ley de Emergencia! Impacto de evento bloqueado por completo.',
+                    'legislativo' => '¡[Sector Legislativo] activó Ley de Emergencia! Impacto de evento bloqueado por completo.',
                     'ciudadania' => '¡[Ciudadanía] activó Presión Social! Eliminado el 50% de las opciones incorrectas del reto actual.',
                 ];
 
@@ -130,7 +130,7 @@ class HabilidadController extends Controller
                     case 'tech':
                         Cache::put("juego_{$juego->juego_id}_event_halved_t{$juego->current_turn}", true, 3600);
                         break;
-                    case 'publico':
+                    case 'legislativo':
                         Cache::put("juego_{$juego->juego_id}_event_blocked_t{$juego->current_turn}", true, 3600);
                         break;
                     case 'ciudadania':
@@ -188,12 +188,12 @@ class HabilidadController extends Controller
             $juego->refresh();
 
             // Sincronizar con todos
-            if ($request->slug === 'ciencia' || in_array($request->slug, ['tech', 'publico'])) {
+            if ($request->slug === 'ciencia' || in_array($request->slug, ['tech', 'legislativo'])) {
                 if ($request->slug === 'ciencia') {
                     // Completar el turno inmediatamente (como si hubieran contestado)
                     $this->gameFlowService->transitionToResults($juego);
                 } else {
-                    // Tech y Publico no terminan el turno si es un evento, pero el host debe hacer advanceTurn después de mostrarlo.
+                    // Tech y Legislativo no terminan el turno si es un evento, pero el host debe hacer advanceTurn después de mostrarlo.
                     // Actually, if it's an event, we still need them to transition to results manually or automatically. Let's just broadcast.
                     $this->gameFlowService->broadcastState($juego);
                 }

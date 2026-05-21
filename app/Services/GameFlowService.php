@@ -223,7 +223,7 @@ class GameFlowService
     {
         // Orden real del tablero (Empezando desde arriba en sentido horario)
         // Público (Top) -> Ciudadanía (Right) -> Textil (Bottom-Right) -> Ciencia (Bottom-Left) -> Tech (Left) -> Primario (Top-Left)
-        $clockwiseOrder = ['publico', 'ciudadania', 'textil', 'ciencia', 'tech', 'primario'];
+        $clockwiseOrder = ['legislativo', 'ciudadania', 'textil', 'ciencia', 'tech', 'primario'];
         
         $rolesAsignadosSlugs = DB::table('juego_participante')
             ->join('roles', 'juego_participante.rol_id', '=', 'roles.rol_id')
