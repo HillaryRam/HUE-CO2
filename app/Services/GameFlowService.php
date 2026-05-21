@@ -289,7 +289,7 @@ class GameFlowService
             })->toArray();
 
 
-        $carta = Carta::find($juego->current_carta_id);
+        $carta = Carta::with(['preguntas.opciones'])->find($juego->current_carta_id);
         $challengeData = $this->formatChallenge($carta, $juego);
         $challengeData['activeSectorId'] = $activeSectorSlug;
         $challengeData['anillo_id']      = $juego->anillo_id;
@@ -600,6 +600,10 @@ class GameFlowService
             ])->whereNotNull('resultado')->value('resultado');
         }
 
+        $opcionCorrecta = $pregunta
+            ? ($pregunta->opciones->where('correcta', true)->first() ?? $pregunta->opciones->where('correcta', 1)->first())
+            : null;
+
         return [
             'id' => $carta->carta_id,
             'type' => $propuestaActiva ? 'validate' : $tipoBase,
@@ -620,9 +624,14 @@ class GameFlowService
             'sliderMin' => $pregunta && $pregunta->rango_min !== null ? $pregunta->rango_min : 0,
             'sliderMax' => $pregunta && $pregunta->rango_max !== null ? $pregunta->rango_max : 100,
             'unit' => ($pregunta && $pregunta->rango_max !== null && $pregunta->rango_max !== 100) ? '' : '%',
-            'correct_answer' => $pregunta ? ($pregunta->opciones->where('correcta', true)->first()->texto ?? null) : null,
+            'correct_answer' => $opcionCorrecta ? $opcionCorrecta->texto : null,
+            'correctAnswerText' => $opcionCorrecta ? $opcionCorrecta->texto : null,
             'isEvent' => ($carta->tipo === 'evento'),
             'cambioTemp' => $carta->cambio_temp ?? 0,
+            // Campos de dinámica de grupo
+            'explicacion' => $pregunta ? $pregunta->explicacion : null,
+            'dinamica_grupo' => $pregunta ? $pregunta->dinamica_grupo : null,
+            'tiempo_dinamica' => ($pregunta && $pregunta->tiempo_dinamica !== null) ? $pregunta->tiempo_dinamica : 120,
         ];
     }
 

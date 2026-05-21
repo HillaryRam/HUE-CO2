@@ -252,7 +252,9 @@ class GameController extends Controller
      */
     private function getChallengeData(Juego $juego): ?array
     {
-        $carta = $juego->current_carta_id ? \App\Models\Carta::find($juego->current_carta_id) : null;
+        $carta = $juego->current_carta_id
+            ? \App\Models\Carta::with(['preguntas.opciones'])->find($juego->current_carta_id)
+            : null;
         if (!$carta) return null;
 
         $pregunta = $carta->preguntas->first();
@@ -274,12 +276,16 @@ class GameController extends Controller
             ])->whereNotNull('resultado')->value('resultado');
         }
 
+        $opcionCorrecta = $pregunta
+            ? ($pregunta->opciones->where('correcta', true)->first() ?? $pregunta->opciones->where('correcta', 1)->first())
+            : null;
+
         $challengeData = [
             'id' => $carta->carta_id,
             'type' => $propuestaActiva ? 'validate' : $tipoBase,
             'title' => ($carta->tipo === 'evento') ? $carta->texto : ($pregunta ? $pregunta->texto : $carta->texto),
-            'description' => ($carta->tipo === 'evento') 
-                ? ($pregunta ? $pregunta->texto : '') 
+            'description' => ($carta->tipo === 'evento')
+                ? ($pregunta ? $pregunta->texto : '')
                 : ($pregunta && $carta->texto !== $pregunta->texto ? $carta->texto : ''),
             'ring' => $juego->anillo ? $juego->anillo->nombre : 'General',
             'anillo_id' => $juego->anillo_id,
@@ -291,12 +297,16 @@ class GameController extends Controller
             'sliderMin' => $pregunta && $pregunta->rango_min !== null ? $pregunta->rango_min : 0,
             'sliderMax' => $pregunta && $pregunta->rango_max !== null ? $pregunta->rango_max : 100,
             'unit' => ($pregunta && $pregunta->rango_max !== null && $pregunta->rango_max !== 100) ? '' : '%',
-            'correct_answer' => $pregunta ? ($pregunta->opciones->where('correcta', true)->first()->texto ?? null) : null,
+            'correct_answer' => $opcionCorrecta ? $opcionCorrecta->texto : null,
+            'correctAnswerText' => $opcionCorrecta ? $opcionCorrecta->texto : null,
             'isEvent' => ($carta->tipo === 'evento'),
             'cambioTemp' => $carta->cambio_temp ?? 0,
+            // Campos de dinámica de grupo
+            'explicacion' => $pregunta ? $pregunta->explicacion : null,
+            'dinamica_grupo' => $pregunta ? $pregunta->dinamica_grupo : null,
+            'tiempo_dinamica' => ($pregunta && $pregunta->tiempo_dinamica !== null) ? $pregunta->tiempo_dinamica : 120,
         ];
 
-        
         $activeRol = \Illuminate\Support\Facades\DB::table('roles')->where('rol_id', $juego->current_rol_id)->first();
         $challengeData['activeSectorId'] = $activeRol ? $activeRol->slug : null;
 

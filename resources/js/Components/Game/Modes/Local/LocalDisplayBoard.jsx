@@ -507,6 +507,10 @@ export default function LocalDisplayBoard({
                 {localFeedback !== null && (
                     <FeedbackOverlay 
                         isCorrect={localFeedback === 'correct'}
+                        explicacion={activeChallenge?.explicacion}
+                        dinamica_grupo={activeChallenge?.dinamica_grupo}
+                        tiempo_dinamica={activeChallenge?.tiempo_dinamica}
+                        opcion_correcta={activeChallenge?.correctAnswerText}
                         onNext={async () => {
                             // Al cerrar, marcamos este reto como procesado para que no vuelva a saltar
                             // por culpa de un mensaje tardío de WebSocket o Polling
@@ -516,7 +520,6 @@ export default function LocalDisplayBoard({
                             setLocalFeedback(null);
                             await handleAdvance();
                         }}
-
                     />
                 )}
             </AnimatePresence>
