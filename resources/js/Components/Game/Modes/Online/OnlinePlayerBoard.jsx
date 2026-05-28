@@ -42,7 +42,7 @@ export default function OnlinePlayerBoard({
     turnNumber, 
     myRoles = [], 
     visualPhase = 1, 
-    initialTimeLeft = 30,
+    initialTimeLeft = 45,
     isHost = false
 }) {
     const { props } = usePage();

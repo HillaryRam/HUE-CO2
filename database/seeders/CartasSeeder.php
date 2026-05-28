@@ -714,7 +714,7 @@ class CartasSeeder extends Seeder
 
             foreach ($preguntas as $p) {
                 $tipoCarta = $p['tipo_carta'] ?? 'pregunta';
-                $tiempo = $p['tiempo'] ?? ($tipoCarta === 'evento' ? 60 : 30);
+                $tiempo = $p['tiempo'] ?? ($tipoCarta === 'evento' ? 60 : 45);
                 $puntos = $p['puntos'] ?? ($tipoCarta === 'evento' ? 3 : 2);
                 $penalizacion = $p['penalizacion'] ?? ($tipoCarta === 'evento' ? 2 : 1);
                 $cambioTemp = $p['cambio_temp'] ?? null;

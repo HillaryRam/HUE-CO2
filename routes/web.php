@@ -3,6 +3,20 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Artisan;
+
+Route::get('/limpiar-todo', function() {
+    // 1. Forzamos la limpieza profunda de configuraciones, rutas y vistas viejas de Laravel
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
+    Artisan::call('route:clear');
+    
+    // 2. Ejecutamos la creación real de las tablas de la app (si hubiera cambios)
+    Artisan::call('migrate', ['--force' => true]);
+    
+    return "¡Servidor Vaport purgado, optimizado y Base de Datos estructurada con éxito!";
+});
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -113,3 +127,9 @@ Route::get('/test-boards', function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/cargar-datos', function() {
+    // Ejecuta los seeders para rellenar las tablas vacías
+    Artisan::call('db:seed', ['--force' => true]);
+    return "¡Datos iniciales (Seeders) cargados con éxito en la base de datos!";
+});

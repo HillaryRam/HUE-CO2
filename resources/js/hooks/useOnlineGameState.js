@@ -6,7 +6,7 @@ import axios from 'axios';
 /**
  * Hook para centralizar la lógica de estado y sincronización multijugador
  */
-export function useOnlineGameState(roomCode, myPlayerName, initialChallenge, sectors, myParticipantId, initialTimeLeft = 30) {
+export function useOnlineGameState(roomCode, myPlayerName, initialChallenge, sectors, myParticipantId, initialTimeLeft = 45) {
     const { setTimeLeft, setIsPaused } = useGame();
     
     // Sincronizar tiempo inicial al montar (para late-joiners)
